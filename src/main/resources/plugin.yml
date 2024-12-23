@@ -1,0 +1,29 @@
+name: KoolSMPCore
+main: eu.koolfreedom.KoolSMPCore
+version: ${project.version}
+api-version: 1.20
+description: Core plugin for the KoolFreedom SMP
+softdepend: [Essentials]
+depend: [WorldGuard, ProtocolLib]
+authors: [gamingto12]
+commands:
+  clearchat:
+    permission: kf.admin
+    aliases: [ chatclear, cc ]
+    description: Clears the chat
+  report:
+    description: Reports a suspicious player
+  koolsmpcore:
+    description: Displays information about the plugin
+  obliterate:
+    description: Send someone straight to hell
+    permission: kf.senior
+  spectate:
+    permission: kf.admin
+    description: Allows you to spectate someone
+
+permissions:
+  kf.admin:
+    default: op
+  kf.senior:
+    default: op

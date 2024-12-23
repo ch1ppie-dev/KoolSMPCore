@@ -1,0 +1,8 @@
+eu/koolfreedom/command/KoolSMPCoreCommand.class
+eu/koolfreedom/command/SpectateCommand.class
+eu/koolfreedom/command/ClearChatCommand.class
+eu/koolfreedom/ExploitListener.class
+eu/koolfreedom/KoolSMPCore.class
+eu/koolfreedom/command/ObliterateCommand.class
+eu/koolfreedom/system/IndefiniteBanSystem.class
+eu/koolfreedom/command/ReportCommand.class
