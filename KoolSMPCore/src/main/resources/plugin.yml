@@ -1,6 +1,7 @@
 name: KoolSMPCore
 main: eu.koolfreedom.KoolSMPCore
 version: ${project.version}
+api-version: 1.20
 description: Core plugin for the KoolFreedom SMP
 softdepend: [Essentials]
 depend: [WorldGuard, ProtocolLib]
@@ -14,9 +15,8 @@ commands:
     description: Reports a suspicious player
   koolsmpcore:
     description: Displays information about the plugin
-  gtfo:
-    description: Bans the suspicious user
-    ussage: /gtfo <player>
+  obliterate:
+    description: Send someone straight to hell
     permission: kf.senior
   spectate:
     permission: kf.admin
