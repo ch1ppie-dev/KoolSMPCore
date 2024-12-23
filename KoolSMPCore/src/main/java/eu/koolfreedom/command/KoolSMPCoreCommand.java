@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class VenomCoreCommand implements CommandExecutor {
+public class KoolSMPCoreCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         Player player;
         if (commandSender instanceof Player) {
@@ -21,7 +21,7 @@ public class VenomCoreCommand implements CommandExecutor {
             return true;
         }
         player.sendMessage(((TextComponent)((TextComponent)((TextComponent)((TextComponent)((TextComponent)Component.text("KoolSMPCore v", (TextColor)NamedTextColor.GOLD)
-                    .append((Component)Component.text(VenomCore.main.getPluginMeta().getVersion(), (TextColor)NamedTextColor.GOLD)))
+                    .append((Component)Component.text(KoolSMPCore.main.getPluginMeta().getVersion(), (TextColor)NamedTextColor.GOLD)))
                     .append((Component)Component.text(" for the ", (TextColor)NamedTextColor.RED)))
                     .append((Component)Component.text("KoolFreedom SMP", (TextColor)NamedTextColor.GOLD)))
                     .append((Component)Component.text(" server", (TextColor)NamedTextColor.RED)))
