@@ -9,18 +9,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class IndefiniteBanSystem {
 
-    private KoolSMPCore plugin;
-    private FileConfiguration bansConfig;
-    private File bansFile;
+    private final FileConfiguration bansConfig;
+    private final File bansFile;
     private List<String> bannedPlayers;
 
     public IndefiniteBanSystem(KoolSMPCore plugin) {
-        this.plugin = plugin;
         bannedPlayers = new ArrayList<>();
         bansFile = new File(plugin.getDataFolder(), "indefbans.yml");
         bansConfig = YamlConfiguration.loadConfiguration(bansFile);
