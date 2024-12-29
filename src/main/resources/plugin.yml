@@ -9,7 +9,7 @@ authors: [gamingto12]
 commands:
   clearchat:
     permission: kf.admin
-    aliases: [ chatclear, cc ]
+    aliases: [chatclear, cc]
     description: Clears the chat
   report:
     description: Reports a suspicious player
