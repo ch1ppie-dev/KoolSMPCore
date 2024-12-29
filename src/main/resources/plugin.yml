@@ -3,8 +3,8 @@ main: eu.koolfreedom.KoolSMPCore
 version: 1.0
 api-version: 1.20
 description: Core plugin for the KoolFreedom SMP
-softdepend: [Essentials]
-depend: [WorldGuard, ProtocolLib]
+depend: [ ProtocolLib, WorldGuard ]
+softdepend: [ Essentials ]
 authors: [gamingto12]
 commands:
   clearchat:

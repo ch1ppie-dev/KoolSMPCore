@@ -2,9 +2,7 @@ package eu.koolfreedom.command;
 
 import eu.koolfreedom.KoolSMPCore;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,18 +13,27 @@ public class KoolSMPCoreCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         Player player;
         if (commandSender instanceof Player) {
-            player = (Player) commandSender;
+            player = (Player)commandSender;
         } else {
-            commandSender.sendMessage((Component) Component.text("Only players can use this command.", (TextColor) NamedTextColor.RED));
+            commandSender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
             return true;
         }
-        player.sendMessage(((TextComponent) ((TextComponent) ((TextComponent) ((TextComponent) ((TextComponent) Component.text("KoolSMPCore v", (TextColor) NamedTextColor.GOLD)
-                .append((Component) Component.text(KoolSMPCore.main.getPluginMeta().getVersion(), (TextColor) NamedTextColor.GOLD)))
-                .append((Component) Component.text(" for the ", (TextColor) NamedTextColor.RED)))
-                .append((Component) Component.text("KoolFreedom SMP", (TextColor) NamedTextColor.GOLD)))
-                .append((Component) Component.text(" server", (TextColor) NamedTextColor.RED)))
-                .append((Component) Component.text(" by ", (TextColor) NamedTextColor.RED)))
-                .append((Component) Component.text("gamingto12", (TextColor) NamedTextColor.GOLD)));
-        return false;
+        if (args.length > 0 && (args[0].equalsIgnoreCase("reloadconfig") || args[0].equalsIgnoreCase("reload"))) {
+            if (!player.hasPermission("kf.senior")) {
+                player.sendMessage(Component.text("You do not have permission to use this command.", NamedTextColor.RED));
+                return true;
+            }
+            KoolSMPCore.main.reloadConfig();
+            player.sendMessage(Component.text("Successfully reloaded the configuration.", NamedTextColor.GREEN));
+        } else {
+            player.sendMessage(Component.text("KoolSMPCore v", NamedTextColor.GOLD)
+                    .append(Component.text(KoolSMPCore.main.getPluginMeta().getVersion(), NamedTextColor.GOLD))
+                    .append(Component.text(" for the ", NamedTextColor.RED))
+                    .append(Component.text("KoolFreedom SMP", NamedTextColor.GOLD))
+                    .append(Component.text(" server", NamedTextColor.RED))
+                    .append(Component.text(" by ", NamedTextColor.RED))
+                    .append(Component.text("gamingto12", NamedTextColor.GOLD)));
+        }
+        return true;
     }
-    }
+}

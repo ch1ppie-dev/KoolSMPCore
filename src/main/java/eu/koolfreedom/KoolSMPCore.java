@@ -3,12 +3,14 @@ package eu.koolfreedom;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
 import com.earth2me.essentials.Essentials;
@@ -40,7 +42,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     private static RegionContainer container;
     public static final Random random = new Random();
     private final List<UUID> titleCooldown = new ArrayList<>();
-    private int bossTaskId = 0;
     private static File indefbansFile;
     private static FileConfiguration indefbansConfig;
     private static final List<String> BAN_COMMANDS = List.of("/ban", "/ban-ip", "/banip", "/ipban", "/tempban", "/tempbanip", "/tempipban", "/kick");
@@ -52,11 +53,11 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         IndefiniteBanSystem banSystem = new IndefiniteBanSystem(this);
         getServer().getPluginManager().registerEvents(this, this);
 
-        getCommand("clearchat").setExecutor((CommandExecutor)new ClearChatCommand());
-        getCommand("report").setExecutor((CommandExecutor)new ReportCommand());
-        getCommand("koolsmpcore").setExecutor((CommandExecutor)new KoolSMPCoreCommand());
-        getCommand("spectate").setExecutor((CommandExecutor)new SpectateCommand());
-        getCommand("obliterate").setExecutor((CommandExecutor)new ObliterateCommand());
+        Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
+        Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
+        Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
+        Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
+        Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
 
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
@@ -161,6 +162,35 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text("Too many connections from this IP address.", NamedTextColor.RED));
                 break;
             }
+        }
+    }
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onChat(AsyncPlayerChatEvent event) {
+        String message = event.getMessage();
+        Player player = event.getPlayer();
+        if (message.startsWith("/") && !player.isOp()) {
+            event.setCancelled(true);
+            return;
+        }
+        if (player.hasPermission("venomgens.mod")) {
+            if (message.contains("@everyone")) {
+                String str = ChatColor.getLastColors(message);
+                message = message.replace("@everyone", "&b@everyone" + (str.isEmpty() ? "&r" : str));
+                for (Player p : Bukkit.getOnlinePlayers())
+                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
+                event.setMessage(message);
+            }
+        } else if (message.trim().toLowerCase().contains("nigger") || message
+                .trim().toLowerCase().contains("nigga")) {
+            event.setCancelled(true);
+            player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if (player.isOnline()) {
+                    getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + " Racism");
+                } else {
+                    getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " &c&lMay the ban hammer strike fear into your heart, " + player.getName() + ". (Racism)");
+                }
+            }, 50L);
         }
     }
 }
