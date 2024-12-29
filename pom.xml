@@ -15,7 +15,37 @@
     </properties>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>true</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>eu.koolfreedom.shaded.net.kyori</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
@@ -61,13 +91,23 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <minimizeJar>true</minimizeJar>
                             <relocations>
+                                <!-- Avoid relocating your plugin classes -->
                                 <relocation>
-                                    <pattern>net.kyori</pattern>
-                                    <shadedPattern>eu.koolfreedom.shaded.net.kyori</shadedPattern>
+                                    <pattern>com.example.other</pattern>
+                                    <shadedPattern>hidden.com.example.other</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <filters>
+                                <!-- Exclude plugin.yml from relocation -->
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.yml</exclude>
+                                        <exclude>plugin.yml</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -102,7 +142,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
-            <version>4.14.0</version>
+            <version>4.14.0</version> <!-- Ensure this matches your intended version -->
         </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>
