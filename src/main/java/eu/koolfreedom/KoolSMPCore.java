@@ -181,7 +181,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 event.setMessage(message);
             }
         } else if (message.trim().toLowerCase().contains("nigger") || message
-                .trim().toLowerCase().contains("nigga")) {
+                .trim().toLowerCase().contains("nigga") || message.trim().toLowerCase().contains("faggot")) {
             event.setCancelled(true);
             player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
             Bukkit.getScheduler().runTaskLater(this, () -> {
