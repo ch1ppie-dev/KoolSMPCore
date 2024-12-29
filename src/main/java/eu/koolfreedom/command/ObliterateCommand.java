@@ -47,7 +47,7 @@ public class ObliterateCommand implements CommandExecutor {
             Bukkit.getScheduler().runTaskLater((Plugin)KoolSMPCore.main, () -> Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), "execute as \"" + target.getName() + "\" at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"), 30L);
         Bukkit.getScheduler().runTaskLater((Plugin)KoolSMPCore.main, () -> (((CraftPlayer)target).getHandle()).c.b((Packet)new PacketPlayOutPosition(Double.POSITIVE_INFINITY, 0.0D, Double.POSITIVE_INFINITY, 90.0F, 0.0F, RelativeMovement.f, 0)), 30L);
         String reason = (args.length > 1) ? (" (" + String.join(" ", Arrays.<CharSequence>copyOfRange((CharSequence[])args, 1, args.length)) + ")") : "";
-        Bukkit.getScheduler().runTaskLater((Plugin)KoolSMPCore.main, () -> Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), "banip " + target.getName() + " &c&lMay the ban hammer strike fear into your heart, " + target.getName() + "." + reason), 38L);
+        Bukkit.getScheduler().runTaskLater((Plugin)KoolSMPCore.main, () -> Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), "banip " + target.getName() + " &c&lMay your worst nightmare come true, and may you suffer by the hands of your ruler, " + target.getName() + "." + reason), 38L);
         return true;
     }
 }
