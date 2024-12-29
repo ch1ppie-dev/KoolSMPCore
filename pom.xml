@@ -61,12 +61,6 @@
                         </goals>
                         <configuration>
                             <minimizeJar>true</minimizeJar>
-                            <relocations>
-                                <relocation>
-                                    <pattern>net.kyori</pattern>
-                                    <shadedPattern>eu.koolfreedom.shaded.net.kyori</shadedPattern>
-                                </relocation>
-                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
