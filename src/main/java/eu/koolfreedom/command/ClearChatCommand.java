@@ -25,6 +25,6 @@ public class ClearChatCommand implements CommandExecutor {
 
     private String getRandomColorCode() {
         char[] colors = "0123456789abcdefklmnor".toCharArray();
-        return "&" + colors[KoolSMPCore.random.nextInt(colors.length)];
+        return "§" + colors[KoolSMPCore.random.nextInt(colors.length)];
     }
 }

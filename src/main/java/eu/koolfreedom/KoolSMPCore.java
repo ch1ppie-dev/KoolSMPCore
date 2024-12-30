@@ -175,7 +175,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         if (player.hasPermission("venomgens.mod")) {
             if (message.contains("@everyone")) {
                 String str = ChatColor.getLastColors(message);
-                message = message.replace("@everyone", "&b@everyone" + (str.isEmpty() ? "&r" : str));
+                message = message.replace("@everyone", "§b@everyone" + (str.isEmpty() ? "§r" : str));
                 for (Player p : Bukkit.getOnlinePlayers())
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
                 event.setMessage(message);
@@ -188,7 +188,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 if (player.isOnline()) {
                     getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + " Racism");
                 } else {
-                    getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " &c&lMay the ban hammer strike fear into your heart, " + player.getName() + ". (Racism)");
+                    getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " §c§lMay the ban hammer strike fear into your heart, " + player.getName() + ". (Racism)");
                 }
             }, 50L);
         }
