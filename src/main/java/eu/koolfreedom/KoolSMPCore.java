@@ -3,6 +3,7 @@ package eu.koolfreedom;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -19,6 +20,7 @@ import eu.koolfreedom.command.ClearChatCommand;
 import eu.koolfreedom.command.ReportCommand;
 import eu.koolfreedom.command.KoolSMPCoreCommand;
 import eu.koolfreedom.command.SpectateCommand;
+import eu.koolfreedom.command.LagSourceCommand;
 import eu.koolfreedom.command.ObliterateCommand;
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +58,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
         Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
+        Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
 
@@ -121,23 +124,22 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     }
 
     private void announcerRunnable() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask((Plugin)this, () -> {
             List<String> messageKeys = new ArrayList<>(getConfig().getConfigurationSection("messages").getKeys(false));
             if (messageKeys.isEmpty()) {
                 getLogger().warning("No messages found in configuration.");
                 return;
             }
-
             String randomKey = messageKeys.get(ThreadLocalRandom.current().nextInt(messageKeys.size()));
             List<String> lines = getConfig().getStringList("messages." + randomKey);
             if (lines.isEmpty()) {
                 getLogger().warning("Message '" + randomKey + "' has no lines.");
                 return;
             }
+            Bukkit.broadcast(((TextComponent)Component.newline().append((Component)LegacyComponentSerializer.legacyAmpersand().deserialize(String.join("\n", (Iterable)lines)))).appendNewline());
+        },0L,
 
-            Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(String.join("\n", lines));
-            Bukkit.broadcast(Component.newline().append(message).append(Component.newline()));
-        }, 0L, getConfig().getLong("announcer-delay"));
+                getConfig().getLong("announcer-delay"));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
