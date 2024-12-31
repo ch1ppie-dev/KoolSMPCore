@@ -21,9 +21,17 @@ commands:
   spectate:
     permission: kf.admin
     description: Allows you to spectate someone
+  cmdspy:
+    aliases: [cspy, commandspy]
+    permission: kf.admin
+    description: Enables/Disables CommandSpy
 
 permissions:
   kf.admin:
     default: op
   kf.senior:
+    default: op
+  kf.cmdspy.exempt:
+    default: op
+  kf.cmdspy.others:
     default: op

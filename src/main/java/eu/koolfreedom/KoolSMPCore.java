@@ -8,8 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,8 +20,6 @@ import eu.koolfreedom.command.KoolSMPCoreCommand;
 import eu.koolfreedom.command.SpectateCommand;
 import eu.koolfreedom.command.LagSourceCommand;
 import eu.koolfreedom.command.ObliterateCommand;
-import java.io.File;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -37,22 +33,20 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.potion.PotionEffectType;
-import eu.koolfreedom.system.IndefiniteBanSystem;
+import eu.koolfreedom.system.CommandSpySystem;
 
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
     private static RegionContainer container;
     public static final Random random = new Random();
     private final List<UUID> titleCooldown = new ArrayList<>();
-    private static File indefbansFile;
-    private static FileConfiguration indefbansConfig;
     private static final List<String> BAN_COMMANDS = List.of("/ban", "/ban-ip", "/banip", "/ipban", "/tempban", "/tempbanip", "/tempipban", "/kick");
 
     @Override
     public void onEnable() {
         getLogger().info("KoolSMPCore has been enabled");
 
-        IndefiniteBanSystem banSystem = new IndefiniteBanSystem(this);
+        CommandSpySystem spySystem = new CommandSpySystem(this);
         getServer().getPluginManager().registerEvents(this, this);
 
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
@@ -68,7 +62,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
-        createIndefBansFile();
 
         if (getConfig().getBoolean("announcer-enabled")) {
             announcerRunnable();
@@ -81,7 +74,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         getLogger().info("KoolSMPCore has been disabled");
-        saveIndefBansConfig();
     }
 
     @Override
@@ -89,27 +81,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         return false;
     }
 
-    private void createIndefBansFile() {
-        indefbansFile = new File(getDataFolder(), "indefbans.yml");
-        if (!indefbansFile.exists()) {
-            try {
-                getDataFolder().mkdirs();
-                indefbansFile.createNewFile();
-                saveResource("indefbans.yml", false);
-            } catch (IOException e) {
-                getLogger().severe("Error creating indefbans.yml: " + e.getMessage());
-            }
-        }
-        indefbansConfig = YamlConfiguration.loadConfiguration(indefbansFile);
-    }
-
-    public static void saveIndefBansConfig() {
-        try {
-            indefbansConfig.save(indefbansFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public boolean isVanished(Player player) {
         Plugin essentials = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
@@ -190,7 +161,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 if (player.isOnline()) {
                     getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + " Racism");
                 } else {
-                    getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " §c§lMay the ban hammer strike fear into your heart, " + player.getName() + ". (Racism)");
+                    getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " §c§lMay your wost nightmare come true, and may you suffer by the hands of your ruler, " + player.getName() + ". (Racism)");
                 }
             }, 50L);
         }
