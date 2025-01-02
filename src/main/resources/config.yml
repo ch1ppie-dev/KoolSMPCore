@@ -12,11 +12,3 @@ messages:
     - "&c[&6KoolFreedom&c] Got a rule breaker on the server? use &6'/report' &cto submit a report."
   suggestion:
     - "&c[&6KoolFreedom&c] Have a suggestion? Join our Discord and put it there, the staff will review it."
-
-# This entire section of the configuration file is for CommandSpy
-Enabled-Message: "&cCMDSpy has been &aenabled"
-Disabled-Message: "&cCMDSpy has been &4disabled"
-Enabled-Message-Others: "&cCMDSpy has been &aenabled&c for &6%player%"
-Disabled-Message-Others: "&cCMDSpy has been &4disabled&c for &6%player%"
-Chat-Format: "&7%player%: /%message%"
-Ignored-Commands: []

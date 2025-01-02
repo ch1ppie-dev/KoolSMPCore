@@ -37,6 +37,7 @@ import eu.koolfreedom.system.CommandSpySystem;
 
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
+    private CommandSpySystem commandSpySystem;
     private static RegionContainer container;
     public static final Random random = new Random();
     private final List<UUID> titleCooldown = new ArrayList<>();
@@ -44,18 +45,31 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        getLogger().info("KoolSMPCore has been enabled");
+        getLogger().info("Starting KoolSMPCore...");
 
-        CommandSpySystem spySystem = new CommandSpySystem(this);
+        try {
+            getLogger().info("Creating CommandSpySystem instance...");
+            commandSpySystem = Objects.requireNonNull(new CommandSpySystem(this), "CommandSpySystem cannot be null");
+            getLogger().info("CommandSpySystem instance created.");
+
+            getLogger().info("Initializing CommandSpySystem...");
+            commandSpySystem.initialize();
+            getLogger().info("CommandSpySystem initialized.");
+        } catch (Exception e) {
+            getLogger().severe("Error during CommandSpySystem setup: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Register plugin events
         getServer().getPluginManager().registerEvents(this, this);
 
+        // Register other commands
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
         Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
         Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
-
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new ExploitListener(this));
@@ -69,10 +83,15 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
         container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         main = this;
+
+        getLogger().info("KoolSMPCore has been enabled.");
     }
 
     @Override
     public void onDisable() {
+        if (commandSpySystem != null) {
+            commandSpySystem.cleanup();
+        }
         getLogger().info("KoolSMPCore has been disabled");
     }
 
