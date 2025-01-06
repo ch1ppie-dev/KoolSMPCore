@@ -33,11 +33,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.potion.PotionEffectType;
-import eu.koolfreedom.system.CommandSpySystem;
 
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
-    private CommandSpySystem commandSpySystem;
     private static RegionContainer container;
     public static final Random random = new Random();
     private final List<UUID> titleCooldown = new ArrayList<>();
@@ -45,25 +43,10 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        getLogger().info("Starting KoolSMPCore...");
-
-        try {
-            getLogger().info("Creating CommandSpySystem instance...");
-            commandSpySystem = Objects.requireNonNull(new CommandSpySystem(this), "CommandSpySystem cannot be null");
-            getLogger().info("CommandSpySystem instance created.");
-
-            getLogger().info("Initializing CommandSpySystem...");
-            commandSpySystem.initialize();
-            getLogger().info("CommandSpySystem initialized.");
-        } catch (Exception e) {
-            getLogger().severe("Error during CommandSpySystem setup: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        // Register plugin events
+        getLogger().info("KoolSMPCore is starting...");
+        getLogger().info("KoolSMPCore has been enabled.");
         getServer().getPluginManager().registerEvents(this, this);
 
-        // Register other commands
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
         Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
@@ -71,27 +54,23 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
 
+
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new ExploitListener(this));
 
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
-        if (getConfig().getBoolean("announcer-enabled")) {
+        if (getConfig().getBoolean("enable-announcer")) {
             announcerRunnable();
         }
 
         container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         main = this;
-
-        getLogger().info("KoolSMPCore has been enabled.");
     }
 
     @Override
     public void onDisable() {
-        if (commandSpySystem != null) {
-            commandSpySystem.cleanup();
-        }
         getLogger().info("KoolSMPCore has been disabled");
     }
 
@@ -164,7 +143,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (player.hasPermission("venomgens.mod")) {
+        if (player.hasPermission("kf.admin")) {
             if (message.contains("@everyone")) {
                 String str = ChatColor.getLastColors(message);
                 message = message.replace("@everyone", "§b@everyone" + (str.isEmpty() ? "§r" : str));
