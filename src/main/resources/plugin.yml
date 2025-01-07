@@ -36,9 +36,6 @@ commands:
     description: Poke someone to annoy them
   ship:
     description: Make it known that you ship two people.
-  consolesay:
-    description: Idk
-    permission: kf.senior
 
 permissions:
   kf.admin:
