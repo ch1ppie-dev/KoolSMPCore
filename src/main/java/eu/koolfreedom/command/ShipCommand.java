@@ -4,14 +4,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+
 import static org.bukkit.Bukkit.getPlayer;
 
-public class ShipCommand implements Listener
+public class ShipCommand implements CommandExecutor
 {
 
     public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
@@ -56,5 +58,10 @@ public class ShipCommand implements Listener
             Bukkit.broadcastMessage(ChatColor.GREEN + "" + shipperProbablyMiddie.getName() + " ships " + p1.getName() + " x " + p2.getName() + "." + ChatColor.LIGHT_PURPLE + " <3");
         }
         return true;
+    }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        return false;
     }
 }

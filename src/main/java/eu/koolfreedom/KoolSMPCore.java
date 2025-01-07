@@ -49,13 +49,13 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
-        Objects.requireNonNull(getCommand("hug")).setExecutor((CommandExecutor) new HugCommand());
-        Objects.requireNonNull(getCommand("slap")).setExecutor((CommandExecutor)new SlapCommand());
-        Objects.requireNonNull(getCommand("ship")).setExecutor((CommandExecutor)new ShipCommand());
-        Objects.requireNonNull(getCommand("poke")).setExecutor((CommandExecutor)new PokeCommand());
-        Objects.requireNonNull(getCommand("kiss")).setExecutor((CommandExecutor)new KissCommand());
-        Objects.requireNonNull(getCommand("pat")).setExecutor((CommandExecutor)new PatCommand());
-        Objects.requireNonNull(getCommand("consolesay")).setExecutor((CommandExecutor)new ConsoleSayCommand());
+        Objects.requireNonNull(getCommand("hug")).setExecutor( new HugCommand());
+        Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
+        Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
+        Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
+        Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
+        Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
+        Objects.requireNonNull(getCommand("consolesay")).setExecutor(new ConsoleSayCommand());
 
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
