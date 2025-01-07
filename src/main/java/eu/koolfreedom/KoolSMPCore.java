@@ -55,6 +55,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("poke")).setExecutor((CommandExecutor)new PokeCommand());
         Objects.requireNonNull(getCommand("kiss")).setExecutor((CommandExecutor)new KissCommand());
         Objects.requireNonNull(getCommand("pat")).setExecutor((CommandExecutor)new PatCommand());
+        Objects.requireNonNull(getCommand("consolesay")).setExecutor((CommandExecutor)new ConsoleSayCommand());
 
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
