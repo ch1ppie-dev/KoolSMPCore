@@ -24,6 +24,18 @@ commands:
   lagsource:
     description: Checks for any sources causing lag
     permission: kf.senior
+  hug:
+    description: Give someone a nice warm hug, you never know who could need one.
+  kiss:
+    description: For the love birds....give em a kiss.
+  pat:
+    description: Pat someone on the head
+  slap:
+    description: Slap the fuck out of someone
+  poke:
+    description: Poke someone to annoy them
+  ship:
+    description: Make it known that you ship two people.
 
 permissions:
   kf.admin:

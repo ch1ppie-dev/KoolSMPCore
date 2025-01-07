@@ -7,6 +7,7 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -48,6 +49,12 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
+        Objects.requireNonNull(getCommand("hug")).setExecutor((CommandExecutor) new HugCommand());
+        Objects.requireNonNull(getCommand("slap")).setExecutor((CommandExecutor)new SlapCommand());
+        Objects.requireNonNull(getCommand("ship")).setExecutor((CommandExecutor)new ShipCommand());
+        Objects.requireNonNull(getCommand("poke")).setExecutor((CommandExecutor)new PokeCommand());
+        Objects.requireNonNull(getCommand("kiss")).setExecutor((CommandExecutor)new KissCommand());
+        Objects.requireNonNull(getCommand("pat")).setExecutor((CommandExecutor)new PatCommand());
 
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
