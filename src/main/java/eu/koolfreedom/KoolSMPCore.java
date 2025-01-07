@@ -14,12 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
 import com.earth2me.essentials.Essentials;
 import com.sk89q.worldguard.WorldGuard;
-import eu.koolfreedom.command.ClearChatCommand;
-import eu.koolfreedom.command.ReportCommand;
-import eu.koolfreedom.command.KoolSMPCoreCommand;
-import eu.koolfreedom.command.SpectateCommand;
-import eu.koolfreedom.command.LagSourceCommand;
-import eu.koolfreedom.command.ObliterateCommand;
+import eu.koolfreedom.command.*;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -93,7 +88,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     }
 
     private void announcerRunnable() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask((Plugin)this, () -> {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             List<String> messageKeys = new ArrayList<>(getConfig().getConfigurationSection("messages").getKeys(false));
             if (messageKeys.isEmpty()) {
                 getLogger().warning("No messages found in configuration.");
@@ -105,11 +100,10 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 getLogger().warning("Message '" + randomKey + "' has no lines.");
                 return;
             }
-            Bukkit.broadcast(((TextComponent)Component.newline().append((Component)LegacyComponentSerializer.legacyAmpersand().deserialize(String.join("\n", (Iterable)lines)))).appendNewline());
-        },0L,
-
-                getConfig().getLong("announcer-delay"));
+            Bukkit.broadcast(Component.newline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(String.join("\n", lines))).appendNewline());
+        }, 0L, getConfig().getLong("announcer-time"));
     }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onLogin(PlayerLoginEvent event) {
@@ -135,33 +129,46 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             }
         }
     }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onChat(AsyncPlayerChatEvent event) {
         String message = event.getMessage();
         Player player = event.getPlayer();
+
         if (message.startsWith("/") && !player.isOp()) {
             event.setCancelled(true);
             return;
         }
+
         if (player.hasPermission("kf.admin")) {
             if (message.contains("@everyone")) {
-                String str = ChatColor.getLastColors(message);
-                message = message.replace("@everyone", "§b@everyone" + (str.isEmpty() ? "§r" : str));
-                for (Player p : Bukkit.getOnlinePlayers())
+                String lastColor = ChatColor.getLastColors(message);
+                message = message.replace("@everyone", "§b@everyone" + (lastColor.isEmpty() ? "§r" : lastColor));
+                for (Player p : Bukkit.getOnlinePlayers()) {
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
-                event.setMessage(message);
-            }
-        } else if (message.trim().toLowerCase().contains("nigger") || message
-                .trim().toLowerCase().contains("nigga") || message.trim().toLowerCase().contains("faggot")) {
-            event.setCancelled(true);
-            player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
-            Bukkit.getScheduler().runTaskLater(this, () -> {
-                if (player.isOnline()) {
-                    getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + " Racism");
-                } else {
-                    getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " §c§lMay your wost nightmare come true, and may you suffer by the hands of your ruler, " + player.getName() + ". (Racism)");
                 }
-            }, 50L);
+
+                event.setMessage(message);
+                return;
+            }
+        } else {
+            if (message.trim().toLowerCase().contains("nigger") ||
+                    (message.trim().toLowerCase().contains("faggot") ||
+                            (message.trim().toLowerCase().contains("nigga")))) {
+                event.setCancelled(true);
+
+                player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
+
+                Bukkit.getScheduler().runTaskLater(this, () -> {
+                    if (player.isOnline()) {
+                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + " Racism");
+                    } else {
+                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " §c§lMay your worst nightamre come true, and may you suffer by the hands of your ruler, " + player.getName() + ". (Racism)");
+                    }
+                }, 50L);
+
+                return;
+            }
         }
     }
 }
