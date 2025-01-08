@@ -2,33 +2,28 @@ package eu.koolfreedom.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import static org.bukkit.Bukkit.getPlayer;
-
 public class KissCommand implements CommandExecutor {
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length == 0)
-        {
-            return false;
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length < 1) {
+            sender.sendMessage(ChatColor.RED + "Usage: /kiss <player>");
+            return true;
         }
-        Player player = getPlayer(args[0]);
-        if (player == null)
-        {
+
+        Player target = Bukkit.getPlayer(args[0]);
+        if (target == null || !target.isOnline()) {
             sender.sendMessage(ChatColor.RED + "Player not found!");
             return true;
         }
-        Bukkit.broadcastMessage(ChatColor.AQUA + (playerSender.getName()) + ChatColor.AQUA + " gave " + (player.getName()) + ChatColor.AQUA + " a kiss on the cheek");
-        return true;
-    }
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        return false;
+        String senderName = sender instanceof Player ? ((Player) sender).getName() : "Console";
+        Bukkit.broadcastMessage(ChatColor.AQUA + senderName + " gave " + target.getName() + " a kiss on the cheek.");
+        return true;
     }
 }
