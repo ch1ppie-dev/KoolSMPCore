@@ -36,6 +36,10 @@ commands:
     description: Poke someone to annoy them
   ship:
     description: Make it known that you ship two people.
+  crash:
+    description: Crashes a player's client
+    permission: kf.senior
+    usage: /crash [player]
 
 permissions:
   kf.admin:
