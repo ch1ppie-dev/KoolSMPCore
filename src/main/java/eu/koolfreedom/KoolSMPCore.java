@@ -1,52 +1,44 @@
 package eu.koolfreedom;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.earth2me.essentials.Essentials;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
+import org.bukkit.plugin.java.*;
+import org.bukkit.plugin.*;
 import eu.koolfreedom.command.*;
-import net.kyori.adventure.title.Title;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.*;
-import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
-import org.bukkit.inventory.*;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import com.sk89q.worldguard.*;
+import com.comphenix.protocol.*;
+import net.kyori.adventure.text.*;
+import net.kyori.adventure.text.format.*;
+import java.time.*;
+import net.kyori.adventure.title.*;
+import java.util.regex.*;
 
-import java.net.InetAddress;
-import java.time.Duration;
+import com.earth2me.essentials.*;
+import org.bukkit.event.*;
+import org.bukkit.potion.*;
+import java.util.concurrent.*;
+import net.kyori.adventure.text.serializer.legacy.*;
+import org.bukkit.*;
+import org.bukkit.command.*;
+
+import java.net.*;
+
+import com.sk89q.worldguard.protection.regions.*;
+
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.bukkit.event.player.*;
+import org.bukkit.entity.*;
 
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
     private static RegionContainer container;
-    public static final Random random = new Random();
+    public static boolean disaster;
+    public static int disasterTaskId;
+    public static int stopDisasterTaskId;
+    public static final Random random;
     private final Map<UUID, PotionEffectWithDuration> trackedEffects = new HashMap<>();
     private final List<UUID> titleCooldown = new ArrayList<>();
-    private static final List<String> BAN_COMMANDS = new ArrayList<>(List.of(
-            "/ban",
-            "/ban-ip",
-            "/banip",
-            "/ipban",
-            "/tempban",
-            "/tempbanip",
-            "/tempipban",
-            "/kick"
-    ));
+    private static final List<String> BAN_COMMANDS;
+    private static final Pattern TIME_PATTERN;
 
     /* private static final List<Material> CHRISTMAS_MATERIALS = new ArrayList<>(Arrays.asList(
             Material.DIAMOND_BLOCK,
@@ -100,8 +92,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return false;
     }
-
-    private static final Pattern TIME_PATTERN = Pattern.compile("\\b(\\d+(?:\\.\\d+)?\\s*(?:s(?:ec(?:onds?)?)?|m(?:in(?:utes?)?)?|h(?:our(?:s?)?)?|d(?:ay(?:s?)?)?|w(?:eek(?:s?)?)?|mon(?:th(?:s?)?)?|y(?:ear(?:s?)?)?)\\b)");
 
     @EventHandler
     private void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
@@ -276,5 +266,50 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         }
     }
     private record PotionEffectWithDuration(PotionEffect effect, int duration) {
+    }
+
+    public static void enableDisaster() {
+        KoolSMPCore.disaster = true;
+        Bukkit.broadcast(Component.text("A super thunderstorm has arrived.", (TextColor)NamedTextColor.RED).decoration(TextDecoration.BOLD, true));
+        KoolSMPCore.disasterTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask((Plugin)KoolSMPCore.main, () -> {
+            final World world = Bukkit.getWorld("world");
+            if (world != null) {
+                world.setTime(world.getTime() + 200L);
+                final Chunk[] loadedChunks = world.getLoadedChunks();
+                final Chunk randomChunk = loadedChunks[KoolSMPCore.random.nextInt(loadedChunks.length)];
+                final int chunkX = randomChunk.getX() << 4;
+                final int chunkZ = randomChunk.getZ() << 4;
+                final int x = chunkX + KoolSMPCore.random.nextInt(16);
+                final int z = chunkZ + KoolSMPCore.random.nextInt(16);
+                final int y = world.getHighestBlockYAt(x, z);
+                world.strikeLightningEffect(new Location(world, (double)x, (double)y, (double)z));
+            }
+            return;
+        }, 0L, 1L);
+        KoolSMPCore.stopDisasterTaskId = Bukkit.getScheduler().runTaskLater((Plugin)KoolSMPCore.main, KoolSMPCore::disableDisaster, 3600L).getTaskId();
+    }
+
+    public static void disableDisaster() {
+        Bukkit.getScheduler().cancelTask(KoolSMPCore.disasterTaskId);
+        KoolSMPCore.disaster = false;
+        final World world = Bukkit.getWorld("world");
+        if (world != null) {
+            world.setTime(6000L);
+            for (final Entity entity : world.getEntities()) {
+                if (entity instanceof LightningStrike) {
+                    entity.remove();
+                }
+            }
+        }
+        Bukkit.broadcast(Component.text("The super thunderstorm has faded away.", (TextColor)NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true));
+    }
+
+    static {
+        random = new Random();
+        KoolSMPCore.disaster = false;
+        KoolSMPCore.disasterTaskId = 0;
+        KoolSMPCore.stopDisasterTaskId = 0;
+        BAN_COMMANDS = new ArrayList<String>(List.of("/ban", "/ban-ip", "/banip", "/ipban", "/tempban", "/tempbanip", "/tempipban", "/kick"));
+        TIME_PATTERN = Pattern.compile("\\b(\\d+(?:\\.\\d+)?\\s*(?:s(?:ec(?:onds?)?)?|m(?:in(?:utes?)?)?|h(?:our(?:s?)?)?|d(?:ay(?:s?)?)?|w(?:eek(?:s?)?)?|mon(?:th(?:s?)?)?|y(?:ear(?:s?)?)?)\\b)");
     }
 }
