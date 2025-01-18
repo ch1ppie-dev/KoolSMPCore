@@ -3,11 +3,9 @@ package eu.koolfreedom;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -35,7 +33,16 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     private static RegionContainer container;
     public static final Random random = new Random();
     private final List<UUID> titleCooldown = new ArrayList<>();
-    private static final List<String> BAN_COMMANDS = List.of("/ban", "/ban-ip", "/banip", "/ipban", "/tempban", "/tempbanip", "/tempipban", "/kick");
+    private static final List<String> BAN_COMMANDS = new ArrayList<>(List.of(
+            "/ban",
+            "/ban-ip",
+            "/banip",
+            "/ipban",
+            "/tempban",
+            "/tempbanip",
+            "/tempipban",
+            "/kick"
+    ));
 
     @Override
     public void onEnable() {

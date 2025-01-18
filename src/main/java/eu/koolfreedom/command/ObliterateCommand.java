@@ -34,8 +34,8 @@ public class ObliterateCommand implements CommandExecutor {
         target.setFireTicks(200);
         target.setGameMode(GameMode.SURVIVAL);
 
-        Bukkit.broadcast(Component.text(commandSender.getName() + " is unleashing divine punishment upon " + target.getName() + "!", NamedTextColor.RED));
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text("May " + target.getName() + "'s soul be cleaned by the flames of destruction!", NamedTextColor.RED)), 2);
+        Bukkit.broadcast(Component.text(commandSender.getName() + " is unleashing Majora's Wrath upon " + target.getName() + "!", NamedTextColor.RED));
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(target.getName() + " will never see the light of day", NamedTextColor.RED)), 2);
 
         Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
@@ -50,7 +50,7 @@ public class ObliterateCommand implements CommandExecutor {
         }
 
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &c&lMay your worst nightmare come true, and may you suffer by the hands of your ruler, " + target.getName() + "." + reason), 38);
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &4&lGet fucked " + reason + " | PERMANENT BAN | DO NOT UNBAN"), 38);
         return true;
     }
 }
