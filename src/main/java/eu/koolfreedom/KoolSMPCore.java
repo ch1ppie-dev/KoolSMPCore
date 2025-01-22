@@ -1,5 +1,9 @@
 package eu.koolfreedom;
 
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import eu.koolfreedom.command.*;
@@ -10,7 +14,6 @@ import net.kyori.adventure.text.format.*;
 import java.time.*;
 import net.kyori.adventure.title.*;
 import java.util.regex.*;
-
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;
 import org.bukkit.potion.*;
@@ -18,13 +21,9 @@ import java.util.concurrent.*;
 import net.kyori.adventure.text.serializer.legacy.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
-
 import java.net.*;
-
 import com.sk89q.worldguard.protection.regions.*;
-
 import java.util.*;
-
 import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
 
@@ -162,7 +161,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         }, 0L, getConfig().getLong("announcer-time"));
     }
 
-    /* private void christmasRunnable() {
+     /* private void christmasRunnable() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 ItemStack christmas = new ItemStack(Material.DRIED_KELP_BLOCK);
