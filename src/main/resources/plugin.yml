@@ -38,7 +38,7 @@ commands:
     description: Make it known that you ship two people.
   crash:
     description: Crashes a player's client
-    permission: kf.senior
+    permission: kf.exec
     usage: /crash [player]
 
 permissions:

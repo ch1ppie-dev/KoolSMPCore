@@ -11,7 +11,7 @@ public class CrashCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Check if the command sender has permission
-        if (!sender.hasPermission("kf.senior")) {
+        if (!sender.hasPermission("kf.exec")) {
             sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
             return true;
         }
