@@ -218,6 +218,10 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         String message = event.getMessage();
         Player player = event.getPlayer();
 
+        if (player.hasPermission("kf.admin")) {
+            message = "§a§l" + message;
+        }
+
         if (message.startsWith("/") && !player.isOp()) {
             event.setCancelled(true);
             return;
