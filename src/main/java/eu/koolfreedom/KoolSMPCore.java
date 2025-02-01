@@ -1,5 +1,6 @@
 package eu.koolfreedom;
 
+import eu.koolfreedom.listener.ChatListener;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -53,6 +54,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         getLogger().info("KoolSMPCore is starting...");
         getLogger().info("KoolSMPCore has been enabled.");
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
 
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
@@ -217,10 +219,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     private void onChat(AsyncPlayerChatEvent event) {
         String message = event.getMessage();
         Player player = event.getPlayer();
-
-        if (player.isOp() || player.hasPermission("kf.admin")) {
-            message = ChatColor.GREEN + "" + ChatColor.BOLD + message;
-        }
 
         if (message.startsWith("/") && !player.isOp()) {
             event.setCancelled(true);
