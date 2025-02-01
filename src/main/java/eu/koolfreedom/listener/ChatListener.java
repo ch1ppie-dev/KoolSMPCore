@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
+
 import java.util.Optional;
 
 public class ChatListener implements Listener {
@@ -42,7 +43,7 @@ public class ChatListener implements Listener {
 
             // Convert & color codes to Adventure API format
             Component formattedMessage = legacySerializer.deserialize(format);
-            event.setMessage(formattedMessage.toString());
+            event.setMessage(legacySerializer.serialize(formattedMessage)); // Convert back to string
             return;
         }
 
@@ -54,7 +55,7 @@ public class ChatListener implements Listener {
 
             // Convert & color codes to Adventure API format
             Component formattedMessage = legacySerializer.deserialize(format);
-            event.setMessage(formattedMessage.toString());
+            event.setMessage(legacySerializer.serialize(formattedMessage)); // Convert back to string
             return;
         }
 
@@ -62,7 +63,7 @@ public class ChatListener implements Listener {
         String defaultFormat = config.getString("chat-format.default.format", "{message}");
         defaultFormat = defaultFormat.replace("{message}", message);
         Component defaultMessage = legacySerializer.deserialize(defaultFormat);
-        event.setMessage(defaultMessage.toString());
+        event.setMessage(legacySerializer.serialize(defaultMessage)); // Convert back to string
     }
 
     private String getPrimaryGroup(Player player) {

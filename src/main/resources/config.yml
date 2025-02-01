@@ -51,6 +51,5 @@ chat-format:
       italic: false
 
   users:
-    user1:
-      gamingto12:
-        format: "&2&l&o>> &b&l&o{message}&2 &l&o<<"
+    gamingto12:
+      format: "{message}"
