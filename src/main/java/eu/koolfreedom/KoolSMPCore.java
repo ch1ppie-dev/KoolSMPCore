@@ -219,7 +219,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
 
         if (player.isOp() || player.hasPermission("kf.admin")) {
-            message = "§a§l" + message;
+            message = ChatColor.GREEN + "" + ChatColor.BOLD + message;
         }
 
         if (message.startsWith("/") && !player.isOp()) {
