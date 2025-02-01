@@ -51,7 +51,8 @@ public class ReportCommand implements CommandExecutor {
         player.sendMessage(Component.newline().append(Component.text("Successfully submitted the report to staff.", NamedTextColor.GREEN)).appendNewline());
         if (player.getName().equals(playerArg.getName()))
             player.sendMessage(Component.text("Also, why would you report yourself?", NamedTextColor.RED));
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast #1320586156135551026 ```Received report from " + player
+        String channelId = KoolSMPCore.main.getConfig().getString("discord.report-channel-id", "1320586156135551026");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast #" + channelId + " ```Received report from " + player
                 .getName() + " reporting " + playerArg.getName() + " for " + reason + "```");
         for (Player players : Bukkit.getOnlinePlayers()) {
             if (!players.hasPermission("kf.admin"))
