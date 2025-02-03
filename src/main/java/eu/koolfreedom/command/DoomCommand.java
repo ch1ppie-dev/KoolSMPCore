@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.bukkit.*;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
@@ -26,26 +27,53 @@ public class DoomCommand implements CommandExecutor {
             return false;
         }
 
-
         Bukkit.broadcast(Component.text(sender.getName() + " - Swinging the Russian Hammer over " + target.getName(), NamedTextColor.RED));
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(target.getName() + " will be completely squashed!", NamedTextColor.RED)), 20);
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
-            if (target.isOp()) target.setOp(false);
-        }, 20);
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(sender.getName() + " - Removing " + target.getName() + " from the staff list", NamedTextColor.RED)), 20);
+        Bukkit.broadcast(Component.text(target.getName() + " will be squished flat!", NamedTextColor.RED));
 
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> target.setHealth(0), 10);
+        // Remove from whitelist
+        target.setWhitelisted(false);
 
-        for (int i = 0; i < 30; i++) {
-            target.getWorld().strikeLightningEffect(target.getLocation());
-        }
-
-        target.setFireTicks(200);
-        target.setGameMode(GameMode.SURVIVAL);
+        // De-op
+        target.setOp(false);
 
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + "&c&lMay your worst nightmares come true, and may you suffer by the hands of your ruler." + reason), 30);
+
+        // Set gamemode to survival
+        target.setGameMode(GameMode.SURVIVAL);
+
+        // Ignite player
+        target.setFireTicks(10000);
+
+        // Explosions
+        target.getWorld().createExplosion(target.getLocation(), 0F, false);
+
+        new BukkitRunnable() {
+            @Override
+            public void run()
+            {
+                // strike lightning
+                target.getWorld().strikeLightningEffect(target.getLocation());
+
+                // kill if not killed already
+                target.setHealth(0.0);
+            }
+        }.runTaskLater(KoolSMPCore.main, 2L * 20L);
+
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                // message
+                Bukkit.broadcast(Component.text(sender.getName() + " - Banning " + target.getName(), NamedTextColor.RED));
+
+                // more explosion
+                target.getWorld().createExplosion(target.getLocation(), 0F, false);
+
+                // execute ban command
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + "&c&lMay your worst nightmare come true, and may you suffer by the hands of your ruler. " + reason + " -s");
+            }
+        }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;
     }
 }
