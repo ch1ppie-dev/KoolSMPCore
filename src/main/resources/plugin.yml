@@ -18,6 +18,9 @@ commands:
   obliterate:
     description: Send someone straight to hell
     permission: kf.senior
+  doom:
+    permission: kf.senior
+    description: Swing the Russian Hammer
   spectate:
     permission: kf.admin
     description: Allows you to spectate someone

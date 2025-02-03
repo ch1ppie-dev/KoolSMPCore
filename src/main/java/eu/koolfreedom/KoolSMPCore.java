@@ -35,15 +35,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     private static final List<String> BAN_COMMANDS;
     private static final Pattern TIME_PATTERN;
 
-    /* private static final List<Material> CHRISTMAS_MATERIALS = new ArrayList<>(Arrays.asList(
-            Material.DIAMOND_BLOCK,
-            Material.ENCHANTED_GOLDEN_APPLE,
-            Material.GOLDEN_APPLE,
-            Material.NETHERITE_BLOCK,
-            Material.NETHERITE_SWORD,
-            Material.REDSTONE_BLOCK
-    )); */
-
     @Override
     public void onEnable() {
         getLogger().info("KoolSMPCore is starting...");
@@ -56,6 +47,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
+        Objects.requireNonNull(getCommand("doom")).setExecutor(new DoomCommand());
         Objects.requireNonNull(getCommand("hug")).setExecutor( new HugCommand());
         Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
         Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
@@ -72,7 +64,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         saveDefaultConfig();
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
-        // christmasRunnable();
 
         container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         main = this;
@@ -156,31 +147,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             Bukkit.broadcast(Component.newline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(String.join("\n", lines))).appendNewline());
         }, 0L, getConfig().getLong("announcer-time"));
     }
-
-     /* private void christmasRunnable() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                ItemStack christmas = new ItemStack(Material.DRIED_KELP_BLOCK);
-                ItemMeta meta = christmas.getItemMeta();
-
-                meta.displayName(Component.text("Christmas Gift", NamedTextColor.RED)
-                        .decoration(TextDecoration.ITALIC, false));
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-
-                christmas.setItemMeta(meta);
-                christmas.lore(List.of(Component.text("Right Click to redeem!", NamedTextColor.GREEN)
-                        .decoration(TextDecoration.ITALIC, false)));
-                christmas.addUnsafeEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 1);
-
-                christmas.setAmount(random.nextInt(1, 3));
-
-                if (!player.getInventory().addItem(christmas).isEmpty()) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), christmas);
-                }
-                player.updateInventory();
-            }
-        }, 0L, 12000L);
-    } */
 
 
     @EventHandler(priority = EventPriority.HIGHEST)
