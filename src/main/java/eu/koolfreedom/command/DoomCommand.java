@@ -33,17 +33,17 @@ public class DoomCommand implements CommandExecutor {
         target.setGameMode(GameMode.SURVIVAL);
 
         Bukkit.broadcast(Component.text(sender.getName() + " - Swinging the Russian Hammer over " + target.getName(), NamedTextColor.RED));
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(target.getName() + " will be completely squashed!", NamedTextColor.RED)), 2);
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(target.getName() + " will be completely squashed!", NamedTextColor.RED)), 20);
         Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
             if (target.isOp()) target.setOp(false);
-        }, 2);
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(sender.getName() + " - Removing " + target.getName() + " from the staff list", NamedTextColor.RED)), 2);
+        }, 20);
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(sender.getName() + " - Removing " + target.getName() + " from the staff list", NamedTextColor.RED)), 20);
 
         Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> target.setHealth(0), 10);
 
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip" + target.getName() + "&cMay your worst nightmare come true, and may you suffer by the hands of your ruler." + reason), 10);
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ipban" + target.getName() + "&cMay your worst nightmare come true, and may you suffer by the hands of your ruler." + reason), 30);
         return true;
     }
 }
