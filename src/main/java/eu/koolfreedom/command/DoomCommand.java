@@ -1,5 +1,6 @@
 package eu.koolfreedom.command;
 
+import eu.koolfreedom.KoolSMPCore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.*;
@@ -8,7 +9,6 @@ import org.bukkit.*;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
-@SuppressWarnings("deprecation")
 public class DoomCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if (args.length == 0) {
@@ -22,23 +22,28 @@ public class DoomCommand implements CommandExecutor {
             return true;
         }
         if (!sender.hasPermission("kf.senior")) {
-            sender.sendMessage(ChatColor.RED + "You do not have permission to use this command");
+            sender.sendMessage(NamedTextColor.RED + "You do not have permission to use this command");
             return false;
         }
-        final Player player = Bukkit.getPlayer(args[0]);
-        for (final Player onlinePlayers : Bukkit.getOnlinePlayers()) {
-            onlinePlayers.sendMessage(ChatColor.RED + "" + sender + "- Swinging the Russian Hammer over " + player);
-            onlinePlayers.sendMessage(ChatColor.RED + "" + player + " will be squashed!");
+        for (int i = 0; i < 30; i++) {
+            target.getWorld().strikeLightningEffect(target.getLocation());
         }
-        final Location playerLoc = player.getLocation();
-        player.getWorld().strikeLightning(playerLoc);
-        player.getWorld().strikeLightning(playerLoc);
-        player.getWorld().strikeLightning(playerLoc);
-        player.getWorld().strikeLightning(playerLoc);
-        player.getWorld().strikeLightning(playerLoc);
-        player.getWorld().strikeLightning(playerLoc);
+
+        target.setFireTicks(200);
+        target.setGameMode(GameMode.SURVIVAL);
+
+        Bukkit.broadcast(Component.text(sender.getName() + " - Swinging the Russian Hammer over " + target.getName(), NamedTextColor.RED));
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(target.getName() + " will be completely squashed!", NamedTextColor.RED)), 2);
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
+            if (target.isOp()) target.setOp(false);
+        }, 2);
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(sender.getName() + " - Removing " + target.getName() + " from the staff list", NamedTextColor.RED)), 2);
+
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> target.setHealth(0), 10);
+
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip" + player + "&cMay your worst nightmare come true, and may you suffer by the hands of your ruler." + reason);
+        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip" + target.getName() + "&cMay your worst nightmare come true, and may you suffer by the hands of your ruler." + reason), 10);
         return true;
     }
 }
