@@ -17,7 +17,7 @@ commands:
     description: Displays information about the plugin
   obliterate:
     description: Send someone straight to hell
-    permission: kf.senior
+    permission: kf.exec
   doom:
     permission: kf.senior
     description: Swing the Russian Hammer
