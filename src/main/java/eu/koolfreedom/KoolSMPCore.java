@@ -1,10 +1,5 @@
 package eu.koolfreedom;
 
-import eu.koolfreedom.listener.ChatListener;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import eu.koolfreedom.command.*;
@@ -54,7 +49,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         getLogger().info("KoolSMPCore is starting...");
         getLogger().info("KoolSMPCore has been enabled.");
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
 
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
