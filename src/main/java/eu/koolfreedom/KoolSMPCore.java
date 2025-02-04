@@ -25,15 +25,6 @@ import org.bukkit.entity.*;
 
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
-    private static RegionContainer container;
-    public static boolean disaster;
-    public static int disasterTaskId;
-    public static int stopDisasterTaskId;
-    public static final Random random;
-    private final Map<UUID, PotionEffectWithDuration> trackedEffects = new HashMap<>();
-    private final List<UUID> titleCooldown = new ArrayList<>();
-    private static final List<String> BAN_COMMANDS;
-    private static final Pattern TIME_PATTERN;
 
     @Override
     public void onEnable() {
@@ -65,7 +56,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
 
-        container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         main = this;
     }
 
@@ -77,44 +67,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return false;
-    }
-
-    @EventHandler
-    private void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        String command = event.getMessage();
-        String[] commandParts = command.split(" ", 3);
-
-        if (commandParts.length > 1) {
-            boolean kick = commandParts[0].startsWith("/kick");
-            if (BAN_COMMANDS.contains(commandParts[0]) || kick) {
-                String playerName = commandParts[1];
-                Player player = Bukkit.getPlayerExact(playerName);
-
-                if (player != null) {
-                    String reason = "";
-
-                    if (commandParts.length == 3) {
-                        reason = commandParts[2];
-                        Matcher matcher = TIME_PATTERN.matcher(reason);
-                        while (matcher.find()) {
-                            String timePart = matcher.group();
-                            reason = reason.replace(timePart, "").trim();
-                        }
-                    }
-
-                    if (reason.isEmpty() && !kick) {
-                        return;
-                    }
-
-                    Title title = Title.title(
-                            Component.text("You were " + (kick ? "kicked" : "banned"), NamedTextColor.RED),
-                            Component.text(reason, NamedTextColor.WHITE),
-                            Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(5), Duration.ofSeconds(1))
-                    );
-                    player.showTitle(title);
-                }
-            }
-        }
     }
 
     public boolean isVanished(Player player) {
@@ -227,50 +179,5 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         }
     }
     private record PotionEffectWithDuration(PotionEffect effect, int duration) {
-    }
-
-    public static void enableDisaster() {
-        KoolSMPCore.disaster = true;
-        Bukkit.broadcast(Component.text("A super thunderstorm has arrived.", (TextColor)NamedTextColor.RED).decoration(TextDecoration.BOLD, true));
-        KoolSMPCore.disasterTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask((Plugin)KoolSMPCore.main, () -> {
-            final World world = Bukkit.getWorld("world");
-            if (world != null) {
-                world.setTime(world.getTime() + 200L);
-                final Chunk[] loadedChunks = world.getLoadedChunks();
-                final Chunk randomChunk = loadedChunks[KoolSMPCore.random.nextInt(loadedChunks.length)];
-                final int chunkX = randomChunk.getX() << 4;
-                final int chunkZ = randomChunk.getZ() << 4;
-                final int x = chunkX + KoolSMPCore.random.nextInt(16);
-                final int z = chunkZ + KoolSMPCore.random.nextInt(16);
-                final int y = world.getHighestBlockYAt(x, z);
-                world.strikeLightningEffect(new Location(world, (double)x, (double)y, (double)z));
-            }
-            return;
-        }, 0L, 1L);
-        KoolSMPCore.stopDisasterTaskId = Bukkit.getScheduler().runTaskLater((Plugin)KoolSMPCore.main, KoolSMPCore::disableDisaster, 3600L).getTaskId();
-    }
-
-    public static void disableDisaster() {
-        Bukkit.getScheduler().cancelTask(KoolSMPCore.disasterTaskId);
-        KoolSMPCore.disaster = false;
-        final World world = Bukkit.getWorld("world");
-        if (world != null) {
-            world.setTime(6000L);
-            for (final Entity entity : world.getEntities()) {
-                if (entity instanceof LightningStrike) {
-                    entity.remove();
-                }
-            }
-        }
-        Bukkit.broadcast(Component.text("The super thunderstorm has faded away.", (TextColor)NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true));
-    }
-
-    static {
-        random = new Random();
-        KoolSMPCore.disaster = false;
-        KoolSMPCore.disasterTaskId = 0;
-        KoolSMPCore.stopDisasterTaskId = 0;
-        BAN_COMMANDS = new ArrayList<String>(List.of("/ban", "/ban-ip", "/banip", "/ipban", "/tempban", "/tempbanip", "/tempipban", "/kick"));
-        TIME_PATTERN = Pattern.compile("\\b(\\d+(?:\\.\\d+)?\\s*(?:s(?:ec(?:onds?)?)?|m(?:in(?:utes?)?)?|h(?:our(?:s?)?)?|d(?:ay(?:s?)?)?|w(?:eek(?:s?)?)?|mon(?:th(?:s?)?)?|y(?:ear(?:s?)?)?)\\b)");
     }
 }
