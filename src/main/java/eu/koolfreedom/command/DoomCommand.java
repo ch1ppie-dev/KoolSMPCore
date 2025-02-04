@@ -71,7 +71,7 @@ public class DoomCommand implements CommandExecutor {
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
                 // execute ban command
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + "&c&lMay your worst nightmare come true, and may you suffer by the hands of your ruler. " + reason + " -s");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &c&lMay your worst nightmare come true, and may you suffer by the hands of your ruler. " + reason + " -s");
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;
