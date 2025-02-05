@@ -3,23 +3,15 @@ package eu.koolfreedom;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import eu.koolfreedom.command.*;
-import com.sk89q.worldguard.*;
 import com.comphenix.protocol.*;
 import net.kyori.adventure.text.*;
 import eu.koolfreedom.listener.ExploitListener;
-import net.kyori.adventure.text.format.*;
-import java.time.*;
-import net.kyori.adventure.title.*;
-import java.util.regex.*;
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;
-import org.bukkit.potion.*;
 import java.util.concurrent.*;
 import net.kyori.adventure.text.serializer.legacy.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
-import java.net.*;
-import com.sk89q.worldguard.protection.regions.*;
 import java.util.*;
 import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
@@ -80,10 +72,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         return essentials.isEnabled() && ((Essentials) essentials).getUser(player).isVanished();
     }
 
-    public boolean isInvisible(Player player) {
-        return player.getGameMode() == GameMode.SPECTATOR || player.hasPotionEffect(PotionEffectType.INVISIBILITY) || isVanished(player);
-    }
-
     private void announcerRunnable() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             List<String> messageKeys = new ArrayList<>(getConfig().getConfigurationSection("messages").getKeys(false));
@@ -99,32 +87,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             }
             Bukkit.broadcast(Component.newline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(String.join("\n", lines))).appendNewline());
         }, 0L, getConfig().getLong("announcer-time"));
-    }
-
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    private void onLogin(PlayerLoginEvent event) {
-        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) return;
-
-        if (getServer().getOnlinePlayers().size() >= getServer().getMaxPlayers()) {
-            event.disallow(PlayerLoginEvent.Result.KICK_FULL, Component.text("The server is full!"));
-            return;
-        }
-
-        InetAddress address = event.getAddress();
-        if (address == null) return; // Can be null according to bukkit
-
-        int found = 0;
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            InetAddress addr = player.getAddress().getAddress();
-            if (addr != null && addr.equals(address)) {
-                found++;
-                if (found >= 2) {
-                    event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text("Too many connections from this IP address.", NamedTextColor.RED));
-                    break;
-                }
-            }
-        }
     }
 
     @SuppressWarnings("deprecation")
@@ -178,7 +140,5 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
             }
         }
-    }
-    private record PotionEffectWithDuration(PotionEffect effect, int duration) {
     }
 }
