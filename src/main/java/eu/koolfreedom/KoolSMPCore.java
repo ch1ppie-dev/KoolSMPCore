@@ -1,8 +1,8 @@
 package eu.koolfreedom;
 
+import eu.koolfreedom.utils.CommandLoader;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
-import eu.koolfreedom.command.*;
 import com.comphenix.protocol.*;
 import net.kyori.adventure.text.*;
 import eu.koolfreedom.listener.ExploitListener;
@@ -18,6 +18,7 @@ import org.bukkit.entity.*;
 
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
+    public static final Random random = new Random();
 
     @Override
     public void onEnable() {
@@ -25,21 +26,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         getLogger().info("KoolSMPCore has been enabled.");
         getServer().getPluginManager().registerEvents(this, this);
 
-        Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
-        Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
-        Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
-        Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
-        Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
-        Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
-        Objects.requireNonNull(getCommand("doom")).setExecutor(new DoomCommand());
-        Objects.requireNonNull(getCommand("hug")).setExecutor( new HugCommand());
-        Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
-        Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
-        Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
-        Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
-        Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
-        Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
-
+        new CommandLoader(this).registerCommands("eu.koolfreedom.command.impl");
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new ExploitListener(this));
