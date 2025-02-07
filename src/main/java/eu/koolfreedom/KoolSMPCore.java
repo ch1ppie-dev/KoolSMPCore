@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import com.comphenix.protocol.*;
 import net.kyori.adventure.text.*;
+import eu.koolfreedom.command.impl.*;
 import eu.koolfreedom.listener.ExploitListener;
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;
@@ -24,6 +25,21 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         getLogger().info("KoolSMPCore is starting...");
         getLogger().info("KoolSMPCore has been enabled.");
         getServer().getPluginManager().registerEvents(this, this);
+
+        Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
+        Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
+        Objects.requireNonNull(getCommand("doom")).setExecutor(new DoomCommand());
+        Objects.requireNonNull(getCommand("hug")).setExecutor(new HugCommand());
+        Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
+        Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
+        Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
+        Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
+        Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
+        Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
+        Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
+        Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
+        Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
+        Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new ExploitListener(this));
