@@ -1,6 +1,5 @@
 package eu.koolfreedom;
 
-import eu.koolfreedom.utils.CommandLoader;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import com.comphenix.protocol.*;
@@ -25,9 +24,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         getLogger().info("KoolSMPCore is starting...");
         getLogger().info("KoolSMPCore has been enabled.");
         getServer().getPluginManager().registerEvents(this, this);
-
-        CommandLoader commandLoader = new CommandLoader(this);
-        commandLoader.registerCommands("eu.koolfreedom.command.impl");
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new ExploitListener(this));
