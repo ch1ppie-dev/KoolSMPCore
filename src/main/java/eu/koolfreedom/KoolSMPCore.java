@@ -26,7 +26,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         getLogger().info("KoolSMPCore has been enabled.");
         getServer().getPluginManager().registerEvents(this, this);
 
-        new CommandLoader(this).registerCommands("eu.koolfreedom.command.impl");
+        CommandLoader commandLoader = new CommandLoader(this);
+        commandLoader.registerCommands("eu.koolfreedom.command.impl");
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new ExploitListener(this));

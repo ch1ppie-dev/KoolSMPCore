@@ -4,7 +4,6 @@ import eu.koolfreedom.command.BaseCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.plugin.Plugin;
 import org.reflections.Reflections;
@@ -45,19 +44,11 @@ public class CommandLoader {
         }
     }
 
-    private void registerCommand(BaseCommand command) {
-        if (commandMap != null) {
-            Command bukkitCommand = new BukkitCommand(command.getName()) {
-                @Override
-                public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-                    return command.onCommand(sender, this, commandLabel, args);
-                }
-            };
-
-            commandMap.register(plugin.getName(), bukkitCommand);
-            Bukkit.getLogger().info("[KoolSMPCore] Registered command: " + command.getName());
-        } else {
-            Bukkit.getLogger().warning("[KoolSMPCore] CommandMap is null! Commands cannot be registered.");
-        }
-    }
+    private void registerCommand(String name, CommandExecutor executor) {
+    PluginCommand command = getCommand(name);
+    if (command != null) {
+        command.setExecutor(executor);
+    } else {
+        System.out.println("[ERROR] Could not register command: " + name);
+  }
 }

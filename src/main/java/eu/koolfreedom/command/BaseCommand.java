@@ -3,10 +3,16 @@ package eu.koolfreedom.command;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseCommand implements CommandExecutor {
+import java.util.Collections;
+import java.util.List;
+
+public abstract class BaseCommand implements CommandExecutor, TabCompleter {
     private final String name;
 
     public BaseCommand(String name) {
@@ -19,6 +25,8 @@ public abstract class BaseCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        Bukkit.getLogger().info("[KoolSMPCore] " + label + " command is being executed by " + sender.getName());
+
         if (sender instanceof Player) {
             execute((Player) sender, args);
         } else {
@@ -26,6 +34,7 @@ public abstract class BaseCommand implements CommandExecutor {
         }
         return true;
     }
+
 
     public abstract void execute(Player player, String[] args);
 }

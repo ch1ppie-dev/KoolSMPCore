@@ -6,43 +6,6 @@ description: Core plugin for the KoolFreedom SMP
 depend: [ ProtocolLib, WorldGuard, LuckPerms ]
 softdepend: [ Essentials ]
 authors: [gamingto12]
-commands:
-  clearchat:
-    permission: kf.admin
-    aliases: [chatclear, cc]
-    description: Clears the chat
-  report:
-    description: Reports a suspicious player
-  koolsmpcore:
-    description: Displays information about the plugin
-  obliterate:
-    description: Send someone straight to hell
-    permission: kf.exec
-  doom:
-    permission: kf.senior
-    description: Swing the Russian Hammer
-  spectate:
-    permission: kf.admin
-    description: Allows you to spectate someone
-  lagsource:
-    description: Checks for any sources causing lag
-    permission: kf.senior
-  hug:
-    description: Give someone a nice warm hug, you never know who could need one.
-  kiss:
-    description: For the love birds....give em a kiss.
-  pat:
-    description: Pat someone on the head
-  slap:
-    description: Slap the fuck out of someone
-  poke:
-    description: Poke someone to annoy them
-  ship:
-    description: Make it known that you ship two people.
-  crash:
-    description: Crashes a player's client
-    permission: kf.exec
-    usage: /crash [player]
 
 permissions:
   kf.admin:
