@@ -12,6 +12,12 @@ messages:
     - "&c[&6KoolFreedom&c] Got a rule breaker on the server? use &6'/report' &cto submit a report."
   suggestion:
     - "&c[&6KoolFreedom&c] Have a suggestion? Join our Discord and put it there, the staff will review it."
+  owner:
+    - "&c[&6KoolFreedom&c] &6gamingto12&c is the Owner of KoolFreedom."
+  claim:
+    - "&c[&6KoolFreedom&c] We do allow bases to be claimed, contact a &6Senior Admin&c for help."
+  staff:
+    - "&c[&6KoolFreedom&c] Wish to apply for staff? Apply on our Discord server using &6'/discord'&c."
 
 # This is for the ReportCommand only
 discord:
