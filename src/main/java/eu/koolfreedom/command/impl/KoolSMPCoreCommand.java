@@ -10,14 +10,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class KoolSMPCoreCommand implements CommandExecutor {
+    @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        Player player;
-        if (commandSender instanceof Player) {
-            player = (Player)commandSender;
-        } else {
-            commandSender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
-            return true;
-        }
+
         if (args.length > 0 && (args[0].equalsIgnoreCase("reloadconfig") || args[0].equalsIgnoreCase("reload"))) {
             if (!player.hasPermission("kf.senior")) {
                 player.sendMessage(Component.text("You do not have permission to use this command.", NamedTextColor.RED));
