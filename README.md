@@ -2,4 +2,4 @@
 
 This is the official source code repository for the KoolSMPCore plugin used for the KoolFreedom SMP
 
-This plugin has lots of inspiration from other plugins, namely TotalFreedomMod. But it does have my own ideas, trust me.
+This plugin is a compilation of my favorite commands that I've either used from the plugin itself or via Skript.
