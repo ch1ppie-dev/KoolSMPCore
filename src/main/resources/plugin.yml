@@ -35,6 +35,9 @@ commands:
     description: poke
   report:
     description: Report a suspicious user
+  say:
+    permission: kf.admin
+    description: what the fuck else does it do
   ship:
     description: Make a really unfunny joke about how you ship 2 people
   slap:
