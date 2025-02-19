@@ -13,6 +13,9 @@ import net.kyori.adventure.text.serializer.legacy.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
 
@@ -36,6 +39,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
         Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
         Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
+        Objects.requireNonNull(getCommand("rawsay")).setExecutor(new RawSayCommand());
         Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
         Objects.requireNonNull(getCommand("say")).setExecutor(new SayCommand());
         Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
@@ -167,5 +171,32 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         {
             player.sendMessage((color == null ? "" : color) + message);
         }
+    }
+
+    public static void bcastMsg(String message, Boolean toConsole)
+    {
+        bcastMsg(message, null, toConsole);
+    }
+
+    public static void bcastMsg(String message)
+    {
+        KoolSMPCore.bcastMsg(message, null, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    public static String colorize(String string)
+    {
+        if (string != null)
+        {
+            Matcher matcher = Pattern.compile("&#[a-f0-9A-F]{6}").matcher(string);
+            while (matcher.find())
+            {
+                String code = matcher.group().replace("&", "");
+                string = string.replace("&" + code, net.md_5.bungee.api.ChatColor.of(code) + "");
+            }
+
+            string = ChatColor.translateAlternateColorCodes('&', string);
+        }
+        return string;
     }
 }
