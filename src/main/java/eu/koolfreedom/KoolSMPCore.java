@@ -141,4 +141,30 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             }
         }
     }
+
+    @SuppressWarnings("deprecation")
+    public static void adminAction(String adminName, String action, boolean isRed)
+    {
+        KoolSMPCore.bcastMsg(adminName + " - " + action, (isRed ? ChatColor.RED : ChatColor.AQUA));
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void bcastMsg(String message, ChatColor color)
+    {
+        bcastMsg(message, color, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void bcastMsg(String message, ChatColor color, Boolean toConsole)
+    {
+        if (toConsole)
+        {
+            Bukkit.getLogger().info(message);
+        }
+
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+            player.sendMessage((color == null ? "" : color) + message);
+        }
+    }
 }

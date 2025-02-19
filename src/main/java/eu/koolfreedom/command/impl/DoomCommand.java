@@ -27,8 +27,11 @@ public class DoomCommand implements CommandExecutor {
             return false;
         }
 
-        Bukkit.broadcast(Component.text(sender.getName() + " - Swinging the Russian Hammer over " + target.getName(), NamedTextColor.RED));
-        Bukkit.broadcast(Component.text(target.getName() + " will be squished flat!", NamedTextColor.RED));
+        KoolSMPCore.adminAction(sender.getName(), "Swinging the Russian Hammer over " + target.getName(), true);
+        KoolSMPCore.bcastMsg(target.getName() + " will be squished flat", ChatColor.RED);
+
+        KoolSMPCore.adminAction(sender.getName(), "Removing " + target.getName() + " from the staff list", true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
 
         // Remove from whitelist
         target.setWhitelisted(false);
@@ -65,7 +68,7 @@ public class DoomCommand implements CommandExecutor {
             public void run()
             {
                 // message
-                Bukkit.broadcast(Component.text(sender.getName() + " - Banning " + target.getName(), NamedTextColor.RED));
+                KoolSMPCore.adminAction(sender.getName(), "Banning " + target.getName(), true);
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
