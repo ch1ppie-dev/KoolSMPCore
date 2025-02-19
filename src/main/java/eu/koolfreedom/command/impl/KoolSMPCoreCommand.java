@@ -13,6 +13,11 @@ public class KoolSMPCoreCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
 
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
+            return true;
+        }
+
         if (args.length > 0 && (args[0].equalsIgnoreCase("reloadconfig") || args[0].equalsIgnoreCase("reload"))) {
             if (!player.hasPermission("kf.senior")) {
                 player.sendMessage(Component.text("You do not have permission to use this command.", NamedTextColor.RED));
