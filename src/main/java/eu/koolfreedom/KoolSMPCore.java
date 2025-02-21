@@ -1,5 +1,6 @@
 package eu.koolfreedom;
 
+import eu.koolfreedom.log.FLog;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import com.comphenix.protocol.*;
@@ -18,15 +19,15 @@ import java.util.regex.Pattern;
 
 import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
-
+@SuppressWarnings("deprecation")
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
     public static final Random random = new Random();
 
     @Override
     public void onEnable() {
-        getLogger().info("KoolSMPCore is starting...");
-        getLogger().info("KoolSMPCore has been enabled.");
+        FLog.info("KoolSMPCore is starting...");
+        FLog.info("KoolSMPCore has been enabled.");
         getServer().getPluginManager().registerEvents(this, this);
 
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
@@ -59,7 +60,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        getLogger().info("KoolSMPCore has been disabled");
+        FLog.info("KoolSMPCore has been disabled");
     }
 
     @Override
