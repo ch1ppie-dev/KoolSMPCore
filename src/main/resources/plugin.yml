@@ -33,6 +33,9 @@ commands:
     description: pat pat
   poke:
     description: poke
+  rawsay:
+    description: Tellraw...but better
+    permission: kf.admin
   report:
     description: Report a suspicious user
   say:
