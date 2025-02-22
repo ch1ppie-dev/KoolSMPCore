@@ -53,8 +53,9 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        FLog.info("KoolSMPCore is starting...");
-        FLog.info("KoolSMPCore has been enabled.");
+        FLog.info("Created by gamingto12 and 0x7694C9");
+        FLog.info("Version " + build.version);
+        FLog.info("Compiled " + build.date + " by " + build.author);
         server.getPluginManager().registerEvents(this, this);
 
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
@@ -91,13 +92,12 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static class BuildProperties
     {
         public String author;
-        public String codename;
         public String version;
         public String number;
         public String date;
         public String head;
 
-        public void load(KoolSMPCore plugin)
+        void load(KoolSMPCore plugin)
         {
             try
             {
@@ -109,24 +109,17 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                     props.load(in);
                 }
 
-                author = props.getProperty("buildAuthor", "gamingto12");
-                codename = props.getProperty("buildCodeName", "unknown");
+                author = props.getProperty("buildAuthor", "unknown");
                 version = props.getProperty("buildVersion", pluginVersion);
                 number = props.getProperty("buildNumber", "1");
                 date = props.getProperty("buildDate", "unknown");
-                // Need to do this, or it will display ${git.commit.id.abbrev}
                 head = props.getProperty("buildHead", "unknown").replace("${git.commit.id.abbrev}", "unknown");
             }
             catch (Exception ex)
             {
                 FLog.severe("Could not load build properties! Did you compile with NetBeans/Maven?");
-                FLog.severe(ex);
+                FLog.severe(ex.toString());
             }
-        }
-
-        public String formattedVersion()
-        {
-            return pluginVersion + "." + number + " (" + head + ")";
         }
     }
 
@@ -231,7 +224,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     {
         if (toConsole)
         {
-            Bukkit.getLogger().info(message);
+            FLog.info(message);
         }
 
         for (Player player : Bukkit.getOnlinePlayers())

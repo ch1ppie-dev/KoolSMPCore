@@ -5,7 +5,7 @@ api-version: 1.20
 description: Core plugin for the KoolFreedom SMP
 depend: [ ProtocolLib, WorldGuard, LuckPerms ]
 softdepend: [ Essentials ]
-authors: [gamingto12]
+authors: [gamingto12, 0x7694C9]
 commands:
   clearchat:
     aliases: [cc]
