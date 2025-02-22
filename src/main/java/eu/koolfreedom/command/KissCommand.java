@@ -1,4 +1,4 @@
-package eu.koolfreedom.command.impl;
+package eu.koolfreedom.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,11 +8,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class PatCommand implements CommandExecutor {
+public class KissCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /pat <player>");
+            sender.sendMessage(ChatColor.RED + "Usage: /kiss <player>");
             return true;
         }
 
@@ -23,7 +23,7 @@ public class PatCommand implements CommandExecutor {
         }
 
         String senderName = sender instanceof Player ? ((Player) sender).getName() : "Console";
-        Bukkit.broadcastMessage(ChatColor.AQUA + senderName + " gave " + target.getName() + " a pat on the head.");
+        Bukkit.broadcastMessage(ChatColor.AQUA + senderName + " gave " + target.getName() + " a kiss on the cheek.");
         return true;
     }
 }

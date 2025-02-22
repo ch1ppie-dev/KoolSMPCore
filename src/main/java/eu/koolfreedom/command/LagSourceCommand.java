@@ -1,4 +1,4 @@
-package eu.koolfreedom.command.impl;
+package eu.koolfreedom.command;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;

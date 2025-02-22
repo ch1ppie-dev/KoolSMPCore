@@ -1,4 +1,4 @@
-package eu.koolfreedom.command.impl;
+package eu.koolfreedom.command;
 
 import eu.koolfreedom.KoolSMPCore;
 import java.util.ArrayList;

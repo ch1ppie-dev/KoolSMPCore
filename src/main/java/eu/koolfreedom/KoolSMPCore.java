@@ -1,14 +1,17 @@
 package eu.koolfreedom;
 
 import eu.koolfreedom.log.FLog;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import com.comphenix.protocol.*;
 import net.kyori.adventure.text.*;
-import eu.koolfreedom.command.impl.*;
+import eu.koolfreedom.command.*;
 import eu.koolfreedom.listener.ExploitListener;
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;
+
+import java.io.InputStream;
 import java.util.concurrent.*;
 import net.kyori.adventure.text.serializer.legacy.*;
 import org.bukkit.*;
@@ -22,13 +25,37 @@ import org.bukkit.entity.*;
 @SuppressWarnings("deprecation")
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
+    public static Server server;
     public static final Random random = new Random();
+    public static String pluginVersion;
+    public static String pluginName;
+    public static final BuildProperties build = new BuildProperties();
+    private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
+    public Component mmDeserialize(String message)
+    {
+        return MINI_MESSAGE.deserialize(message).clickEvent(null).hoverEvent(null);
+    }
+
+
+    public void onLoad()
+    {
+        main = this;
+        server = main.getServer();
+        KoolSMPCore.pluginName = main.getDescription().getName();
+        KoolSMPCore.pluginVersion = main.getDescription().getVersion();
+
+        FLog.setPluginLogger(main.getLogger());
+        FLog.setServerLogger(getServer().getLogger());
+
+        build.load(main);
+    }
 
     @Override
     public void onEnable() {
         FLog.info("KoolSMPCore is starting...");
         FLog.info("KoolSMPCore has been enabled.");
-        getServer().getPluginManager().registerEvents(this, this);
+        server.getPluginManager().registerEvents(this, this);
 
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
@@ -54,13 +81,53 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         saveDefaultConfig();
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
-
-        main = this;
     }
 
     @Override
     public void onDisable() {
         FLog.info("KoolSMPCore has been disabled");
+    }
+
+    public static class BuildProperties
+    {
+        public String author;
+        public String codename;
+        public String version;
+        public String number;
+        public String date;
+        public String head;
+
+        public void load(KoolSMPCore plugin)
+        {
+            try
+            {
+                final Properties props;
+
+                try (InputStream in = plugin.getResource("build.properties"))
+                {
+                    props = new Properties();
+                    props.load(in);
+                }
+
+                author = props.getProperty("buildAuthor", "gamingto12");
+                codename = props.getProperty("buildCodeName", "unknown");
+                version = props.getProperty("buildVersion", pluginVersion);
+                number = props.getProperty("buildNumber", "1");
+                date = props.getProperty("buildDate", "unknown");
+                // Need to do this, or it will display ${git.commit.id.abbrev}
+                head = props.getProperty("buildHead", "unknown").replace("${git.commit.id.abbrev}", "unknown");
+            }
+            catch (Exception ex)
+            {
+                FLog.severe("Could not load build properties! Did you compile with NetBeans/Maven?");
+                FLog.severe(ex);
+            }
+        }
+
+        public String formattedVersion()
+        {
+            return pluginVersion + "." + number + " (" + head + ")";
+        }
     }
 
     @Override
@@ -95,7 +162,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         }, 0L, getConfig().getLong("announcer-time"));
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onChat(AsyncPlayerChatEvent event) {
         String message = event.getMessage();

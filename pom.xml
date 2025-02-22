@@ -7,15 +7,180 @@
     <groupId>eu.koolfreedom</groupId>
     <artifactId>KoolSMPCore</artifactId>
     <version>2.0</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <craftbukkit.version>1.20.4-R0.1-SNAPSHOT</craftbukkit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <tfm.build.codename>awa</tfm.build.codename>
+        <jar.finalName>${project.name}</jar.finalName>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>MM/dd/yyyy HH:mm</maven.build.timestamp.format>
     </properties>
 
+
+    <scm>
+        <connection>scm:git:git@github.com:gamingto12/KoolSMPCore.git</connection>
+        <developerConnection>scm:git:git@github.com:gamingto12/KoolSMPCore.git</developerConnection>
+        <url>git@github.com:gamingto12/KoolSMPCore.git</url>
+    </scm>
+
     <build>
+
+        <!-- Filter resources for build.properties -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
+        <!-- Compiler -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+                <outputFileName>TotalFreedomMod.jar</outputFileName>
+                <compilerVersion>17</compilerVersion>
+                <source>17</source>
+                <target>17</target>
+            </configuration>
+        </plugin>
+
+        <!-- Git describe -->
+        <plugin>
+            <groupId>pl.project13.maven</groupId>
+            <artifactId>git-commit-id-plugin</artifactId>
+            <version>4.9.10</version>
+            <executions>
+                <execution>
+                    <id>get-the-git-infos</id>
+                    <goals>
+                        <goal>revision</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>validate-the-git-infos</id>
+                    <goals>
+                        <goal>validateRevision</goal>
+                    </goals>
+                    <phase>package</phase>
+                </execution>
+            </executions>
+            <configuration>
+                <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                <prefix>git</prefix>
+                <dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
+                <verbose>false</verbose>
+                <format>properties</format>
+                <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+                <includeOnlyProperties>
+                    <includeOnlyProperty>git.commit.id.abbrev</includeOnlyProperty>
+                </includeOnlyProperties>
+                <gitDescribe>
+                    <skip>false</skip>
+                    <always>false</always>
+                    <abbrev>7</abbrev>
+                    <dirty>-dirty</dirty>
+                    <match>*</match>
+                </gitDescribe>
+            </configuration>
+        </plugin>
+
+        <!-- Antrun -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+                <execution>
+                    <id>default-cli</id>
+                    <phase>initialize</phase>
+                    <configuration>
+                        <target>
+                            <propertyfile file="${project.basedir}/src/main/resources/build.properties"
+                                          comment="Build information. Edit this to your liking.">
+                                <entry key="buildAuthor" default="unknown"/>
+                                <entry key="buildNumber" default="0"/>
+                                <entry key="buildCodeName" value="${tfm.build.codename}"/>
+                                <entry key="buildVersion" value="${project.version}"/>
+                                <entry key="buildDate" value="${timestamp}"/>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <entry key="buildHead" value="${git.commit.id.abbrev}"/>
+                            </propertyfile>
+                        </target>
+                    </configuration>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- Properties -->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0.0</version>
+            <executions>
+                <execution>
+                    <phase>initialize</phase>
+                    <goals>
+                        <goal>read-project-properties</goal>
+                    </goals>
+                    <configuration>
+                        <files>
+                            <file>${project.basedir}/src/main/resources/build.properties</file>
+                        </files>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- Buildnumber -->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>buildnumber-maven-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+                <execution>
+                    <phase>generate-resources</phase>
+                    <goals>
+                        <goal>create</goal>
+                    </goals>
+                </execution>
+            </executions>
+
+            <configuration>
+                <buildNumberPropertyName>maven.buildnumber</buildNumberPropertyName>
+                <buildNumberPropertiesFileLocation>${project.basedir}/src/main/resources/build.properties
+                </buildNumberPropertiesFileLocation>
+                <format>{0,number,#}</format>
+                <items>
+                    <item>buildNumber</item>
+                </items>
+            </configuration>
+        </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+                <filters>
+                    <filter>
+                        <excludes>
+                            <exclude>META-INF/*.SF</exclude>
+                            <exclude>META-INF/*.RSA</exclude>
+                            <exclude>META-INF/*.DSA</exclude>
+                        </excludes>
+                    </filter>
+                </filters>
+            </configuration>
+            </plugin>
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
@@ -123,5 +288,35 @@
             <artifactId>adventure-api</artifactId>
             <version>4.14.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>3.1.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <reporting>
+        <!-- Checkstyle -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <failOnViolation>true</failOnViolation>
+                    <failsOnError>true</failsOnError>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

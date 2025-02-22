@@ -1,4 +1,4 @@
-package eu.koolfreedom.command.impl;
+package eu.koolfreedom.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,7 +37,7 @@ public class CrashCommand implements CommandExecutor {
             // Crash a specific player
             Player target = Bukkit.getPlayer(args[0]);
             if (target == null || !target.isOnline()) {
-                executor.sendMessage(ChatColor.RED + "Player not found or not online.");
+                executor.sendMessage(Messages.PLAYER_NOT_FOUND);
                 return true;
             }
             if (target.equals(executor)) {

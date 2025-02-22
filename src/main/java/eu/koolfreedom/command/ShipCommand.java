@@ -1,4 +1,4 @@
-package eu.koolfreedom.command.impl;
+package eu.koolfreedom.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
