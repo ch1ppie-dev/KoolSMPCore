@@ -23,7 +23,7 @@ public class ObliterateCommand implements CommandExecutor {
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            commandSender.sendMessage(Component.text("Could not find the specified player on the server.", NamedTextColor.RED));
+            commandSender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
 

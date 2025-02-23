@@ -1,5 +1,6 @@
 package eu.koolfreedom.command;
 
+import eu.koolfreedom.KoolSMPCore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -18,7 +19,7 @@ public class SlapCommand implements CommandExecutor {
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null || !target.isOnline()) {
-            sender.sendMessage(ChatColor.RED + "Player not found!");
+            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
 
@@ -26,7 +27,7 @@ public class SlapCommand implements CommandExecutor {
         String senderName = sender instanceof Player ? ((Player) sender).getName() : "Console";
 
         // Broadcast the slap message
-        Bukkit.broadcastMessage(ChatColor.AQUA + senderName + " gave " + target.getName() + " a nice slap to the face!");
+        KoolSMPCore.bcastMsg(ChatColor.AQUA + senderName + " gave " + target.getName() + " a nice slap to the face!");
         return true;
     }
 }

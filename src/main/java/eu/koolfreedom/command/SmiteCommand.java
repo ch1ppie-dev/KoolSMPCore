@@ -16,7 +16,7 @@ public class SmiteCommand implements CommandExecutor
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!(sender.hasPermission("kf.admin"))) {
-            sender.sendMessage(ChatColor.RED + "Unknown command.");
+            sender.sendMessage(Messages.MSG_NO_PERMS);
             return true;
         }
 
@@ -27,7 +27,7 @@ public class SmiteCommand implements CommandExecutor
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            sender.sendMessage(ChatColor.RED + "Player not found!");
+            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
 

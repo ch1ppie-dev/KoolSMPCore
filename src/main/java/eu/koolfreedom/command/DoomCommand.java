@@ -19,11 +19,11 @@ public class DoomCommand implements CommandExecutor {
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            sender.sendMessage(Component.text("Could not find the specified player on the server.", NamedTextColor.RED));
+            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
         if (!sender.hasPermission("kf.senior")) {
-            sender.sendMessage(NamedTextColor.RED + "You do not have permission to use this command");
+            sender.sendMessage(Messages.MSG_NO_PERMS);
             return false;
         }
 
