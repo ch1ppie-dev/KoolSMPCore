@@ -3,14 +3,10 @@ package eu.koolfreedom.command;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.util.KoolSMPCoreBase;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -19,7 +15,7 @@ import java.util.List;
 public class KoolSMPCoreCommand extends KoolSMPCoreBase implements CommandExecutor, TabCompleter
 {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String str, String[] args)
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String str, String[] args)
     {
         if (args.length == 0)
         {
@@ -53,7 +49,7 @@ public class KoolSMPCoreCommand extends KoolSMPCoreBase implements CommandExecut
         return false;
     }
 
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args)
+    public List<String> onTabComplete(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
     {
         if (sender.hasPermission("kf.senior"))
         {

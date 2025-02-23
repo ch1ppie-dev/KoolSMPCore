@@ -45,6 +45,9 @@ commands:
     description: Make a really unfunny joke about how you ship 2 people
   slap:
     description: Slap the shit out of someone
+  smite:
+    permission: kf.admin
+    description: Smite that motherfucker
   spectate:
     description: Suspicious user? Spectate them
 
