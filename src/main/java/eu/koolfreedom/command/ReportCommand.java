@@ -20,7 +20,7 @@ public class ReportCommand implements CommandExecutor {
         if (commandSender instanceof Player) {
             player = (Player)commandSender;
         } else {
-            commandSender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
+            commandSender.sendMessage(Messages.ONLY_IN_GAME);
             return true;
         }
         if (args.length == 0) {
@@ -29,16 +29,16 @@ public class ReportCommand implements CommandExecutor {
         }
         Player playerArg = Bukkit.getServer().getPlayer(args[0]);
         if (playerArg == null) {
-            player.sendMessage(Component.text("Could not find the specified player on the server.", NamedTextColor.RED));
+            player.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
         if (args.length < 2) {
-            player.sendMessage(Component.text("You did not provide a valid reason.", NamedTextColor.RED));
+            player.sendMessage(Messages.INVALID_REASON);
             return true;
         }
         String reason = StringUtils.join(args, " ", 1, args.length).replace("\\n", "").replace("`", "");
         if (reason.isBlank()) {
-            player.sendMessage(Component.text("You did not provide a valid reason.", NamedTextColor.RED));
+            player.sendMessage(Messages.INVALID_REASON);
             return true;
         }
         if (!this.antispam.contains(player)) {

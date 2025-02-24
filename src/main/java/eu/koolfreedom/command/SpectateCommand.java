@@ -16,7 +16,7 @@ public class SpectateCommand implements CommandExecutor {
         if (commandSender instanceof Player) {
             player = (Player)commandSender;
         } else {
-            commandSender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
+            commandSender.sendMessage(Messages.ONLY_IN_GAME);
             return true;
         }
         if (args.length == 0) {
@@ -25,7 +25,7 @@ public class SpectateCommand implements CommandExecutor {
         }
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            commandSender.sendMessage(Component.text("Could not find the specified player on the server.", NamedTextColor.RED));
+            commandSender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
         player.setGameMode(GameMode.SPECTATOR);

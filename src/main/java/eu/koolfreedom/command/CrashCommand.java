@@ -19,7 +19,7 @@ public class CrashCommand implements CommandExecutor {
 
         // Check if the command is run by a player
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+            sender.sendMessage(Messages.ONLY_IN_GAME);
             return true;
         }
 
@@ -32,7 +32,7 @@ public class CrashCommand implements CommandExecutor {
                     crashPlayer(player);
                 }
             }
-            executor.sendMessage(ChatColor.GREEN + "Crashed all players on the server.");
+            executor.sendMessage(Messages.CRASHED_ALL);
         } else if (args.length == 1) {
             // Crash a specific player
             Player target = Bukkit.getPlayer(args[0]);
@@ -41,7 +41,7 @@ public class CrashCommand implements CommandExecutor {
                 return true;
             }
             if (target.equals(executor)) {
-                executor.sendMessage(ChatColor.RED + "You cannot crash yourself.");
+                executor.sendMessage(Messages.CRASH_SELF);
                 return true;
             }
 
@@ -59,6 +59,6 @@ public class CrashCommand implements CommandExecutor {
         String command = "execute at " + player.getName() + " run particle ash ~ ~ ~ 1 1 1 1 2147483647 force " + player.getName();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 
-        player.sendMessage(ChatColor.RED + "You have been crashed!");
+        player.sendMessage(Messages.MSG_CRASHED);
     }
 }
