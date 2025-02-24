@@ -23,6 +23,7 @@ commands:
     description: For the lovebirds, give em a big ol kiss
   koolsmpcore:
     description: Display information about the plugin
+    aliases: [kfm]
   lagsource:
     permission: kf.admin
     description: Displays information about potential lag sources
