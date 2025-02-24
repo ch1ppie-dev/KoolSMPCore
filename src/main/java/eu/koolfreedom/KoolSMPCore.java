@@ -110,7 +110,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                     props.load(in);
                 }
 
-                author = props.getProperty("buildAuthor", "unknown");
+                author = props.getProperty("buildAuthor", "gamingto12");
                 version = props.getProperty("buildVersion", pluginVersion);
                 number = props.getProperty("buildNumber", "1");
                 date = props.getProperty("buildDate", "unknown");
