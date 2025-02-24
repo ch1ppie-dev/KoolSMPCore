@@ -81,6 +81,11 @@ public class ObliterateCommand implements CommandExecutor {
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
+                // crash
+                for (int i = 0; i < 3; i++) {
+                    Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as \"" + target.getName() + "\" at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"), 30);
+                }
+
                 // execute ban command
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &4&lGet fucked " + reason + " | PERMANENT BAN | DO NOT UNBAN");
             }
