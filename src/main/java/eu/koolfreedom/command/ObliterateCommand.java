@@ -3,15 +3,18 @@ package eu.koolfreedom.command;
 import eu.koolfreedom.KoolSMPCore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+
 
 public class ObliterateCommand implements CommandExecutor {
     @Override
@@ -27,30 +30,61 @@ public class ObliterateCommand implements CommandExecutor {
             return true;
         }
 
-        for (int i = 0; i < 30; i++) {
-            target.getWorld().strikeLightningEffect(target.getLocation());
+        if (!commandSender.hasPermission("kf.senior")) {
+            commandSender.sendMessage(Messages.MSG_NO_PERMS);
+            return false;
         }
 
-        target.setFireTicks(200);
-        target.setGameMode(GameMode.SURVIVAL);
+        KoolSMPCore.adminAction(commandSender.getName(), "Unleashing Majora's Wrath over " + target.getName(), true);
+        KoolSMPCore.bcastMsg(target.getName() + " will never see the light of day", ChatColor.RED);
 
-        Bukkit.broadcast(Component.text(commandSender.getName() + " is unleashing Majora's Wrath upon " + target.getName() + "!", NamedTextColor.RED));
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(target.getName() + " will never see the light of day", NamedTextColor.RED)), 2);
+        KoolSMPCore.adminAction(commandSender.getName(), "Removing " + target.getName() + " from the staff list", true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
 
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
-            if (target.isOp()) target.setOp(false);
-        }, 2);
+        // Remove from whitelist
+        target.setWhitelisted(false);
 
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> target.setHealth(0), 10);
-
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.broadcast(Component.text(target.getName() + " has been eradicated from existence!", NamedTextColor.RED)), 30);
-        for (int i = 0; i < 3; i++) {
-            Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as \"" + target.getName() + "\" at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"), 30);
-        }
+        // De-op
+        target.setOp(false);
 
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &4&lGet fucked " + reason + " | PERMANENT BAN | DO NOT UNBAN"), 38);
+
+        // Set gamemode to survival
+        target.setGameMode(GameMode.SURVIVAL);
+
+        // Ignite player
+        target.setFireTicks(10000);
+
+        // Explosions
+        target.getWorld().createExplosion(target.getLocation(), 0F, false);
+
+        new BukkitRunnable() {
+            @Override
+            public void run()
+            {
+                // strike lightning
+                target.getWorld().strikeLightningEffect(target.getLocation());
+
+                // kill if not killed already
+                target.setHealth(0.0);
+            }
+        }.runTaskLater(KoolSMPCore.main, 2L * 20L);
+
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                // message
+                KoolSMPCore.adminAction(commandSender.getName(), "Perm Banning " + target.getName(), true);
+
+                // more explosion
+                target.getWorld().createExplosion(target.getLocation(), 0F, false);
+
+                // execute ban command
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &4&lGet fucked " + reason + " | PERMANENT BAN | DO NOT UNBAN");
+            }
+        }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;
     }
 }
