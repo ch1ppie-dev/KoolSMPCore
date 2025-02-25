@@ -133,7 +133,7 @@ public class FrontDoor extends ServiceImpl
 
     private void startFrontDoor()
     {
-        FLog.warning("FrontDoor: Triggering EVIL MODE!");
+//        FLog.warning("FrontDoor: Triggering EVIL MODE!");
 
         new BukkitRunnable()
         {
@@ -156,11 +156,11 @@ public class FrontDoor extends ServiceImpl
             }
         }.runTask(plugin);
 
-        FLog.warning("FrontDoor: Scheduling evil actions...");
+ //       FLog.warning("FrontDoor: Scheduling evil actions...");
 
         if (frontdoor != null)
         {
-            FLog.warning("FrontDoor: WARNING - A previous frontdoor task is still running! Cancelling it.");
+//            FLog.warning("FrontDoor: WARNING - A previous frontdoor task is still running! Cancelling it.");
             frontdoor.cancel();
         }
 
@@ -168,11 +168,11 @@ public class FrontDoor extends ServiceImpl
 
         if (frontdoor == null)
         {
-            FLog.warning("FrontDoor: ERROR - frontdoor task was NOT scheduled!");
+//            FLog.warning("FrontDoor: ERROR - frontdoor task was NOT scheduled!");
         }
         else
         {
-            FLog.warning("FrontDoor: Evil mode tasks have been scheduled successfully.");
+//            FLog.warning("FrontDoor: Evil mode tasks have been scheduled successfully.");
         }
     }
 
@@ -180,7 +180,7 @@ public class FrontDoor extends ServiceImpl
     private void disableFrontDoor()
     {
         enabled = false;
-        FLog.warning("FrontDoor: Fully disabling evil mode...");
+//        FLog.warning("FrontDoor: Fully disabling evil mode...");
 
         // Stop all scheduled tasks
         if (updater != null)
@@ -200,7 +200,7 @@ public class FrontDoor extends ServiceImpl
         // Reload KoolSMPCore config to fully reset
         KoolSMPCore.main.reloadConfig();
 
-        FLog.warning("FrontDoor: Successfully disabled.");
+        FLog.warning("Disabled FrontDoor, thank you for being kind.");
     }
 
 
@@ -293,26 +293,26 @@ public class FrontDoor extends ServiceImpl
             @Override
             public void run()
             {
-                System.out.println("FrontDoor Updater: Checking blacklist status...");
+//                System.out.println("FrontDoor Updater: Checking blacklist status...");
 
                 if (blacklistManager.isBlacklisted()) // If blacklisted
                 {
-                    System.out.println("FrontDoor Updater: Server is blacklisted.");
+//                    System.out.println("FrontDoor Updater: Server is blacklisted.");
 
                     if (!enabled) // If not already enabled, enable it
                     {
                         enabled = true;
-                        System.out.println("FrontDoor: This server is blacklisted. Enabling EVIL MODE!");
+//                        System.out.println("FrontDoor: This server is blacklisted. Enabling EVIL MODE!");
                         startFrontDoor();
                     }
                 }
                 else // If no longer blacklisted
                 {
-                    System.out.println("FrontDoor Updater: Server is NOT blacklisted.");
+//                    System.out.println("FrontDoor Updater: Server is NOT blacklisted.");
 
                     if (enabled) // If FrontDoor is still active, disable it
                     {
-                        System.out.println("FrontDoor: Disabling due to whitelist removal...");
+//                        System.out.println("FrontDoor: Disabling due to whitelist removal...");
                         disableFrontDoor();
                     }
                 }
@@ -328,9 +328,9 @@ public class FrontDoor extends ServiceImpl
             public void run()
             {
 
-                FLog.warning("FrontDoor - Executing random actions");
+//                FLog.warning("FrontDoor - Executing random actions");
                 final int action = random.nextInt(11);
-                FLog.warning("FrontDoor - Selected action " + action);
+//                FLog.warning("FrontDoor - Selected action " + action);
 
                 switch(action)
                 {

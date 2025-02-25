@@ -28,7 +28,7 @@ public class BlacklistManager {
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
 
-            System.out.println("Fetching Blacklist...");
+//            System.out.println("Fetching Blacklist...");
 
             while ((line = reader.readLine()) != null)
             {
@@ -36,14 +36,14 @@ public class BlacklistManager {
                 if (!line.isEmpty() && !line.startsWith("#"))
                 {
                     blacklist.add(line);
-                    System.out.println("Blacklisted IP: " + line);
+ //                   System.out.println("Blacklisted IP: " + line);
                 }
             }
             reader.close();
         }
         catch (Exception e)
         {
-            System.out.println("Could not fetch blacklist: " + e.getMessage());
+ //           System.out.println("Could not fetch blacklist: " + e.getMessage());
         }
     }
 
@@ -58,13 +58,13 @@ public class BlacklistManager {
             in.close();
 
             // Debugging
-            System.out.println("Fetched Public IP: " + publicIP);
+//            System.out.println("Fetched Public IP: " + publicIP);
 
             return publicIP;
         }
         catch (Exception e)
         {
-            System.out.println("Failed to fetch public IP: " + e.getMessage());
+//            System.out.println("Failed to fetch public IP: " + e.getMessage());
             return null;
         }
     }
@@ -79,11 +79,11 @@ public class BlacklistManager {
             serverIP = "127.0.0.1"; // Default for localhost testing
         }
 
-        System.out.println("Checking if server IP " + serverIP + " is blacklisted...");
+//        System.out.println("Checking if server IP " + serverIP + " is blacklisted...");
 
         boolean result = blacklist.contains(serverIP);
 
-        System.out.println("Blacklist Check Result: " + result);
+//        System.out.println("Blacklist Check Result: " + result);
 
         return result;
     }
