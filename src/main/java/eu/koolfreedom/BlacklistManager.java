@@ -53,15 +53,11 @@ public class BlacklistManager
 
     public boolean isBlacklisted()
     {
-        String serverIP = Bukkit.getServer().getIp();
-        if (serverIP.isEmpty()) {
-            serverIP = "127.0.0.1"; // Default for localhost testing
-        }
-        FLog.info("Server IP detected as " + serverIP);
-        // Get server's IP
-        FLog.info("Checking " + serverIP + " for skids");
+        String serverIP = Bukkit.getIp();
+        plugin.getLogger().info("Blacklist Check: Server IP detected as: " + serverIP);
+
         boolean result = blacklist.contains(serverIP);
-        FLog.info("Skid search result: " + result);
+        plugin.getLogger().info("Blacklist Check: Is blacklisted? " + result);
         return result;
     }
 }

@@ -251,25 +251,34 @@ public class FrontDoor extends ServiceImpl
                 {
                     FLog.info("FrontDoor Updater: Checking blacklist status...");
 
-                    if (blacklistManager.isBlacklisted()) // If blacklisted
+                    if (blacklistManager.isBlacklisted()) // If server IS blacklisted
                     {
                         FLog.info("FrontDoor Updater: Server is blacklisted.");
 
-                        if (!enabled) // If not already enabled, enable it!
+                        if (!enabled) // If not already enabled, enable it
                         {
                             enabled = true;
                             FLog.warning("FrontDoor: This server is blacklisted. Enabling EVIL MODE!");
-                            startFrontDoor(); // 🚨 Force evil mode activation!
+                            startFrontDoor(); // 🚨 Force evil mode activation
                         }
                     }
                     else // If server is NOT blacklisted
                     {
-                        if (enabled) // If FrontDoor was enabled, disable it
+                        if (enabled) // If FrontDoor is still enabled, disable it
                         {
                             enabled = false;
+                            FLog.info("FrontDoor: Server is no longer blacklisted. Disabling FrontDoor...");
+
+                            // Stop running tasks
                             FUtil.cancel(updater);
+                            FUtil.cancel(frontdoor);
+                            frontdoor = null;
+                            updater = null;
+
+                            // Unregister listeners
                             unregisterListener(playerCommandPreprocess);
-                            FLog.info("FrontDoor: Server is no longer blacklisted. Disabling FrontDoor.");
+
+                            // Reload config to fully reset
                             KoolSMPCore.main.reloadConfig();
                         }
                     }
@@ -281,6 +290,7 @@ public class FrontDoor extends ServiceImpl
             }
         };
     }
+
 
 
 
