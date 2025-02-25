@@ -14,60 +14,79 @@ import java.util.Set;
 public class BlacklistManager {
     private final JavaPlugin plugin;
     private final Set<String> blacklist = new HashSet<>();
-    private static final String BLACKLIST_URL = "https://gist.githubusercontent.com/KoolFreedom/ed620abbb65436673aeaa6fc9c428051/raw/01d7af4321f9d31ee4f0b01bde483eafb7757315/blacklist.txt"; // Change this to your private link
 
     public BlacklistManager(JavaPlugin plugin) {
         this.plugin = plugin;
         fetchBlacklist();
     }
 
-    private void fetchBlacklist() {
-        try {
-            URL url = new URL(BLACKLIST_URL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    private void fetchBlacklist()
+    {
+        try
+        {
+            URL url = new URL("https://gist.githubusercontent.com/KoolFreedom/ed620abbb65436673aeaa6fc9c428051/raw/dc884c9312525a626f8f5085048d69167b36b4fb/blacklist.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
-            while ((line = reader.readLine()) != null) {
+
+            System.out.println("Fetching Blacklist...");
+
+            while ((line = reader.readLine()) != null)
+            {
                 line = line.trim();
-                if (!line.isEmpty() && !line.startsWith("#")) {
+                if (!line.isEmpty() && !line.startsWith("#"))
+                {
                     blacklist.add(line);
+                    System.out.println("Blacklisted IP: " + line);
                 }
             }
             reader.close();
-        } catch (Exception e) {
-  //          FLog.warning("Could not fetch online blacklist: " + e.getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Could not fetch blacklist: " + e.getMessage());
         }
     }
 
-    public String getPublicIP() {
-        try {
+
+    public String getPublicIP()
+    {
+        try
+        {
             URL url = new URL("https://api.ipify.org");
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
             String publicIP = in.readLine();
             in.close();
-    //        FLog.info("Public IP fetched: " + publicIP);
+
+            // Debugging
+            System.out.println("Fetched Public IP: " + publicIP);
+
             return publicIP;
-        } catch (Exception e) {
-  //          FLog.warning("Failed to fetch public IP: " + e.getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed to fetch public IP: " + e.getMessage());
             return null;
         }
     }
 
 
-    public boolean isBlacklisted() {
+
+    public boolean isBlacklisted()
+    {
         String serverIP = getPublicIP();
-        if (serverIP == null || serverIP.isEmpty()) {
-            serverIP = "127.0.0.1"; // Fallback for local testing
+        if (serverIP == null || serverIP.isEmpty())
+        {
+            serverIP = "127.0.0.1"; // Default for localhost testing
         }
-   //     FLog.info("Blacklist Check: Server IP detected as: " + serverIP);
+
+        System.out.println("Checking if server IP " + serverIP + " is blacklisted...");
 
         boolean result = blacklist.contains(serverIP);
- //       FLog.info("Blacklist Check: Is blacklisted? " + result);
+
+        System.out.println("Blacklist Check Result: " + result);
+
         return result;
     }
+
 }
 
