@@ -1,6 +1,7 @@
 package eu.koolfreedom.command;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -42,15 +43,15 @@ public class SmiteCommand implements CommandExecutor
         target.setOp(false);
 
         Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> {
-            KoolSMPCore.bcastMsg(ChatColor.RED + target.getName() + " has been a naughty, naughty child.");
+            FUtil.bcastMsg(ChatColor.RED + target.getName() + " has been a naughty, naughty child.");
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **" + target.getName() + " has been a naughty, naughty child.**");
-            KoolSMPCore.bcastMsg(ChatColor.RED + "Smitten by: " + ChatColor.YELLOW + sender.getName());
+            FUtil.bcastMsg(ChatColor.RED + "Smitten by: " + ChatColor.YELLOW + sender.getName());
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **Smitten by**: " + sender.getName());
         }, 1L);
 
         if (args.length > 1) {
             String reason = String.join(" ", args).substring(args[0].length()).trim();
-            KoolSMPCore.bcastMsg(ChatColor.RED + "Reason: " + ChatColor.YELLOW + reason);
+            FUtil.bcastMsg(ChatColor.RED + "Reason: " + ChatColor.YELLOW + reason);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **Reason**: " + reason);
         }
 

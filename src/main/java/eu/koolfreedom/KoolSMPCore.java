@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
+
 @SuppressWarnings("deprecation")
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
@@ -35,6 +36,11 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public Component mmDeserialize(String message)
     {
         return MINI_MESSAGE.deserialize(message).clickEvent(null).hoverEvent(null);
+    }
+
+    public static KoolSMPCore getPlugin()
+    {
+        return main;
     }
 
 
@@ -57,6 +63,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Version " + build.version);
         FLog.info("Compiled " + build.date + " by " + build.author);
         server.getPluginManager().registerEvents(this, this);
+        FrontDoor frontDoor = new FrontDoor(this);
 
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
@@ -206,58 +213,5 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
             }
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void adminAction(String adminName, String action, boolean isRed)
-    {
-        KoolSMPCore.bcastMsg(adminName + " - " + action, (isRed ? ChatColor.RED : ChatColor.AQUA));
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void bcastMsg(String message, ChatColor color)
-    {
-        bcastMsg(message, color, true);
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void bcastMsg(String message, ChatColor color, Boolean toConsole)
-    {
-        if (toConsole)
-        {
-            FLog.info(message);
-        }
-
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-            player.sendMessage((color == null ? "" : color) + message);
-        }
-    }
-
-    public static void bcastMsg(String message, Boolean toConsole)
-    {
-        bcastMsg(message, null, toConsole);
-    }
-
-    public static void bcastMsg(String message)
-    {
-        KoolSMPCore.bcastMsg(message, null, true);
-    }
-
-    @SuppressWarnings("deprecation")
-    public static String colorize(String string)
-    {
-        if (string != null)
-        {
-            Matcher matcher = Pattern.compile("&#[a-f0-9A-F]{6}").matcher(string);
-            while (matcher.find())
-            {
-                String code = matcher.group().replace("&", "");
-                string = string.replace("&" + code, net.md_5.bungee.api.ChatColor.of(code) + "");
-            }
-
-            string = ChatColor.translateAlternateColorCodes('&', string);
-        }
-        return string;
     }
 }

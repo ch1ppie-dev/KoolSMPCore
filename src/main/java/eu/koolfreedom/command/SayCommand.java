@@ -1,13 +1,11 @@
 package eu.koolfreedom.command;
 
-import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.util.FUtil;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class SayCommand implements CommandExecutor
@@ -22,7 +20,7 @@ public class SayCommand implements CommandExecutor
 
         String message = StringUtils.join(args, " ");
 
-        KoolSMPCore.bcastMsg(String.format("[KoolFreedom:%s] %s", sender.getName(), message), ChatColor.LIGHT_PURPLE);
+        FUtil.bcastMsg(String.format("[KoolFreedom:%s] %s", sender.getName(), message), ChatColor.LIGHT_PURPLE);
 
         return true;
     }

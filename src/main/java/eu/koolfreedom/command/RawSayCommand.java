@@ -1,6 +1,7 @@
 package eu.koolfreedom.command;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.util.FUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,7 +15,7 @@ public class RawSayCommand implements CommandExecutor
     {
         if (args.length == 0)
         {
-            KoolSMPCore.bcastMsg(KoolSMPCore.colorize(StringUtils.join(args, " ")));
+            FUtil.bcastMsg(FUtil.colorize(StringUtils.join(args, " ")));
         }
 
         return true;

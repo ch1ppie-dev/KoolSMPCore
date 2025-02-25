@@ -1,6 +1,6 @@
 package eu.koolfreedom.command;
 
-import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -44,7 +44,7 @@ public class ShipCommand implements CommandExecutor {
             return true;
         }
 
-        KoolSMPCore.bcastMsg(ChatColor.GREEN + sender.getName() + " ships " + p1.getName() + " x " + p2.getName() + ChatColor.LIGHT_PURPLE + " <3");
+        FUtil.bcastMsg(ChatColor.GREEN + sender.getName() + " ships " + p1.getName() + " x " + p2.getName() + ChatColor.LIGHT_PURPLE + " <3");
         return true;
     }
 }

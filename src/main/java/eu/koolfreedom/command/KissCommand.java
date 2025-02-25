@@ -1,6 +1,6 @@
 package eu.koolfreedom.command;
 
-import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,7 +24,7 @@ public class KissCommand implements CommandExecutor {
         }
 
         String senderName = sender instanceof Player ? ((Player) sender).getName() : "Console";
-        KoolSMPCore.bcastMsg(ChatColor.AQUA + senderName + " gave " + target.getName() + " a kiss on the cheek.");
+        FUtil.bcastMsg(ChatColor.AQUA + senderName + " gave " + target.getName() + " a kiss on the cheek.");
         return true;
     }
 }

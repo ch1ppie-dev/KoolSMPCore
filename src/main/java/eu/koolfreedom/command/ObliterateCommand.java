@@ -1,6 +1,7 @@
 package eu.koolfreedom.command;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -35,10 +36,10 @@ public class ObliterateCommand implements CommandExecutor {
             return false;
         }
 
-        KoolSMPCore.adminAction(commandSender.getName(), "Unleashing Majora's Wrath over " + target.getName(), true);
-        KoolSMPCore.bcastMsg(target.getName() + " will never see the light of day", ChatColor.RED);
+        FUtil.adminAction(commandSender.getName(), "Unleashing Majora's Wrath over " + target.getName(), true);
+        FUtil.bcastMsg(target.getName() + " will never see the light of day", ChatColor.RED);
 
-        KoolSMPCore.adminAction(commandSender.getName(), "Removing " + target.getName() + " from the staff list", true);
+        FUtil.adminAction(commandSender.getName(), "Removing " + target.getName() + " from the staff list", true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
 
         // Remove from whitelist
@@ -76,7 +77,7 @@ public class ObliterateCommand implements CommandExecutor {
             public void run()
             {
                 // message
-                KoolSMPCore.adminAction(commandSender.getName(), "Perm Banning " + target.getName(), true);
+                FUtil.adminAction(commandSender.getName(), "Perm Banning " + target.getName(), true);
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
