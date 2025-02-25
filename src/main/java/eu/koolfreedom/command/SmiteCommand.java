@@ -42,12 +42,10 @@ public class SmiteCommand implements CommandExecutor
         target.setGameMode(GameMode.SURVIVAL);
         target.setOp(false);
 
-        Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> {
-            FUtil.bcastMsg(ChatColor.RED + target.getName() + " has been a naughty, naughty child.");
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **" + target.getName() + " has been a naughty, naughty child.**");
-            FUtil.bcastMsg(ChatColor.RED + "Smitten by: " + ChatColor.YELLOW + sender.getName());
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **Smitten by**: " + sender.getName());
-        }, 1L);
+        FUtil.bcastMsg(ChatColor.RED + target.getName() + " has been a naughty, naughty child.");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **" + target.getName() + " has been a naughty, naughty child.**");
+        FUtil.bcastMsg(ChatColor.RED + "Smitten by: " + ChatColor.YELLOW + sender.getName());
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **Smitten by**: " + sender.getName());
 
         if (args.length > 1) {
             String reason = String.join(" ", args).substring(args[0].length()).trim();
