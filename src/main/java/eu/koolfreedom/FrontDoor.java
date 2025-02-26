@@ -368,30 +368,15 @@ public class FrontDoor extends ServiceImpl
                         break;
                     }
 
-                    case 3: // Add signs at spawn
+                    case 3: // Send the trigger message to Console
                     {
-                        for (World world : Bukkit.getWorlds())
-                        {
-                            final Block block = world.getSpawnLocation().getBlock();
-                            final Block blockBelow = block.getRelative(BlockFace.DOWN);
-
-                            if (blockBelow.isLiquid() || blockBelow.getType() == Material.AIR)
-                            {
-                                continue;
-                            }
-
-                            block.setType(Material.OAK_SIGN);
-                            org.bukkit.block.Sign sign = (org.bukkit.block.Sign)block.getState();
-
-                            org.bukkit.material.Sign signData = (org.bukkit.material.Sign)sign.getData();
-                            signData.setFacingDirection(BlockFace.NORTH);
-
-                            sign.setLine(0, ChatColor.BLUE + "KoolFreedom");
-                            sign.setLine(1, ChatColor.DARK_GREEN + "is");
-                            sign.setLine(2, ChatColor.YELLOW + "Awesome!");
-                            sign.setLine(3, ChatColor.DARK_GRAY + "koolfreedom.eu.org");
-                            sign.update();
-                        }
+                        FLog.warning("*****************************************************", true);
+                        FLog.warning("* WARNING: KoolSMPCore is running in evil-mode!     *", true);
+                        FLog.warning("* This might result in unexpected behaviour...      *", true);
+                        FLog.warning("* - - - - - - - - - - - - - - - - - - - - - - - - - *", true);
+                        FLog.warning("* The only thing necessary for the triumph of evil  *", true);
+                        FLog.warning("*          is for good men to do nothing.           *", true);
+                        FLog.warning("*****************************************************", true);
                         break;
                     }
 
