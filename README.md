@@ -16,4 +16,4 @@ Open the terminal and cd to the root of this repository (~/KoolSMPCore) and type
 
 ### Through IntelliJ
 
-On the right sidebar, you should see a big M, that's the Maven Project, all you need to do is click on "Lifestyle" and double-click on "package"
+If you have loaded the Maven project after being prompted to, you should see a big M on the right sidebar, that is where you can quickly build the project. All you need to do is just open the project, click `Lifecycle` and double-click on `package`
