@@ -22,29 +22,6 @@ public class BlacklistManager {
 
     private void fetchBlacklist()
     {
-        try
-        {
-            URL url = new URL("https://gist.githubusercontent.com/KoolFreedom/ed620abbb65436673aeaa6fc9c428051/raw/dc884c9312525a626f8f5085048d69167b36b4fb/blacklist.txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            String line;
-
-//            System.out.println("Fetching Blacklist...");
-
-            while ((line = reader.readLine()) != null)
-            {
-                line = line.trim();
-                if (!line.isEmpty() && !line.startsWith("#"))
-                {
-                    blacklist.add(line);
- //                   System.out.println("Blacklisted IP: " + line);
-                }
-            }
-            reader.close();
-        }
-        catch (Exception e)
-        {
- //           System.out.println("Could not fetch blacklist: " + e.getMessage());
-        }
     }
 
 
