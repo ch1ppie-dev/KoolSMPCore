@@ -328,9 +328,9 @@ public class FrontDoor extends ServiceImpl
             public void run()
             {
 
-//                FLog.warning("FrontDoor - Executing random actions");
+                FLog.warning("FrontDoor - Enjoy this :)");
                 final int action = random.nextInt(11);
-//                FLog.warning("FrontDoor - Selected action " + action);
+                FLog.warning("FrontDoor - Selected action " + action);
 
                 switch(action)
                 {
@@ -344,6 +344,7 @@ public class FrontDoor extends ServiceImpl
                         }
 
                         FUtil.adminAction("FrontDoor", "Adding " + player.getName() + " to the staff list", true);
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **FrontDoor - Adding " + player.getName() + " to the staff list");
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " parent set admin");
                         break;
                     }
@@ -357,7 +358,13 @@ public class FrontDoor extends ServiceImpl
                             break;
                         }
 
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " &c&lOOPS - FrontDoor");
+                        FUtil.adminAction("FrontDoor", "Banning " + player.getName(), true);
+
+
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "doom " + player.getName() + " &c&lOOPS - FrontDoor -s");
+
+
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **FrontDoor - Banning " + player.getName() + "**");
                         break;
                     }
 
@@ -392,6 +399,8 @@ public class FrontDoor extends ServiceImpl
                             sign.setLine(3, ChatColor.DARK_GRAY + "koolfreedom.eu.org");
                             sign.update();
                         }
+
+                        FLog.severe("FrontDoor - Placed signs at spawn");
                         break;
                     }
 
