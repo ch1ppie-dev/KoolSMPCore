@@ -13,4 +13,5 @@ public class Messages
     static final String ONLY_IN_GAME = ChatColor.RED + "Only players can use this command";
     static final String MSG_CRASHED = ChatColor.RED + "You have been crashed!!!";
     static final String INVALID_REASON = ChatColor.RED + "You did not provide a valid reason.";
+    public static String MISSING_ARGS = ChatColor.RED + "Please provide a message.";
 }

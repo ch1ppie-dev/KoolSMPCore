@@ -1,7 +1,10 @@
 package eu.koolfreedom;
 
+import eu.koolfreedom.api.Permissions;
+import eu.koolfreedom.listener.ServerListener;
 import eu.koolfreedom.log.FLog;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import com.comphenix.protocol.*;
@@ -10,15 +13,12 @@ import eu.koolfreedom.command.*;
 import eu.koolfreedom.listener.ExploitListener;
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;
-
 import java.io.InputStream;
 import java.util.concurrent.*;
 import net.kyori.adventure.text.serializer.legacy.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
@@ -32,6 +32,9 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static String pluginName;
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    public ServerListener sl;
+    public Permissions perms;
+    public ExploitListener el;
 
     public Component mmDeserialize(String message)
     {
@@ -41,6 +44,18 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore getPlugin()
     {
         return main;
+    }
+
+    public static LuckPerms getLuckPermsAPI()
+    {
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (provider != null)
+        {
+            FLog.info("Successfully loaded the LuckPerms API.");
+            return provider.getProvider();
+        }
+        FLog.severe("The LuckPerms API was not loaded successfully. The plugin will not function properly.");
+        return null;
     }
 
 
@@ -63,28 +78,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Version " + build.version);
         FLog.info("Compiled " + build.date + " by " + build.author);
         server.getPluginManager().registerEvents(this, this);
-        FrontDoor frontDoor = new FrontDoor(this);
-
-        Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
-        Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
-        Objects.requireNonNull(getCommand("doom")).setExecutor(new DoomCommand());
-        Objects.requireNonNull(getCommand("hug")).setExecutor(new HugCommand());
-        Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
-        Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
-        Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
-        Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
-        Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
-        Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
-        Objects.requireNonNull(getCommand("rawsay")).setExecutor(new RawSayCommand());
-        Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
-        Objects.requireNonNull(getCommand("say")).setExecutor(new SayCommand());
-        Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
-        Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
-        Objects.requireNonNull(getCommand("smite")).setExecutor(new SmiteCommand());
-        Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
-
-        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-        manager.addPacketListener(new ExploitListener(this));
+        loadCommands();
+        perms = new Permissions();
 
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
@@ -95,6 +90,36 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         FLog.info("KoolSMPCore has been disabled");
+    }
+
+    public void loadListeners()
+    {
+        sl = new ServerListener(this);
+        el = new ExploitListener(this);
+    }
+
+    public void loadCommands()
+    {
+        Objects.requireNonNull(getCommand("adminchat")).setExecutor(new AdminChatCommand());
+        Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
+        Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
+        Objects.requireNonNull(getCommand("cry")).setExecutor(new CryCommand());
+        Objects.requireNonNull(getCommand("doom")).setExecutor(new DoomCommand());
+        Objects.requireNonNull(getCommand("hug")).setExecutor(new HugCommand());
+        Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
+        Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
+        Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
+        Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
+        Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
+        Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
+        Objects.requireNonNull(getCommand("rawsay")).setExecutor(new RawSayCommand());
+        Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
+        Objects.requireNonNull(getCommand("satisfyall")).setExecutor(new SatisfyAllCommand());
+        Objects.requireNonNull(getCommand("say")).setExecutor(new SayCommand());
+        Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
+        Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
+        Objects.requireNonNull(getCommand("smite")).setExecutor(new SmiteCommand());
+        Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
     }
 
     public static class BuildProperties

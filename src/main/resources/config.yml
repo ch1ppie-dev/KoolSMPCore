@@ -1,3 +1,10 @@
+#
+# KoolSMPCore v2.0 Configuration File
+#
+
+server:
+  motd: KoolFreedom SMP (Native 1.21.1)
+
 # Toggles the announcer
 enable-announcer: true
 

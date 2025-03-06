@@ -4,14 +4,21 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.log.FLog;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
-
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FUtil
 {
+    public static Map<String, ChatColor> CHAT_COLOR_NAMES;
+    public static List<ChatColor> CHAT_COLOR_POOL;
+    private static Random RANDOM;
+
     public static void cancel(BukkitTask task)
     {
         if (task == null)
@@ -64,20 +71,26 @@ public class FUtil
         FUtil.bcastMsg(message, null, true);
     }
 
-    @SuppressWarnings("deprecation")
-    public static String colorize(String string)
+    public static String colorize(final String string)
     {
-        if (string != null)
-        {
-            Matcher matcher = Pattern.compile("&#[a-f0-9A-F]{6}").matcher(string);
-            while (matcher.find())
-            {
-                String code = matcher.group().replace("&", "");
-                string = string.replace("&" + code, net.md_5.bungee.api.ChatColor.of(code) + "");
-            }
+        return ChatColor.translateAlternateColorCodes('&', string);
+    }
 
-            string = ChatColor.translateAlternateColorCodes('&', string);
-        }
-        return string;
+    public static ChatColor randomChatColor()
+    {
+        return CHAT_COLOR_POOL.get(RANDOM.nextInt(CHAT_COLOR_POOL.size()));
+    }
+
+    public static void adminChat(CommandSender sender, String message)
+    {
+        Player player = Bukkit.getPlayer(sender.getName());
+        String rank = KoolSMPCore.main.perms.getDisplay(player);
+        String format = ChatColor.DARK_GRAY + "# " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
+                + ChatColor.DARK_GRAY + "] \u00BB " + ChatColor.GOLD + message;
+        Bukkit.getLogger().info(format);
+        Bukkit.getOnlinePlayers()
+                .stream()
+                .filter((players) -> (players.hasPermission("kf.admin")))
+                .forEachOrdered((players) -> players.sendMessage(format));
     }
 }
