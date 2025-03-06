@@ -1,19 +1,17 @@
 package eu.koolfreedom.command;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.util.FUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.entity.Player;
 
-
-public class RawSayCommand implements CommandExecutor
+public class RawSayCommand extends FreedomCommand
 {
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
+    @Override
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
     {
-        if (args.length == 0)
+        if (args.length > 0)
         {
             FUtil.bcastMsg(FUtil.colorize(StringUtils.join(args, " ")));
         }
