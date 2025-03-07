@@ -7,7 +7,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
-import com.comphenix.protocol.*;
 import net.kyori.adventure.text.*;
 import eu.koolfreedom.command.*;
 import eu.koolfreedom.listener.ExploitListener;
@@ -61,7 +60,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
     public void onLoad()
     {
-        main = this;
         server = main.getServer();
         KoolSMPCore.pluginName = main.getDescription().getName();
         KoolSMPCore.pluginVersion = main.getDescription().getVersion();
@@ -80,6 +78,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         server.getPluginManager().registerEvents(this, this);
         loadCommands();
         perms = new Permissions();
+        main = this;
 
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
@@ -128,7 +127,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         public String version;
         public String number;
         public String date;
-        public String head;
 
         void load(KoolSMPCore plugin)
         {
@@ -146,7 +144,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 version = props.getProperty("buildVersion", pluginVersion);
                 number = props.getProperty("buildNumber", "1");
                 date = props.getProperty("buildDate", "unknown");
-                head = props.getProperty("buildHead", "unknown").replace("${git.commit.id.abbrev}", "unknown");
             }
             catch (Exception ex)
             {

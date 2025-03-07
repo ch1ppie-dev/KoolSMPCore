@@ -2,19 +2,21 @@ package eu.koolfreedom.api;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import eu.koolfreedom.util.KoolSMPCoreBase;
 import net.luckperms.api.model.user.UserManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("deprecation")
 public class Permissions extends KoolSMPCoreBase
 {
     public String getGroup(Player player)
     {
         UUID uuid = player.getUniqueId();
         UserManager userManager = api.getUserManager();
-        return userManager.getUser(uuid).getPrimaryGroup();
+        return Objects.requireNonNull(userManager.getUser(uuid)).getPrimaryGroup();
     }
 
     public Group getPlayerGroup(Player player)
