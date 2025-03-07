@@ -10,8 +10,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FUtil
 {
@@ -85,8 +83,8 @@ public class FUtil
     {
         Player player = Bukkit.getPlayer(sender.getName());
         String rank = KoolSMPCore.main.perms.getDisplay(player);
-        String format = ChatColor.DARK_GRAY + "# " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
-                + ChatColor.DARK_GRAY + "] \u00BB " + ChatColor.GOLD + message;
+        String format = ChatColor.DARK_GRAY + "[ " + ChatColor.AQUA + " AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
+                + ChatColor.DARK_GRAY + "] " + ChatColor.GOLD + message;
         Bukkit.getLogger().info(format);
         Bukkit.getOnlinePlayers()
                 .stream()

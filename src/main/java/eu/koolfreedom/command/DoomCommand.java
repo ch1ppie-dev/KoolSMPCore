@@ -23,7 +23,7 @@ public class DoomCommand implements CommandExecutor {
             sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
-        if (!sender.hasPermission("kf.senior")) {
+        if (!sender.hasPermission("kf.admin")) {
             sender.sendMessage(Messages.MSG_NO_PERMS);
             return false;
         }

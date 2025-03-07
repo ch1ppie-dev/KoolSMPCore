@@ -2,6 +2,7 @@ package eu.koolfreedom.command;
 
 import org.bukkit.ChatColor;
 
+@SuppressWarnings("deprecation")
 public class Messages
 {
     static final String MSG_NO_PERMS = ChatColor.RED + "I'm sorry but you do not have permission to perform this command. Please contact the server administrator if you believe that this is in error.";
@@ -13,5 +14,5 @@ public class Messages
     static final String ONLY_IN_GAME = ChatColor.RED + "Only players can use this command";
     static final String MSG_CRASHED = ChatColor.RED + "You have been crashed!!!";
     static final String INVALID_REASON = ChatColor.RED + "You did not provide a valid reason.";
-    public static String MISSING_ARGS = ChatColor.RED + "Please provide a message.";
+    static final String MISSING_ARGS = ChatColor.RED + "Please provide a message.";
 }

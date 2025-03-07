@@ -1,5 +1,6 @@
 package eu.koolfreedom;
 
+import eu.koolfreedom.api.EssentialsXBridge;
 import eu.koolfreedom.api.Permissions;
 import eu.koolfreedom.listener.ServerListener;
 import eu.koolfreedom.log.FLog;
@@ -33,6 +34,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     public ServerListener sl;
     public Permissions perms;
+    public EssentialsXBridge esb;
     public ExploitListener el;
 
     public Component mmDeserialize(String message)
@@ -78,6 +80,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         server.getPluginManager().registerEvents(this, this);
         loadCommands();
         perms = new Permissions();
+        esb = new EssentialsXBridge();
         main = this;
 
         getConfig().options().copyDefaults(true);
