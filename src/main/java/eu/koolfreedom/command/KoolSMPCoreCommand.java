@@ -20,7 +20,7 @@ public class KoolSMPCoreCommand extends KoolSMPCoreBase implements CommandExecut
         if (args.length == 0)
         {
             KoolSMPCore.BuildProperties build = KoolSMPCore.build;
-            sender.sendMessage(main.mmDeserialize("<gold>KoolSMPCore - A clusterfuck of a plugin."));
+            sender.sendMessage(main.mmDeserialize("<gold>KoolSMPCore - A multi-purpose SMP Core plugin."));
             sender.sendMessage(main.mmDeserialize("<gold>Version <blue>" + String.format("%s.%s", build.version, build.number)));
             sender.sendMessage(main.mmDeserialize("<gold>Compiled on <blue>" + String.format("%s" + " <gold>by <blue>" + "%s", build.date, build.author)));
             sender.sendMessage(main.mmDeserialize("<green>Visit <aqua>https://github.com/KoolFreedom/KoolSMPCore <green>for more information."));

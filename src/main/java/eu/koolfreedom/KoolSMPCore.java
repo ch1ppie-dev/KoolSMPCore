@@ -78,6 +78,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Compiled " + build.date + " by " + build.author);
         server.getPluginManager().registerEvents(this, this);
         loadCommands();
+        loadListeners();
         perms = new Permissions();
 
         getConfig().options().copyDefaults(true);
