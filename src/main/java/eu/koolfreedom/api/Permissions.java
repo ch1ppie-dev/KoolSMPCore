@@ -57,7 +57,7 @@ public class Permissions extends KoolSMPCoreBase
         SENIOR("Senior", ChatColor.GOLD),
         DEVELOPER("Developer", ChatColor.DARK_PURPLE),
         MANAGER("Manager", ChatColor.LIGHT_PURPLE),
-        BUILDER("Builder", ChatColor.DARK_AQUA),
+        CO_OWNER("Co-Owner", ChatColor.RED),
         EXECUTIVE("Executive", ChatColor.DARK_RED),
         OWNER("Owner", ChatColor.RED);
 
