@@ -8,15 +8,24 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class FUtil
 {
     public static Map<String, ChatColor> CHAT_COLOR_NAMES;
     public static List<ChatColor> CHAT_COLOR_POOL;
     private static Random RANDOM;
+
+    static
+    {
+        RANDOM = new Random();
+        CHAT_COLOR_NAMES = new HashMap<>();
+        CHAT_COLOR_POOL = Arrays.asList(ChatColor.DARK_RED, ChatColor.RED, ChatColor.GOLD, ChatColor.YELLOW, ChatColor.GREEN, ChatColor.DARK_GREEN, ChatColor.AQUA, ChatColor.DARK_AQUA, ChatColor.BLUE, ChatColor.DARK_BLUE, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE);
+        for (final ChatColor chatColor : CHAT_COLOR_POOL)
+        {
+            CHAT_COLOR_NAMES.put(chatColor.name().toLowerCase().replace("_", ""), chatColor);
+        }
+    }
 
     public static void cancel(BukkitTask task)
     {
