@@ -93,7 +93,7 @@ public class FUtil
     {
         Player player = Bukkit.getPlayer(sender.getName());
         String rank = KoolSMPCore.main.perms.getDisplay(player);
-        String format = ChatColor.DARK_GRAY + "[ " + ChatColor.AQUA + " AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
+        String format = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
                 + ChatColor.DARK_GRAY + "] " + ChatColor.GOLD + message;
         Bukkit.getLogger().info(format);
         Bukkit.getOnlinePlayers()
