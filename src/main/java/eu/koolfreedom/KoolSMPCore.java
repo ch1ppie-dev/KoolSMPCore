@@ -1,7 +1,6 @@
 package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
-import eu.koolfreedom.listener.ServerListener;
 import eu.koolfreedom.log.FLog;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPerms;
@@ -9,7 +8,7 @@ import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import net.kyori.adventure.text.*;
 import eu.koolfreedom.command.*;
-import eu.koolfreedom.listener.ExploitListener;
+import eu.koolfreedom.listener.*;
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;
 import java.io.InputStream;
@@ -34,6 +33,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public ServerListener sl;
     public Permissions perms;
     public ExploitListener el;
+    public TabListener tl;
+    public LoginListener lol; // lol
 
     public Component mmDeserialize(String message)
     {
@@ -96,6 +97,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     {
         sl = new ServerListener(this);
         el = new ExploitListener(this);
+        lol = new LoginListener(this);
+        tl = new TabListener(this);
     }
 
     public void loadCommands()
