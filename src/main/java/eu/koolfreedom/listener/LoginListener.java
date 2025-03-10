@@ -26,6 +26,11 @@ public class LoginListener extends KoolSMPCoreBase implements Listener
         {
             player.sendTitle(ChatColor.RED + "Welcome to " + ChatColor.GREEN + " KoolFreedom SMP", ChatColor.WHITE + "Remember to read /rules", 20, 100, 60);
         }
+        // Best not to take chances messing things up so I did this - 0x7694C9
+        else
+        {
+            player.sendTitle(ChatColor.RED + "Welcome to " + ChatColor.GREEN + " KoolFreedom SMP", ChatColor.WHITE + "Remember to read /rules", 20, 100, 60);
+        }
 
         String header = main.getConfig().getString("server.tablist_header");
         String footer = main.getConfig().getString("server.tablist_footer");
