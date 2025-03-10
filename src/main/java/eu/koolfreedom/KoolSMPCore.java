@@ -20,6 +20,7 @@ import java.util.*;
 
 import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public class KoolSMPCore extends JavaPlugin implements Listener {
@@ -158,7 +159,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         return false;
     }
 
