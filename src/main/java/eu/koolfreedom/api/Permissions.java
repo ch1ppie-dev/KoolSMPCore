@@ -53,6 +53,7 @@ public class Permissions extends KoolSMPCoreBase
     public enum Group
     {
         DEFAULT("Member", ChatColor.GRAY),
+        MOD("Moderator", ChatColor.GREEN),
         ADMIN("Admin", ChatColor.AQUA),
         SENIOR("Senior", ChatColor.GOLD),
         DEVELOPER("Developer", ChatColor.DARK_PURPLE),
