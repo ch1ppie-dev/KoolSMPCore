@@ -4,7 +4,6 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.util.FUtil;
 import eu.koolfreedom.util.KoolSMPCoreBase;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +21,6 @@ public class LoginListener extends KoolSMPCoreBase implements Listener
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         Player player = event.getPlayer();
-        player.sendTitle(ChatColor.RED + "Welcome to " + ChatColor.GREEN + " KoolFreedom SMP", ChatColor.WHITE + "Remember to read /rules", 20, 100, 60);
 
         String header = main.getConfig().getString("server.tablist_header");
         String footer = main.getConfig().getString("server.tablist_footer");
