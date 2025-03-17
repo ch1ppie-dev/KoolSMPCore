@@ -37,12 +37,12 @@ public class DoomCommand implements CommandExecutor {
         // Remove from whitelist
         target.setWhitelisted(false);
 
-        // De-op
+        // De-op (if already op'd)
         target.setOp(false);
 
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
 
-        // Set gamemode to survival
+        // Set gamemode to survival (if not in survival)
         target.setGameMode(GameMode.SURVIVAL);
 
         // Ignite player

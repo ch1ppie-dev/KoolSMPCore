@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -24,22 +23,6 @@ public class FUtil
         for (final ChatColor chatColor : CHAT_COLOR_POOL)
         {
             CHAT_COLOR_NAMES.put(chatColor.name().toLowerCase().replace("_", ""), chatColor);
-        }
-    }
-
-    public static void cancel(BukkitTask task)
-    {
-        if (task == null)
-        {
-            return;
-        }
-
-        try
-        {
-            task.cancel();
-        }
-        catch (Exception ignored)
-        {
         }
     }
 

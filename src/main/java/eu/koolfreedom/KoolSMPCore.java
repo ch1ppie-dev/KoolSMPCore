@@ -42,11 +42,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         return MINI_MESSAGE.deserialize(message).clickEvent(null).hoverEvent(null);
     }
 
-    public static KoolSMPCore getPlugin()
-    {
-        return main;
-    }
-
     public static LuckPerms getLuckPermsAPI()
     {
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
