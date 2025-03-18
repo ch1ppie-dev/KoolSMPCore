@@ -29,16 +29,16 @@ public class CommandSpyCommand implements CommandExecutor, Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (!player.hasPermission("kf.admin")) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&cKoolSurvival&8] &4Fuck you bud you can't do this."));
+            player.sendMessage(Messages.MSG_NO_PERMS);
             return true;
         }
 
         if (commandSpyEnabled.contains(playerUUID)) {
             commandSpyEnabled.remove(playerUUID);
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b&lCommand Spy &4&ldiabled!"));
+            player.sendMessage(Messages.CMDSPY_DISABLED);
         } else {
             commandSpyEnabled.add(playerUUID);
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b&lCommand Spy &a&lenabled!"));
+            player.sendMessage(Messages.CMDSPY_ENABLED);
         }
         return true;
     }

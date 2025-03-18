@@ -15,4 +15,6 @@ public class Messages
     static final String MSG_CRASHED = ChatColor.RED + "You have been crashed!!!";
     static final String INVALID_REASON = ChatColor.RED + "You did not provide a valid reason.";
     static final String MISSING_ARGS = ChatColor.RED + "Please provide a message.";
+    static final String CMDSPY_ENABLED = ChatColor.GREEN + "CommandSpy has been enabled";
+    static final String CMDSPY_DISABLED = ChatColor.RED + "CommandSpy has been disabled";
 }
