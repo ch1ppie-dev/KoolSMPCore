@@ -15,13 +15,15 @@ commands:
     aliases: [cc]
     permission: kf.admin
     description: Clears the chat
+  commandspy:
+    aliases: [cmdspy, cspy]
+    description: Spy on another player's commands.
   crash:
     permission: kf.exec
     description: Crash a person's client
   cry:
     description: womp womp
   doom:
-    permission: kf.senior
     description: Swing the Russian Hammer
   hug:
     descriptions: Hug a player
@@ -34,7 +36,6 @@ commands:
     permission: kf.admin
     description: Displays information about potential lag sources
   obliterate:
-    permission: kf.senior
     description: Unleash hell upon a player
   pat:
     description: pat pat
