@@ -59,6 +59,11 @@ public class ObliterateCommand implements CommandExecutor {
         // Explosions
         target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
+        // crash
+        for (int i = 0; i < 3; i++) {
+            Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as \"" + target.getName() + "\" at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"), 30);
+        }
+
         new BukkitRunnable() {
             @Override
             public void run()
@@ -81,11 +86,6 @@ public class ObliterateCommand implements CommandExecutor {
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
-
-                // crash
-                for (int i = 0; i < 3; i++) {
-                    Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as \"" + target.getName() + "\" at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"), 30);
-                }
 
                 // execute ban command
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &eYou've met with a terrible fate haven't you? " + reason);
