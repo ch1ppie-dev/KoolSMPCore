@@ -11,7 +11,7 @@ public class AdminChatCommand implements CommandExecutor
 {
     public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
     {
-        if (!sender.hasPermission("kf.admin"))
+        if (!sender.hasPermission("kf.adminchat"))
         {
             sender.sendMessage(Messages.MSG_NO_PERMS);
             return true;
