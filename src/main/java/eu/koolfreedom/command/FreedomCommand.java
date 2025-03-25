@@ -1,6 +1,5 @@
 package eu.koolfreedom.command;
 
-import com.earth2me.essentials.Essentials;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public abstract class FreedomCommand implements CommandExecutor
 {
     private static final Map<String, FreedomCommand> commands = new HashMap<>();

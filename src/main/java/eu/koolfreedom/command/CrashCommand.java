@@ -6,11 +6,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public class CrashCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         // Check if the command sender has permission
         if (!sender.hasPermission("kf.exec")) {
             sender.sendMessage(Messages.MSG_NO_PERMS);

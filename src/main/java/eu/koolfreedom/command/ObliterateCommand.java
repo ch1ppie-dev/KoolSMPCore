@@ -88,7 +88,7 @@ public class ObliterateCommand implements CommandExecutor {
                 }
 
                 // execute ban command
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &4&lGet fucked " + reason + " | PERMANENT BAN | DO NOT UNBAN");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &eYou've met with a terrible fate haven't you? " + reason);
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;

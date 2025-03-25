@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
+@SuppressWarnings("deprecation")
 public class FUtil
 {
     public static Map<String, ChatColor> CHAT_COLOR_NAMES;
