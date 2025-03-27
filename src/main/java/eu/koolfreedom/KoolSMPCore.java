@@ -2,6 +2,7 @@ package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
 import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.punishment.PunishmentManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
@@ -35,6 +36,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public Permissions perms;
     public ExploitListener el;
     public TabListener tl;
+    public PunishmentManager punishmentManager;
     public LoginListener lol; // lol
 
     public Component mmDeserialize(String message)
@@ -75,6 +77,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Compiled " + build.date + " by " + build.author);
         server.getPluginManager().registerEvents(this, this);
         loadCommands();
+        punishmentManager = new PunishmentManager(this);
+        getServer().getPluginManager().registerEvents(new ChatListener(punishmentManager), this);
         loadListeners();
         perms = new Permissions();
 
@@ -109,7 +113,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
         Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
         Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
-        Objects.requireNonNull(getCommand("mute")).setExecutor(new MuteCommand());
+        Objects.requireNonNull(getCommand("mute")).setExecutor(new MuteCommand(punishmentManager));
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
         Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
         Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());

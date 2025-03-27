@@ -1,0 +1,26 @@
+#
+# KoolSMPCore v3.0 Punishments File
+#
+# All any "expiration" time uses the Unix timestamp, anything else will not work.
+#
+#
+
+punishments:
+  "c5b2bbd4-efc6-4d7b-9e2b-3d6bf82b71b6":
+    type: "BAN"
+    reason: "Griefing"
+    expiration: -1
+  "a3e67f89-1e23-4c3b-b034-6c7a91f23a1e":
+    type: "MUTE"
+    reason: "Spamming chat"
+    expiration: 1709473200  # Unix timestamp
+history:
+  "c5b2bbd4-efc6-4d7b-9e2b-3d6bf82b71b6":
+    - type: "BAN"
+      reason: "Griefing"
+      issued_by: "Admin123"
+      date: "2024-02-24 15:30:00"
+    - type: "MUTE"
+      reason: "Spamming"
+      issued_by: "Mod456"
+      date: "2024-02-20 12:10:00"
