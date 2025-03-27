@@ -35,6 +35,8 @@ commands:
   lagsource:
     permission: kf.admin
     description: Displays information about potential lag sources
+  mute:
+    description: Mutes a player
   obliterate:
     description: Unleash hell upon a player
   pat:
