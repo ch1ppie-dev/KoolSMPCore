@@ -39,7 +39,7 @@ public class MuteCommand implements CommandExecutor
             return true;
         }
 
-        String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
+        String reason = args.length > 1 ? "(" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
         PunishmentListener.addMute(player);
 
         FUtil.adminAction(sender.getName(), "Muting " + player.getName() + " | Reason: " + reason, true);

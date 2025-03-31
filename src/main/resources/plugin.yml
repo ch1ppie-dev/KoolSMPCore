@@ -63,6 +63,8 @@ commands:
     description: Smite that motherfucker
   spectate:
     description: Suspicious user? Spectate them
+  unmute:
+    description: Unmute someone
 permissions:
   kf.admin:
     default: op

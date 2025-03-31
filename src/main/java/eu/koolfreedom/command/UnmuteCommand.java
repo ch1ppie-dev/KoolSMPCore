@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class UnmuteCommand implements CommandExecutor
 {
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
     {
-        if (args.length < 2)
+        if (args.length == 0)
         {
             sender.sendMessage(ChatColor.GRAY + "Usage: /<command> [player]");
             return true;
@@ -30,6 +30,7 @@ public class UnmuteCommand implements CommandExecutor
         if (player == null)
         {
             sender.sendMessage(Messages.PLAYER_NOT_FOUND);
+            return true;
         }
 
         if (!PunishmentListener.isMuted(player))
