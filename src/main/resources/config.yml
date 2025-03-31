@@ -6,6 +6,7 @@ server:
   motd: KoolFreedom SMP (Native 1.21.1)
   tablist_header: ' \n  &dWelcome to &6KoolFreedom SMP&d!  \n '
   tablist_footer: ' \n  &dJoin our &5/discord \n  '
+  website_or_forum: 'Put your own forum/website here.'
 
 # Toggles the announcer
 enable-announcer: true

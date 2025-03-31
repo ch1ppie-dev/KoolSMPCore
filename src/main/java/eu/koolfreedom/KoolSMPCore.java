@@ -1,8 +1,8 @@
 package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
+import eu.koolfreedom.config.Config;
 import eu.koolfreedom.log.FLog;
-import eu.koolfreedom.punishment.PunishmentManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
@@ -32,12 +32,17 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static String pluginName;
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    public Config config;
     public ServerListener sl;
     public Permissions perms;
     public ExploitListener el;
     public TabListener tl;
-    public PunishmentManager punishmentManager;
     public LoginListener lol; // lol
+
+    public static KoolSMPCore getPlugin()
+    {
+        return main;
+    }
 
     public Component mmDeserialize(String message)
     {
@@ -71,26 +76,26 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     }
 
     @Override
-    public void onEnable() {
+    public void onEnable()
+    {
         FLog.info("Created by gamingto12 and 0x7694C9");
         FLog.info("Version " + build.version);
         FLog.info("Compiled " + build.date + " by " + build.author);
         server.getPluginManager().registerEvents(this, this);
         loadCommands();
-        punishmentManager = new PunishmentManager(this);
-        getServer().getPluginManager().registerEvents(new ChatListener(punishmentManager), this);
         loadListeners();
         perms = new Permissions();
 
-        getConfig().options().copyDefaults(true);
-        saveDefaultConfig();
+        config = new Config("config.yml");
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
     }
 
     @Override
-    public void onDisable() {
+    public void onDisable()
+    {
         FLog.info("KoolSMPCore has been disabled");
+        config.save();
     }
 
     public void loadListeners()
@@ -98,6 +103,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         sl = new ServerListener(this);
         el = new ExploitListener(this);
         lol = new LoginListener(this);
+        this.getServer().getPluginManager().registerEvents(new PunishmentListener(), this);
         tl = new TabListener(this);
     }
 
@@ -113,7 +119,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
         Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
         Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
-        Objects.requireNonNull(getCommand("mute")).setExecutor(new MuteCommand(punishmentManager));
+        Objects.requireNonNull(getCommand("mute")).setExecutor(new MuteCommand());
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
         Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
         Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
@@ -125,6 +131,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
         Objects.requireNonNull(getCommand("smite")).setExecutor(new SmiteCommand());
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
+        Objects.requireNonNull(getCommand("unmute")).setExecutor(new UnmuteCommand());
     }
 
     public static class BuildProperties
