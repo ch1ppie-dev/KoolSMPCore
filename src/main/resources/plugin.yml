@@ -3,7 +3,7 @@ main: eu.koolfreedom.KoolSMPCore
 version: 2.2
 api-version: 1.20
 description: Core plugin for the KoolFreedom SMP
-depend: [ ProtocolLib, WorldGuard, LuckPerms ]
+depend: [ ProtocolLib, LuckPerms ]
 softdepend: [ Essentials ]
 authors: [gamingto12, 0x7694C9]
 commands:
