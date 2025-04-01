@@ -8,9 +8,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class UnbanCommand implements CommandExecutor
+public class UnbanIPCommand implements CommandExecutor
 {
     @Override
     @SuppressWarnings("deprecation")
@@ -27,6 +28,14 @@ public class UnbanCommand implements CommandExecutor
             return true;
         }
 
+        Player target = Bukkit.getPlayer(args[0]);
+
+        String ip = target.getAddress().getAddress().getHostAddress(); // Get the player's IP
+        if (ip == null) {
+            sender.sendMessage(ChatColor.RED + "Could not retrieve player's IP address.");
+            return true;
+        }
+
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
 
         if (!player.isBanned())
@@ -35,8 +44,10 @@ public class UnbanCommand implements CommandExecutor
             return true;
         }
 
-        Bukkit.getBanList(BanList.Type.NAME).pardon(player.getName());
-        FUtil.adminAction(sender.getName(), "Unbanning " + player.getName(), true);
+
+        Bukkit.getBanList(BanList.Type.IP).pardon(player.getName());
+        FUtil.adminAction(sender.getName(), "Unbanning an IP address", true);
+        sender.sendMessage(ChatColor.GRAY + "IP Address " + ip + " has been unbanned");
         return true;
     }
 }
