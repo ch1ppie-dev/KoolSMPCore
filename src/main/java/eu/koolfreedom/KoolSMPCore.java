@@ -86,7 +86,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         loadListeners();
         perms = new Permissions();
 
-        Objects.requireNonNull(config = new Config("config.yml"));
+        config = new Config("config.yml");
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
     }
