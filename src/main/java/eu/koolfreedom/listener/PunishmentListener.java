@@ -15,9 +15,11 @@ import eu.koolfreedom.config.ConfigEntry;
 import java.util.List;
 import java.util.ArrayList;
 
+@SuppressWarnings("deprecation")
 public class PunishmentListener implements Listener
 {
     // Ban
+    @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event)
     {
         if (Bukkit.getBanList(BanList.Type.NAME).isBanned(event.getPlayer().getName()))

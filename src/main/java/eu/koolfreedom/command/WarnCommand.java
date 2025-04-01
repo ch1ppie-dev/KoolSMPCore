@@ -1,0 +1,48 @@
+package eu.koolfreedom.command;
+
+import eu.koolfreedom.util.FUtil;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+public class WarnCommand implements CommandExecutor
+{
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args)
+    {
+        if (args.length == 0)
+        {
+            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> (player) [reason]");
+            return true;
+        }
+
+        if (!sender.hasPermission("kf.admin"))
+        {
+            sender.sendMessage(Messages.MSG_NO_PERMS);
+            return true;
+        }
+
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null)
+        {
+            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
+            return true;
+        }
+
+        String reason = Messages.NO_REASON;
+        if (args.length > 1)
+        {
+            reason = StringUtils.join(args, " ", 1, args.length);
+        }
+
+        FUtil.adminAction(sender.getName(), "Warning " + player.getName(), true);
+        player.sendMessage(ChatColor.DARK_RED + "You have been warned for the following reason: " + reason);
+        return true;
+    }
+}

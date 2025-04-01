@@ -11,6 +11,12 @@ commands:
     usage: /<command> <message>
     description: Speak with other staff members
     aliases: [ o, oc, adminchat, ac ]
+  ban:
+    description: Ban someone
+    aliases: [gtfo]
+  banip:
+    description: Ban someone....but their IP
+    aliases: [ipban]
   clearchat:
     aliases: [cc]
     permission: kf.admin
@@ -27,6 +33,8 @@ commands:
     description: Swing the Russian Hammer
   hug:
     descriptions: Hug a player
+  kick:
+    description: Kick someone
   kiss:
     description: For the lovebirds, give em a big ol kiss
   koolsmpcore:
@@ -63,8 +71,12 @@ commands:
     description: Smite that motherfucker
   spectate:
     description: Suspicious user? Spectate them
+  unban:
+    description: Unban someone
   unmute:
     description: Unmute someone
+  warn:
+    description: Warn someone
 permissions:
   kf.admin:
     default: op

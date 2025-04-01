@@ -17,4 +17,5 @@ public class Messages
     static final String MISSING_ARGS = ChatColor.GRAY + "Please provide a message.";
     static final String CMDSPY_ENABLED = ChatColor.GREEN + "CommandSpy has been enabled";
     static final String CMDSPY_DISABLED = ChatColor.RED + "CommandSpy has been disabled";
+    static final String NO_REASON = ChatColor.AQUA + "No reason provided.";
 }

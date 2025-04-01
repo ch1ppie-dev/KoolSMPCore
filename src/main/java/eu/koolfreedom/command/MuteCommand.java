@@ -2,6 +2,7 @@ package eu.koolfreedom.command;
 
 import eu.koolfreedom.listener.PunishmentListener;
 import eu.koolfreedom.util.FUtil;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -39,7 +40,12 @@ public class MuteCommand implements CommandExecutor
             return true;
         }
 
-        String reason = args.length > 1 ? "(" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
+        String reason = Messages.NO_REASON;
+        if (args.length > 1)
+        {
+            reason = StringUtils.join(args, " ", 1, args.length);
+        }
+
         PunishmentListener.addMute(player);
 
         FUtil.adminAction(sender.getName(), "Muting " + player.getName() + " | Reason: " + reason, true);

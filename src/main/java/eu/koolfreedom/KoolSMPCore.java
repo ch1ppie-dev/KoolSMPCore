@@ -110,12 +110,15 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public void loadCommands()
     {
         Objects.requireNonNull(getCommand("adminchat")).setExecutor(new AdminChatCommand());
+        Objects.requireNonNull(getCommand("ban")).setExecutor(new BanCommand());
+        Objects.requireNonNull(getCommand("banip")).setExecutor(new BanIPCommand());
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("commandspy")).setExecutor(new CommandSpyCommand());
         Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
         Objects.requireNonNull(getCommand("cry")).setExecutor(new CryCommand());
         Objects.requireNonNull(getCommand("doom")).setExecutor(new DoomCommand());
         Objects.requireNonNull(getCommand("hug")).setExecutor(new HugCommand());
+        Objects.requireNonNull(getCommand("kick")).setExecutor(new KickCommand());
         Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
         Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
         Objects.requireNonNull(getCommand("lagsource")).setExecutor(new LagSourceCommand());
@@ -131,7 +134,9 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
         Objects.requireNonNull(getCommand("smite")).setExecutor(new SmiteCommand());
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
+        Objects.requireNonNull(getCommand("unban")).setExecutor(new UnbanCommand());
         Objects.requireNonNull(getCommand("unmute")).setExecutor(new UnmuteCommand());
+        Objects.requireNonNull(getCommand("warn")).setExecutor(new WarnCommand());
     }
 
     public static class BuildProperties
