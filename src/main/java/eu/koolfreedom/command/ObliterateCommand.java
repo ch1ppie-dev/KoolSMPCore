@@ -84,13 +84,13 @@ public class ObliterateCommand implements CommandExecutor {
             public void run()
             {
                 // discord message
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Obliterating " + target.getName() + "**");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " has met with a terrible fate**");
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
                 // add ban
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &eYou've met with a terrible fate haven't you? ");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " You've met with a terrible fate haven't you? ");
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;

@@ -1,5 +1,6 @@
 package eu.koolfreedom.command;
 
+import eu.koolfreedom.KoolSMPCore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -59,6 +60,9 @@ public class CrashCommand implements CommandExecutor {
         // Send a particle overload to crash the player's client
         String command = "execute at " + player.getName() + " run particle ash ~ ~ ~ 1 1 1 1 2147483647 force " + player.getName();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        for (int i = 0; i < 3; i++) {
+            Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as \"" + player.getName() + "\" at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"), 30);
+        }
 
         player.sendMessage(Messages.MSG_CRASHED);
     }
