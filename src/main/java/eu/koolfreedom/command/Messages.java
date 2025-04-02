@@ -10,7 +10,7 @@ public class Messages
     static final String FAILED = ChatColor.RED + "The configuration file failed to reload.";
     static final String PLAYER_NOT_FOUND = ChatColor.GRAY + "Could not find the specified player on the server (are they online)";
     static final String CRASHED_ALL = ChatColor.GREEN + "Crashed all players on the server.";
-    static final String CRASH_SELF = ChatColor.RED + "You cannot crash yourself!";
+    static final String CRASH_SELF = ChatColor.DARK_RED + "You cannot crash yourself!";
     static final String ONLY_IN_GAME = ChatColor.RED + "Only players can use this command";
     static final String MSG_CRASHED = ChatColor.DARK_RED + "You have been crashed!!!";
     static final String INVALID_REASON = ChatColor.RED + "You did not provide a valid reason.";

@@ -29,18 +29,18 @@ public class PunishmentListener implements Listener
             String appeal = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();
             {
                 StringBuilder kick = new StringBuilder()
-                        .append(ChatColor.GRAY)
+                        .append(ChatColor.GOLD)
                         .append("You've been banned from this server")
                         .append("\nBanned by: ")
-                        .append(ChatColor.GREEN)
+                        .append(ChatColor.RED)
                         .append(source)
-                        .append(ChatColor.GRAY)
+                        .append(ChatColor.GOLD)
                         .append("\nReason: ")
-                        .append(ChatColor.GREEN)
+                        .append(ChatColor.RED)
                         .append(reason)
-                        .append(ChatColor.GRAY)
+                        .append(ChatColor.GOLD)
                         .append("\nYou may appeal your ban at: ")
-                        .append(ChatColor.GREEN)
+                        .append(ChatColor.RED)
                         .append(appeal);
                 event.disallow(PlayerLoginEvent.Result.KICK_BANNED, kick.toString());
             }
