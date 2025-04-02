@@ -65,6 +65,7 @@ public class BanIPCommand implements CommandExecutor
         Bukkit.getBanList(BanList.Type.IP).addBan(ip, reason, null, sender.getName());
         player.kickPlayer(message.toString());
         FUtil.adminAction(sender.getName(), "IP Banning " + player.getName(), true);
+        sender.sendMessage(ChatColor.GRAY + "IP Address (" + ip + ") has been banned");
         return true;
     }
 }

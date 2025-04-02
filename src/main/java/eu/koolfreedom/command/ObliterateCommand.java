@@ -48,7 +48,6 @@ public class ObliterateCommand implements CommandExecutor {
         // De-op
         target.setOp(false);
 
-        String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
 
         // Set gamemode to survival
         target.setGameMode(GameMode.SURVIVAL);
@@ -81,14 +80,12 @@ public class ObliterateCommand implements CommandExecutor {
             @Override
             public void run()
             {
-                // message
-                FUtil.adminAction(commandSender.getName(), "Perm Banning " + target.getName(), true);
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
-                // execute ban command
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &eYou've met with a terrible fate haven't you? " + reason);
+                // add ban
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &eYou've met with a terrible fate haven't you? ");
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;

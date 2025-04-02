@@ -12,6 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.text.StyledEditorKit;
+
 @SuppressWarnings("deprecation")
 public class BanCommand implements CommandExecutor
 {

@@ -29,9 +29,12 @@ public class DoomCommand implements CommandExecutor {
         }
 
         FUtil.adminAction(sender.getName(), "Swinging the Russian Hammer over " + target.getName(), true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **Swinging the Russian Hammer over " + target.getName() + "**");
         FUtil.bcastMsg(target.getName() + " will be squished flat", ChatColor.RED);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " will be squished flat**");
 
         FUtil.adminAction(sender.getName(), "Removing " + target.getName() + " from the staff list", true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **Removing " + target.getName() + " from the staff list**");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
 
         // Remove from whitelist
@@ -39,8 +42,6 @@ public class DoomCommand implements CommandExecutor {
 
         // De-op (if already op'd)
         target.setOp(false);
-
-        String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
 
         // Set gamemode to survival (if not in survival)
         target.setGameMode(GameMode.SURVIVAL);
@@ -68,14 +69,11 @@ public class DoomCommand implements CommandExecutor {
             @Override
             public void run()
             {
-                // message
-                FUtil.adminAction(sender.getName(), "Banning " + target.getName(), true);
+                // Add ban
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "koolsmpcore:ban " + target.getName() + " May your worst nightmare come true, and may you suffer by the hands of your ruler.");
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
-
-                // execute ban command
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " &c&lMay your worst nightmare come true, and may you suffer by the hands of your ruler. " + reason + " -s");
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;

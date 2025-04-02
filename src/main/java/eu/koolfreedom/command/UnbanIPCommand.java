@@ -45,8 +45,9 @@ public class UnbanIPCommand implements CommandExecutor
         }
 
 
-        Bukkit.getBanList(BanList.Type.IP).pardon(player.getName());
+        Bukkit.getBanList(BanList.Type.IP).pardon(ip);
         FUtil.adminAction(sender.getName(), "Unbanning an IP address", true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unbanning an IP address");
         sender.sendMessage(ChatColor.GRAY + "IP Address " + ip + " has been unbanned");
         return true;
     }
