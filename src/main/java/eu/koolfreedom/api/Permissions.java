@@ -38,7 +38,7 @@ public class Permissions extends KoolSMPCoreBase
     {
         if (!(player instanceof Player))
         {
-            return ChatColor.DARK_PURPLE;
+            return ChatColor.BLUE;
         }
         Group group = getPlayerGroup(player);
         return group.getChatColor();
