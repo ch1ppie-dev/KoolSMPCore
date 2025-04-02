@@ -19,27 +19,30 @@ import java.util.Arrays;
 
 public class ObliterateCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if (args.length == 0) {
-            commandSender.sendMessage(Component.text("Usage: /" + s + " <player> [reason]", NamedTextColor.RED));
+            sender.sendMessage(Component.text("Usage: /" + s + " <player> [reason]", NamedTextColor.RED));
             return true;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            commandSender.sendMessage(Messages.PLAYER_NOT_FOUND);
+            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
 
-        if (!commandSender.hasPermission("kf.senior")) {
-            commandSender.sendMessage(Messages.MSG_NO_PERMS);
+        if (!sender.hasPermission("kf.senior")) {
+            sender.sendMessage(Messages.MSG_NO_PERMS);
             return false;
         }
 
-        FUtil.adminAction(commandSender.getName(), "Unleashing Majora's Wrath over " + target.getName(), true);
+        FUtil.adminAction(sender.getName(), "Unleashing Majora's Wrath upon " + target.getName(), true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unleashing Majora's Wrath upon " + target.getName() + "**");
         FUtil.bcastMsg(target.getName() + " will never see the light of day", ChatColor.RED);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " will never see the light of day**");
 
-        FUtil.adminAction(commandSender.getName(), "Removing " + target.getName() + " from the staff list", true);
+        FUtil.adminAction(sender.getName(), "Removing " + target.getName() + " from the staff list", true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **Removing " + target.getName() + " from the staff list**");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
 
         // Remove from whitelist
@@ -81,7 +84,7 @@ public class ObliterateCommand implements CommandExecutor {
             public void run()
             {
                 // discord message
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + commandSender.getName() + " - Obliterating " + target.getName() + "**");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Obliterating " + target.getName() + "**");
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);

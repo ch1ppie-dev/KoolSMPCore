@@ -42,6 +42,7 @@ public class WarnCommand implements CommandExecutor
         }
 
         FUtil.adminAction(sender.getName(), "Warning " + player.getName(), true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Warning " + player.getName() + "**");
         player.sendMessage(ChatColor.DARK_RED + "You have been warned for the following reason: " + reason);
         return true;
     }

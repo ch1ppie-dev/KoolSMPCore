@@ -49,6 +49,7 @@ public class MuteCommand implements CommandExecutor
         PunishmentListener.addMute(player);
 
         FUtil.adminAction(sender.getName(), "Muting " + player.getName() + " | Reason: " + reason, true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Muting " + player.getName() + "**");
         sender.sendMessage(ChatColor.GRAY + "You have been muted | Reason " + reason);
         return true;
     }

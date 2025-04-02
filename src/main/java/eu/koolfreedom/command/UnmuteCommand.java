@@ -41,6 +41,7 @@ public class UnmuteCommand implements CommandExecutor
 
         PunishmentListener.removeMute(player);
         FUtil.adminAction(sender.getName(), "Unmuting " + player.getName(), true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unuting " + player.getName() + "**");
         return true;
     }
 }

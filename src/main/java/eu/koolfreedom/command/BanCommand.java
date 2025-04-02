@@ -60,6 +60,7 @@ public class BanCommand implements CommandExecutor
         Bukkit.getBanList(BanList.Type.NAME).addBan(player.getName(), reason, null, sender.getName());
         player.kickPlayer(message.toString());
         FUtil.adminAction(sender.getName(), "Banning " + player.getName(), true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Banning " + player.getName() + "**");
         return true;
     }
 }

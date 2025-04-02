@@ -37,6 +37,7 @@ public class UnbanCommand implements CommandExecutor
 
         Bukkit.getBanList(BanList.Type.NAME).pardon(player.getName());
         FUtil.adminAction(sender.getName(), "Unbanning " + player.getName(), true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unbanning " + player.getName() + "**");
         return true;
     }
 }
