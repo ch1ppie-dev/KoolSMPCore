@@ -80,6 +80,8 @@ public class ObliterateCommand implements CommandExecutor {
             @Override
             public void run()
             {
+                // discord message
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + commandSender.getName() + " - Obliterating " + target.getName() + "**");
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
