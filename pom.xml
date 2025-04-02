@@ -6,7 +6,7 @@
 
     <groupId>eu.koolfreedom</groupId>
     <artifactId>KoolSMPCore</artifactId>
-    <version>2.2</version>
+    <version>3.0</version>
     <packaging>jar</packaging>
 
     <properties>

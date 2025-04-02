@@ -19,7 +19,7 @@ public class ServerListener extends KoolSMPCoreBase implements Listener
     @EventHandler
     public void onServerPing(final ServerListPingEvent event)
     {
-        String baseMotd = main.getConfig().getString("server.motd");
+        String baseMotd = main.config.getString("server.motd");
         baseMotd = baseMotd.replace("\\n", "\n");
         baseMotd = FUtil.colorize(baseMotd);
         final StringBuilder motd = new StringBuilder();
