@@ -1,6 +1,7 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.impl.Messages;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,8 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 
 public class ObliterateCommand implements CommandExecutor {

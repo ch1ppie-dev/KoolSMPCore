@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import net.kyori.adventure.text.Component;

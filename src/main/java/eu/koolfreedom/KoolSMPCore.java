@@ -8,7 +8,7 @@ import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import net.kyori.adventure.text.*;
-import eu.koolfreedom.command.*;
+import eu.koolfreedom.command.impl.*;
 import eu.koolfreedom.listener.*;
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;

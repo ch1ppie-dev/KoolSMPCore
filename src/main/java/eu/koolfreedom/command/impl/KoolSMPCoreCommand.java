@@ -1,6 +1,7 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.impl.Messages;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.util.KoolSMPCoreBase;
 import org.bukkit.command.Command;

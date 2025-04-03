@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.listener.PunishmentListener;
 import eu.koolfreedom.util.FUtil;

@@ -1,6 +1,7 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.impl.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

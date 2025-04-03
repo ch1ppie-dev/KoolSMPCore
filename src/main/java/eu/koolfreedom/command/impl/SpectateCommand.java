@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

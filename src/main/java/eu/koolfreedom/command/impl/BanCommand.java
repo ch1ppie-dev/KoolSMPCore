@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FUtil;
@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
-public class BanIPCommand implements CommandExecutor
+public class BanCommand implements CommandExecutor
 {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
@@ -29,12 +29,6 @@ public class BanIPCommand implements CommandExecutor
         Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
             sender.sendMessage(Messages.PLAYER_NOT_FOUND);
-            return true;
-        }
-
-        String ip = player.getAddress().getAddress().getHostAddress(); // Get the player's IP
-        if (ip == null) {
-            sender.sendMessage(ChatColor.RED + "Could not retrieve player's IP address.");
             return true;
         }
 
@@ -60,12 +54,10 @@ public class BanIPCommand implements CommandExecutor
                 .append(ChatColor.RED)
                 .append(appeal);
 
-        // Ban the IP instead of the name
-        Bukkit.getBanList(BanList.Type.IP).addBan(ip, reason, null, sender.getName());
+        Bukkit.getBanList(BanList.Type.NAME).addBan(player.getName(), reason, null, sender.getName());
         player.kickPlayer(message.toString());
-        FUtil.adminAction(sender.getName(), "IP Banning " + player.getName(), true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Banned an IP Address**");
-        sender.sendMessage(ChatColor.GRAY + "IP Address (" + ip + ") has been banned");
+        FUtil.adminAction(sender.getName(), "Banning " + player.getName(), true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Banning " + player.getName() + "**");
         return true;
     }
 }

@@ -1,6 +1,7 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.impl.Messages;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -9,7 +10,6 @@ import org.bukkit.entity.*;
 import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-import java.util.*;
 
 public class DoomCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

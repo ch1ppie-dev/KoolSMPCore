@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
