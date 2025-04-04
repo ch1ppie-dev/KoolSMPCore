@@ -15,14 +15,15 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
 public class BanIPCommand implements CommandExecutor
 {
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length == 0) {
-            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> (player) [reason]");
-            return true;
-        }
-
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args)
+    {
         if (!sender.hasPermission("kf.admin")) {
             sender.sendMessage(Messages.MSG_NO_PERMS);
+            return false;
+        }
+        
+        if (args.length == 0) {
+            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> (player) [reason]");
             return true;
         }
 

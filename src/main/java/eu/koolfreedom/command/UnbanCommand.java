@@ -14,17 +14,18 @@ public class UnbanCommand implements CommandExecutor
 {
     @Override
     @SuppressWarnings("deprecation")
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (args.length == 0)
-        {
-            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> (player)");
-            return false;
-        }
-
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
+    {
         if (!sender.hasPermission("kf.admin"))
         {
             sender.sendMessage(Messages.MSG_NO_PERMS);
             return true;
+        }
+
+        if (args.length == 0)
+        {
+            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> (player)");
+            return false;
         }
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);

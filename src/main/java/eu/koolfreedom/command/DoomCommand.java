@@ -12,7 +12,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class DoomCommand implements CommandExecutor {
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
+    {
+        if (!sender.hasPermission("kf.admin")) {
+            sender.sendMessage(Messages.MSG_NO_PERMS);
+            return false;
+        }
+
         if (args.length == 0) {
             sender.sendMessage(Component.text("Usage: /" + s + " <player> [reason]", NamedTextColor.RED));
             return true;
@@ -22,10 +28,6 @@ public class DoomCommand implements CommandExecutor {
         if (target == null) {
             sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
-        }
-        if (!sender.hasPermission("kf.admin")) {
-            sender.sendMessage(Messages.MSG_NO_PERMS);
-            return false;
         }
 
         FUtil.adminAction(sender.getName(), "Swinging the Russian Hammer over " + target.getName(), true);

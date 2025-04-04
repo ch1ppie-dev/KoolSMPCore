@@ -13,7 +13,14 @@ public class SayCommand implements CommandExecutor
 {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
+    {
+        if(!sender.hasPermission("kf.admin"))
+        {
+            sender.sendMessage(Messages.MSG_NO_PERMS);
+            return true;
+        }
+
         if (args.length == 0)
         {
             return false;

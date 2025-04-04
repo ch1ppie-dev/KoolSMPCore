@@ -16,15 +16,15 @@ public class WarnCommand implements CommandExecutor
     @SuppressWarnings("deprecation")
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args)
     {
-        if (args.length == 0)
-        {
-            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> (player) [reason]");
-            return true;
-        }
-
         if (!sender.hasPermission("kf.admin"))
         {
             sender.sendMessage(Messages.MSG_NO_PERMS);
+            return true;
+        }
+
+        if (args.length == 0)
+        {
+            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> (player) [reason]");
             return true;
         }
 

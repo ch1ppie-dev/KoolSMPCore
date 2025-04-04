@@ -19,7 +19,14 @@ import java.util.Arrays;
 
 public class ObliterateCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
+    {
+        if (!sender.hasPermission("kf.senior"))
+        {
+            sender.sendMessage(Messages.MSG_NO_PERMS);
+            return true;
+        }
+
         if (args.length == 0) {
             sender.sendMessage(Component.text("Usage: /" + s + " <player> [reason]", NamedTextColor.RED));
             return true;
@@ -29,11 +36,6 @@ public class ObliterateCommand implements CommandExecutor {
         if (target == null) {
             sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
-        }
-
-        if (!sender.hasPermission("kf.senior")) {
-            sender.sendMessage(Messages.MSG_NO_PERMS);
-            return false;
         }
 
         FUtil.adminAction(sender.getName(), "Unleashing Majora's Wrath upon " + target.getName(), true);

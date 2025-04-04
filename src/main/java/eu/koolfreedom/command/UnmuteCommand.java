@@ -14,15 +14,15 @@ public class UnmuteCommand implements CommandExecutor
 {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
     {
-        if (args.length == 0)
-        {
-            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> [player]");
-            return true;
-        }
-
         if (!sender.hasPermission("kf.admin"))
         {
             sender.sendMessage(Messages.MSG_NO_PERMS);
+            return true;
+        }
+
+        if (args.length == 0)
+        {
+            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> [player]");
             return true;
         }
 
