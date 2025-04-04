@@ -1,30 +1,22 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.impl.Messages;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.command.*;
+import org.bukkit.entity.*;
+import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-
-
-public class ObliterateCommand implements CommandExecutor {
-    @Override
+public class DoomCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
     {
-        if (!sender.hasPermission("kf.senior"))
-        {
+        if (!sender.hasPermission("kf.admin")) {
             sender.sendMessage(Messages.MSG_NO_PERMS);
-            return true;
+            return false;
         }
 
         if (args.length == 0) {
@@ -38,10 +30,10 @@ public class ObliterateCommand implements CommandExecutor {
             return true;
         }
 
-        FUtil.adminAction(sender.getName(), "Unleashing Majora's Wrath upon " + target.getName(), true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unleashing Majora's Wrath upon " + target.getName() + "**");
-        FUtil.bcastMsg(target.getName() + " will never see the light of day", ChatColor.RED);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " will never see the light of day**");
+        FUtil.adminAction(sender.getName(), "Swinging the Russian Hammer over " + target.getName(), true);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **Swinging the Russian Hammer over " + target.getName() + "**");
+        FUtil.bcastMsg(target.getName() + " will be squished flat", ChatColor.RED);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " will be squished flat**");
 
         FUtil.adminAction(sender.getName(), "Removing " + target.getName() + " from the staff list", true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **Removing " + target.getName() + " from the staff list**");
@@ -50,11 +42,10 @@ public class ObliterateCommand implements CommandExecutor {
         // Remove from whitelist
         target.setWhitelisted(false);
 
-        // De-op
+        // De-op (if already op'd)
         target.setOp(false);
 
-
-        // Set gamemode to survival
+        // Set gamemode to survival (if not in survival)
         target.setGameMode(GameMode.SURVIVAL);
 
         // Ignite player
@@ -62,11 +53,6 @@ public class ObliterateCommand implements CommandExecutor {
 
         // Explosions
         target.getWorld().createExplosion(target.getLocation(), 0F, false);
-
-        // crash
-        for (int i = 0; i < 3; i++) {
-            Bukkit.getScheduler().runTaskLater(KoolSMPCore.main, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as \"" + target.getName() + "\" at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"), 30);
-        }
 
         new BukkitRunnable() {
             @Override
@@ -85,14 +71,11 @@ public class ObliterateCommand implements CommandExecutor {
             @Override
             public void run()
             {
-                // discord message
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " has met with a terrible fate**");
+                // Add ban
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "koolsmpcore:ban " + target.getName() + " May your worst nightmare come true, and may you suffer by the hands of your ruler.");
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
-
-                // add ban
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " You've met with a terrible fate haven't you? ");
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;

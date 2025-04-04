@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.util.FUtil;
 import org.bukkit.BanList;
@@ -10,17 +10,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class UnbanIPCommand implements CommandExecutor {
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args)
-    {
-        if (!sender.hasPermission("kf.admin"))
-        {
-            sender.sendMessage(Messages.MSG_NO_PERMS);
+public class UnbanIPCommand implements CommandExecutor
+{
+    @SuppressWarnings("deprecation")
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 0) {
+            sender.sendMessage(ChatColor.GRAY + "Usage: /" + label + " (player|IP)");
             return true;
         }
 
-        if (args.length == 0) {
-            sender.sendMessage(ChatColor.GRAY + "Usage: /" + label + " (player|IP)");
+        if (!sender.hasPermission("kf.admin")) {
+            sender.sendMessage(Messages.MSG_NO_PERMS);
             return true;
         }
 

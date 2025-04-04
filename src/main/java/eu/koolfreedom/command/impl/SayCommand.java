@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.util.FUtil;
 import org.apache.commons.lang.StringUtils;

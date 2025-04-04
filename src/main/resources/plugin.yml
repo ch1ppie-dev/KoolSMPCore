@@ -47,6 +47,8 @@ commands:
     description: Mutes a player
   obliterate:
     description: Unleash hell upon a player
+  orbit:
+    description: trol
   pat:
     description: pat pat
   poke:

@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
@@ -9,11 +9,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class HugCommand implements CommandExecutor {
+public class SlapCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /hug <player>");
+            sender.sendMessage(ChatColor.RED + "Usage: /slap <player>");
             return true;
         }
 
@@ -23,8 +23,11 @@ public class HugCommand implements CommandExecutor {
             return true;
         }
 
+        // Determine the sender's name (console or player)
         String senderName = sender instanceof Player ? ((Player) sender).getName() : "Console";
-        FUtil.bcastMsg(ChatColor.AQUA + senderName + " has given " + target.getName() + " a warm hug!");
+
+        // Broadcast the slap message
+        FUtil.bcastMsg(ChatColor.AQUA + senderName + " gave " + target.getName() + " a nice slap to the face!");
         return true;
     }
 }

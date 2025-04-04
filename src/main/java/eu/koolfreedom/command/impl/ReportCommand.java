@@ -1,6 +1,7 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.impl.Messages;
 import eu.koolfreedom.config.ConfigEntry;
 import java.util.ArrayList;
 import net.kyori.adventure.text.Component;

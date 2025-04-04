@@ -1,4 +1,4 @@
-package eu.koolfreedom.command;
+package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FUtil;
