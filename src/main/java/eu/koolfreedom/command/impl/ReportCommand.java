@@ -3,7 +3,12 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.impl.Messages;
 import eu.koolfreedom.config.ConfigEntry;
+
+import java.time.Instant;
 import java.util.ArrayList;
+
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.StringUtils;
@@ -53,9 +58,19 @@ public class ReportCommand implements CommandExecutor {
         player.sendMessage(Component.newline().append(Component.text("Successfully submitted the report to staff.", NamedTextColor.GREEN)).appendNewline());
         if (player.getName().equals(playerArg.getName()))
             player.sendMessage(Component.text("Also, why would you report yourself?", NamedTextColor.RED));
-        String channelId = ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString();
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast #" + channelId + " ```Received report from " + player
-                .getName() + " reporting " + playerArg.getName() + " for " + reason + "```");
+        TextChannel channel = KoolSMPCore.jda.getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
+        if (channel != null) {
+            EmbedBuilder embed = new EmbedBuilder()
+                    .setTitle("New Player Report")
+                    .setColor(0xff5555)
+                    .addField("Reporter", player.getName(), false)
+                    .addField("Reported Player", playerArg.getName(), false)
+                    .addField("Reason", reason, false)
+                    .setFooter("From KoolSMP", null)
+                    .setTimestamp(Instant.now());
+
+            channel.sendMessageEmbeds(embed.build()).queue();
+        }
         for (Player players : Bukkit.getOnlinePlayers()) {
             if (!players.hasPermission("kf.admin"))
                 continue;

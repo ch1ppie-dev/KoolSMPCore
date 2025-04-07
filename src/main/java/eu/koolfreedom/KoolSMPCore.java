@@ -2,7 +2,11 @@ package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
 import eu.koolfreedom.config.Config;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.log.FLog;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
@@ -38,6 +42,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public ExploitListener el;
     public TabListener tl;
     public LoginListener lol; // lol
+    public static JDA jda;
 
     public static KoolSMPCore getPlugin()
     {
@@ -85,6 +90,15 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         loadCommands();
         loadListeners();
         perms = new Permissions();
+        try {
+            jda = JDABuilder.createDefault(ConfigEntry.DISCORD_BOT_TOKEN.getString())
+                    .setEnabledIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
+                    .build()
+                    .awaitReady();
+        } catch (Exception e) {
+            e.printStackTrace();
+            getLogger().severe("Failed to initialize Discord bot.");
+        }
 
         config = new Config("config.yml");
 
@@ -95,6 +109,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public void onDisable()
     {
         FLog.info("KoolSMPCore has been disabled");
+        if (jda != null) jda.shutdownNow();
         config.save();
     }
 

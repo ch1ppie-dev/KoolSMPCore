@@ -14,6 +14,8 @@ import eu.koolfreedom.KoolSMPCore;
 public enum ConfigEntry
 {
     SERVER_WEBSITE_OR_FORUM("server.website_or_forum"),
+    DISCORD_BOT_TOKEN("discord.bot_token"),
+    DISCORD_STAFF_ACTION_CHANNEL_ID("discord.staff_action_channel_id"),
     DISCORD_REPORT_CHANNEL_ID("discord.report_channel_id");
 
     private final String path;
@@ -23,7 +25,7 @@ public enum ConfigEntry
         this.path = path;
     }
 
-    private static Config config = KoolSMPCore.getPlugin().config;
+    private static final Config config = KoolSMPCore.getPlugin().config;
 
     public String getString()
     {
