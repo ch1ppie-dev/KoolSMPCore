@@ -2,11 +2,9 @@ package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
 import eu.koolfreedom.config.Config;
-import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
@@ -90,11 +88,11 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Created by gamingto12 and 0x7694C9");
         FLog.info("Version " + build.version);
         FLog.info("Compiled " + build.date + " by " + build.author);
+        Discord.init();
         server.getPluginManager().registerEvents(this, this);
         loadCommands();
         loadListeners();
         perms = new Permissions();
-        startDiscordBot();
         config.load();
         // don't load default entries
         staffactions.load(false);
@@ -152,19 +150,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("unbanip")).setExecutor(new UnbanIPCommand());
         Objects.requireNonNull(getCommand("unmute")).setExecutor(new UnmuteCommand());
         Objects.requireNonNull(getCommand("warn")).setExecutor(new WarnCommand());
-    }
-
-    private void startDiscordBot() {
-        try {
-            jda = JDABuilder.createDefault(ConfigEntry.DISCORD_BOT_TOKEN.getString())
-                    .setEnabledIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
-                    .build()
-                    .awaitReady();
-            getLogger().info("Discord bot connected successfully.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            getLogger().severe("Failed to initialize Discord bot.");
-        }
     }
 
 

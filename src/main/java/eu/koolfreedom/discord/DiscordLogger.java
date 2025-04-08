@@ -12,7 +12,7 @@ import java.time.Instant;
 public class DiscordLogger {
 
     public static void sendStaffAction(StaffActionType type, String actor, String target, String reason) {
-        TextChannel channel = KoolSMPCore.jda.getTextChannelById(ConfigEntry.DISCORD_STAFF_ACTION_CHANNEL_ID.getString());
+        TextChannel channel = Discord.getJDA().getTextChannelById(ConfigEntry.DISCORD_STAFF_ACTION_CHANNEL_ID.getString());
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Staff Action - " + type.getLabel())
                 .setColor(type.getColor())
@@ -23,7 +23,7 @@ public class DiscordLogger {
 
         channel.sendMessageEmbeds(embed.build()).queue();
 
-        if (KoolSMPCore.jda == null) {
+        if (Discord.getJDA() == null) {
             FLog.warning("[DiscordLogger] Tried to log a staff action, but Discord bot is not initialized.");
             return;
         }

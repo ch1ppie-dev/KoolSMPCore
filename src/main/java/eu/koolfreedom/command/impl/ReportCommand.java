@@ -1,7 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.command.impl.Messages;
+import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.config.ConfigEntry;
 
 import java.time.Instant;
@@ -58,7 +58,7 @@ public class ReportCommand implements CommandExecutor {
         player.sendMessage(Component.newline().append(Component.text("Successfully submitted the report to staff.", NamedTextColor.GREEN)).appendNewline());
         if (player.getName().equals(playerArg.getName()))
             player.sendMessage(Component.text("Also, why would you report yourself?", NamedTextColor.RED));
-        TextChannel channel = KoolSMPCore.jda.getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
+        TextChannel channel = Discord.getJDA().getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
         if (channel != null) {
             EmbedBuilder embed = new EmbedBuilder()
                     .setTitle("New Player Report")
