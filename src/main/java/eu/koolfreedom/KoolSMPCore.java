@@ -78,6 +78,9 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.setPluginLogger(main.getLogger());
         FLog.setServerLogger(getServer().getLogger());
 
+        config = new Config(this, "config.yml");
+        staffactions = new Config(this, "staff-actions.yml");
+
         build.load(main);
     }
 
@@ -91,19 +94,10 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         loadCommands();
         loadListeners();
         perms = new Permissions();
-        try {
-            jda = JDABuilder.createDefault(ConfigEntry.DISCORD_BOT_TOKEN.getString())
-                    .setEnabledIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
-                    .build()
-                    .awaitReady();
-        } catch (Exception e) {
-            e.printStackTrace();
-            getLogger().severe("Failed to initialize Discord bot.");
-        }
-
-        config = new Config(this, "config.yml");
-        staffactions = new Config(this, "staff-actions.yml");
-        saveDefaultConfig();
+        startDiscordBot();
+        config.load();
+        // don't load default entries
+        staffactions.load(false);
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
     }
@@ -114,6 +108,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("KoolSMPCore has been disabled");
         if (jda != null) jda.shutdownNow();
         config.save();
+        staffactions.save();
     }
 
     public void loadListeners()
@@ -158,6 +153,20 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("unmute")).setExecutor(new UnmuteCommand());
         Objects.requireNonNull(getCommand("warn")).setExecutor(new WarnCommand());
     }
+
+    private void startDiscordBot() {
+        try {
+            jda = JDABuilder.createDefault(ConfigEntry.DISCORD_BOT_TOKEN.getString())
+                    .setEnabledIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
+                    .build()
+                    .awaitReady();
+            getLogger().info("Discord bot connected successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            getLogger().severe("Failed to initialize Discord bot.");
+        }
+    }
+
 
     public static class BuildProperties
     {
