@@ -1,7 +1,10 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.discord.DiscordLogger;
+import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
+import eu.koolfreedom.util.StaffActionLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -59,6 +62,9 @@ public class BanCommand implements CommandExecutor
         player.kickPlayer(message.toString());
         FUtil.adminAction(sender.getName(), "Banning " + player.getName(), true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Banning " + player.getName() + "**");
+        // Log the ban
+        DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), player.getName(), reason);
+        StaffActionLogger.log(StaffActionType.BAN, sender.getName(), player.getName(), reason);
         return true;
     }
 }

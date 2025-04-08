@@ -1,5 +1,7 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.discord.DiscordLogger;
+import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,11 +47,16 @@ public class SmiteCommand implements CommandExecutor
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **" + target.getName() + " has been a naughty, naughty child.**");
         FUtil.bcastMsg(ChatColor.RED + "Smitten by: " + ChatColor.YELLOW + sender.getName());
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **Smitten by**: " + sender.getName());
+        // Logging
+        DiscordLogger.sendStaffAction(StaffActionType.SMITE, sender.getName(), target.getName(), "No reason provided");
 
         if (args.length > 1) {
             String reason = String.join(" ", args).substring(args[0].length()).trim();
             FUtil.bcastMsg(ChatColor.RED + "Reason: " + ChatColor.YELLOW + reason);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **Reason**: " + reason);
+
+            // Logging
+            DiscordLogger.sendStaffAction(StaffActionType.SMITE, sender.getName(), target.getName(), reason);
         }
 
         return true;

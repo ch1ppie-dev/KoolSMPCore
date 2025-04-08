@@ -1,6 +1,9 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.discord.DiscordLogger;
+import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
+import eu.koolfreedom.util.StaffActionLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -53,6 +56,8 @@ public class KickCommand implements CommandExecutor
 
         player.kickPlayer(message.toString());
         FUtil.adminAction(sender.getName(), "Kicking " + player.getName(), true);
+        DiscordLogger.sendStaffAction(StaffActionType.KICK, sender.getName(), player.getName(), reason);
+        StaffActionLogger.log(StaffActionType.KICK, sender.getName(), player.getName(), reason);
         return true;
     }
 }

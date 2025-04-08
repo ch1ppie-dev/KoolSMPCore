@@ -8,6 +8,8 @@ public enum StaffActionType {
     KICK("Kick", Color.YELLOW),
     WARN("Warn", Color.MAGENTA),
     UNBAN("Unban", Color.GREEN),
+    ORBIT("Orbit", Color.BLUE),
+    SMITE("Smite", Color.WHITE),
     UNMUTE("Unmute", Color.CYAN);
 
     private final String label;

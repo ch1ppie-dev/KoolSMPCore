@@ -1,7 +1,10 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.discord.DiscordLogger;
+import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
+import eu.koolfreedom.util.StaffActionLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -67,6 +70,8 @@ public class BanIPCommand implements CommandExecutor
         FUtil.adminAction(sender.getName(), "IP Banning " + player.getName(), true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Banned an IP Address**");
         sender.sendMessage(ChatColor.GRAY + "IP Address (" + ip + ") has been banned");
+        DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), player.getName(), reason);
+        StaffActionLogger.log(StaffActionType.BAN, sender.getName(), player.getName(), reason);
         return true;
     }
 }

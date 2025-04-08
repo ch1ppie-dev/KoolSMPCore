@@ -2,7 +2,10 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.impl.Messages;
+import eu.koolfreedom.discord.DiscordLogger;
+import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
+import eu.koolfreedom.util.StaffActionLogger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -91,7 +94,11 @@ public class ObliterateCommand implements CommandExecutor {
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
                 // add ban
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " You've met with a terrible fate haven't you? ");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " You've met with a terrible fate, haven't you? ");
+
+                // log ban
+                DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?");
+                StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?");
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;

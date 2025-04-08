@@ -37,6 +37,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     public Config config;
+    public Config staffactions;
     public ServerListener sl;
     public Permissions perms;
     public ExploitListener el;
@@ -100,7 +101,9 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             getLogger().severe("Failed to initialize Discord bot.");
         }
 
-        config = new Config("config.yml");
+        config = new Config(this, "config.yml");
+        staffactions = new Config(this, "staff-actions.yml");
+        saveDefaultConfig();
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
     }

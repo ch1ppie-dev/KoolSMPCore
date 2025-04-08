@@ -1,5 +1,7 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.discord.DiscordLogger;
+import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -60,6 +62,7 @@ public class OrbitCommand implements CommandExecutor, TabCompleter {
 
         startOrbiting(target, strength);
         FUtil.adminAction(sender.getName(), "Orbiting " + target.getName(), false);
+        DiscordLogger.sendStaffAction(StaffActionType.ORBIT, sender.getName(), target.getName(), null);
         return true;
     }
 

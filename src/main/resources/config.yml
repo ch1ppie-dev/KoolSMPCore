@@ -23,6 +23,8 @@ messages:
   owner:
     - "&c[&6KoolFreedom&c] &6gamingto12&c is the Owner of KoolFreedom."
 
-# This is for the ReportCommand only
+# The "Discord" section does not mean that there is a bridge...maybe in the future if I feel like it - gamingto12
 discord:
-  report_channel_id: "REPORT_CHANNEL_ID"
+  bot_token: ""
+  report_channel_id: ""
+  staff_action_channel_id: ""
