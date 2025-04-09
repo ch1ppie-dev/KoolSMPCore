@@ -88,7 +88,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Created by gamingto12 and 0x7694C9");
         FLog.info("Version " + build.version);
         FLog.info("Compiled " + build.date + " by " + build.author);
-        Discord.init();
         server.getPluginManager().registerEvents(this, this);
         loadCommands();
         loadListeners();
@@ -98,6 +97,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         staffactions.load(false);
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
+
+        Discord.init();
     }
 
     @Override
