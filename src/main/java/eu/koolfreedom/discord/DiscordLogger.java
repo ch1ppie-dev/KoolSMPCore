@@ -16,7 +16,7 @@ public class DiscordLogger {
                 .setColor(type.getColor())
                 .addField("Target", target, true)
                 .addField("By", actor, true)
-                .addField("Reason", reason == null || reason.isBlank() ? "None specified" : reason, false)
+                .addField("Reason", reason == null || reason.isBlank() ? "No reason provided" : reason, false)
                 .setTimestamp(Instant.now());
 
 
