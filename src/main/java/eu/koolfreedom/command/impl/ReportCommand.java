@@ -66,7 +66,7 @@ public class ReportCommand implements CommandExecutor {
                     .addField("Reporter", player.getName(), false)
                     .addField("Reported Player", playerArg.getName(), false)
                     .addField("Reason", reason, false)
-                    .setFooter("From KoolSMP", null)
+                    .setFooter("KoolFreedom Reports", null)
                     .setTimestamp(Instant.now());
 
             channel.sendMessageEmbeds(embed.build()).queue();
