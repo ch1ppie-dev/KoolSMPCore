@@ -104,7 +104,7 @@ public class ObliterateCommand implements CommandExecutor {
             message.append(ChatColor.GOLD)
                     .append("\nReason: ")
                     .append(ChatColor.RED)
-                    .append("You've met with a terrible fate, haven't you, " + target.getName() + "?" + "(" +  reason + ")");
+                    .append("You've met with a terrible fate, haven't you, " + target.getName() + "?" + " (" +  reason + ")");
         }
 
         String appeal = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();
@@ -114,8 +114,8 @@ public class ObliterateCommand implements CommandExecutor {
                 .append(appeal);
 
 
-        // same with doom, what the fuck intellij....
-        String finalReason = reason;
+
+        String finalReason = reason; // same with doom, what the fuck intellij....
         new BukkitRunnable()
         {
             @Override

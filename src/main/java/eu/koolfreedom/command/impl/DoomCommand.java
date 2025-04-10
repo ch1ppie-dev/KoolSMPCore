@@ -83,7 +83,7 @@ public class DoomCommand implements CommandExecutor {
             message.append(ChatColor.GOLD)
                     .append("\nReason: ")
                     .append(ChatColor.RED)
-                    .append("May your worst nightmare come true, and may you suffer by the hands of your ruler, " + target.getName() + "(" + reason + ")");
+                    .append("May your worst nightmare come true, and may you suffer by the hands of your ruler, " + target.getName() + " (" + reason + ")");
         }
 
         String appeal = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();
@@ -93,8 +93,8 @@ public class DoomCommand implements CommandExecutor {
                 .append(appeal);
 
 
-        // i seriously don't know why i had to do this, but i had to, thanks intellij...
-        String finalReason = reason;
+
+        String finalReason = reason; // i seriously don't know why i had to do this, but i had to, thanks intellij...
         new BukkitRunnable()
         {
             @Override
