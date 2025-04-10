@@ -52,11 +52,11 @@ public class UnbanIPCommand implements CommandExecutor
 
             if (ip != null && Bukkit.getBanList(BanList.Type.IP).isBanned(ip)) {
                 Bukkit.getBanList(BanList.Type.IP).pardon(ip);
+                DiscordLogger.sendStaffAction(StaffActionType.UNBAN, sender.getName(), player.getName(), null);
+                StaffActionLogger.log(StaffActionType.UNBAN, sender.getName(), player.getName(), null);
                 sender.sendMessage(ChatColor.GREEN + "Unbanned IP of " + target + ": " + ip);
                 FUtil.adminAction(sender.getName(), "Unbanning " + target + " and IPs", true);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unbanning " + target + " and IPs**");
-                DiscordLogger.sendStaffAction(StaffActionType.UNBAN, sender.getName(), player.getName(), null);
-                StaffActionLogger.log(StaffActionType.UNBAN, sender.getName(), player.getName(), null);
             } else {
                 sender.sendMessage(ChatColor.RED + "That player's IP is not banned.");
             }

@@ -1,12 +1,10 @@
 package eu.koolfreedom.discord;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.log.FLog;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-import java.awt.*;
 import java.time.Instant;
 
 public class DiscordLogger {
@@ -21,13 +19,6 @@ public class DiscordLogger {
                 .addField("Reason", reason == null || reason.isBlank() ? "None specified" : reason, false)
                 .setTimestamp(Instant.now());
 
-        channel.sendMessageEmbeds(embed.build()).queue();
-
-        if (Discord.getJDA() == null) {
-            FLog.warning("[DiscordLogger] Tried to log a staff action, but Discord bot is not initialized.");
-            return;
-        }
-
 
         if (channel != null) {
             channel.sendMessageEmbeds(embed.build()).queue();
@@ -35,5 +26,4 @@ public class DiscordLogger {
             FLog.warning("[DiscordLogger] Staff channel ID is invalid or missing in config.");
         }
     }
-
 }

@@ -5,6 +5,7 @@ import eu.koolfreedom.log.FLog;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 public class Discord {
 
@@ -23,8 +24,9 @@ public class Discord {
         }
 
         try {
-            jda = JDABuilder.createDefault(token)
+            jda = JDABuilder.createLight(token)
                     .setEnabledIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
+                    .setDisabledIntents(GatewayIntent.GUILD_VOICE_STATES)
                     .build()
                     .awaitReady();
             FLog.info("[Discord] Discord bot initialized.");

@@ -41,8 +41,7 @@ public class KickCommand implements CommandExecutor
                 .append("You've been kicked!")
                 .append("\nKicked by: ")
                 .append(ChatColor.RED)
-                .append(sender.getName())
-                .append("\n" + Messages.NO_REASON);
+                .append(sender.getName());
 
         String reason = Messages.NO_REASON;
         if (args.length > 1)

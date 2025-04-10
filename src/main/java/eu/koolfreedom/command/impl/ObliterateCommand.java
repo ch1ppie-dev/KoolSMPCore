@@ -2,12 +2,15 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.impl.Messages;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.discord.DiscordLogger;
 import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
 import eu.koolfreedom.util.StaffActionLogger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.BanList;
 import org.bukkit.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -82,6 +85,37 @@ public class ObliterateCommand implements CommandExecutor {
             }
         }.runTaskLater(KoolSMPCore.main, 2L * 20L);
 
+        String ip = target.getAddress().getAddress().getHostAddress(); // Get the player's IP
+        if (ip == null) {
+            sender.sendMessage(ChatColor.RED + "Could not retrieve player's IP address.");
+            return true;
+        }
+
+        StringBuilder message = new StringBuilder()
+                .append(ChatColor.GOLD)
+                .append("You've been banned!")
+                .append("\nBanned by: ")
+                .append(ChatColor.RED)
+                .append(sender.getName());
+
+        String reason = Messages.NO_REASON;
+        if (args.length > 1) {
+            reason = StringUtils.join(args, " ", 1, args.length);
+            message.append(ChatColor.GOLD)
+                    .append("\nReason: ")
+                    .append(ChatColor.RED)
+                    .append(reason);
+        }
+
+        String appeal = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();
+        message.append(ChatColor.GOLD)
+                .append("\nYou may appeal by DMing one of our staff members at ")
+                .append(ChatColor.RED)
+                .append(appeal);
+
+
+        // same with doom, what the fuck intellij....
+        String finalReason = reason;
         new BukkitRunnable()
         {
             @Override
@@ -94,7 +128,9 @@ public class ObliterateCommand implements CommandExecutor {
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
                 // add ban
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "banip " + target.getName() + " You've met with a terrible fate, haven't you? ");
+                Bukkit.getBanList(BanList.Type.IP).addBan(ip, finalReason, null, sender.getName());
+                target.kickPlayer(message.toString());
+                FUtil.adminAction(sender.getName(), "IP Banning " + target.getName(), true);
 
                 // log ban
                 DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?");
