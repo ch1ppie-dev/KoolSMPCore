@@ -248,7 +248,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                                     (message.trim().toLowerCase().contains("tranny")) ||
                                     (message.trim().toLowerCase().contains("n1gger")) ||
                                     (message.trim().toLowerCase().contains("fagg0t")) ||
-                                    (message.trim().toLowerCase().contains("sieg heil"))))){
+                                    (message.trim().toLowerCase().contains("sieg heil")) ||
+                                    (message.trim().toLowerCase().contains("niga"))))){
                 event.setCancelled(true);
 
                 player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
