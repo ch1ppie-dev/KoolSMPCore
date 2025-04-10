@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
-public class FUtil
+public class FUtil // the f stands for fuck
 {
     public static Map<String, ChatColor> CHAT_COLOR_NAMES;
     public static List<ChatColor> CHAT_COLOR_POOL;
