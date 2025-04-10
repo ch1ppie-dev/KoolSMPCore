@@ -93,8 +93,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         loadListeners();
         perms = new Permissions();
         config.load();
-        // don't load default entries
-        staffactions.load(false);
+        staffactions.load();
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
 
@@ -242,16 +241,23 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         } else {
             if (message.trim().toLowerCase().contains("nigger") ||
                     (message.trim().toLowerCase().contains("nigga") ||
-                            (message.trim().toLowerCase().contains("faggot")))) {
+                            (message.trim().toLowerCase().contains("faggot") ||
+                                    (message.trim().toLowerCase().contains("n1gga")) ||
+                                    (message.trim().toLowerCase().contains("fag")) ||
+                                    (message.trim().toLowerCase().contains("heil hitler")) ||
+                                    (message.trim().toLowerCase().contains("tranny")) ||
+                                    (message.trim().toLowerCase().contains("n1gger")) ||
+                                    (message.trim().toLowerCase().contains("fagg0t")) ||
+                                    (message.trim().toLowerCase().contains("sieg heil"))))){
                 event.setCancelled(true);
 
                 player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
 
                 Bukkit.getScheduler().runTaskLater(this, () -> {
                     if (player.isOnline()) {
-                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName());
+                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + "Slurs");
                     } else {
-                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " §c§lMay your worst nightmare come true, and may you suffer by the hands of your ruler, " + player.getName() + ". (Slurs)");
+                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " You've met with a terrible fate, haven't you, " + player.getName() + "? (Slurs)");
                     }
                 }, 50L);
 

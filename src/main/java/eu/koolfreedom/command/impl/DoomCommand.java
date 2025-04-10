@@ -83,7 +83,7 @@ public class DoomCommand implements CommandExecutor {
             message.append(ChatColor.GOLD)
                     .append("\nReason: ")
                     .append(ChatColor.RED)
-                    .append(reason);
+                    .append("May your worst nightmare come true, and may you suffer by the hands of your ruler, " + target.getName() + "(" + reason + ")");
         }
 
         String appeal = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();

@@ -104,7 +104,7 @@ public class ObliterateCommand implements CommandExecutor {
             message.append(ChatColor.GOLD)
                     .append("\nReason: ")
                     .append(ChatColor.RED)
-                    .append(reason);
+                    .append("You've met with a terrible fate, haven't you, " + target.getName() + "?" + "(" +  reason + ")");
         }
 
         String appeal = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();
@@ -134,7 +134,7 @@ public class ObliterateCommand implements CommandExecutor {
 
                 // log ban
                 DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?");
-                StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?");
+                StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?" + finalReason);
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;
