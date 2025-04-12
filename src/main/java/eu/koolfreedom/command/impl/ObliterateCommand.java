@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-
+@SuppressWarnings("deprecation")
 public class ObliterateCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
@@ -130,10 +130,10 @@ public class ObliterateCommand implements CommandExecutor {
                 // add ban
                 Bukkit.getBanList(BanList.Type.IP).addBan(ip, finalReason, null, sender.getName());
                 target.kickPlayer(message.toString());
-                FUtil.adminAction(sender.getName(), "IP Banning " + target.getName(), true);
+                FUtil.adminAction(sender.getName(), "Sending " + target.getName() + " to the Moon", true);
 
                 // log ban
-                DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?");
+                DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?" + finalReason);
                 StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?" + finalReason);
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);

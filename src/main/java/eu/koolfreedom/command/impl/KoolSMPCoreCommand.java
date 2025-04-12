@@ -39,7 +39,7 @@ public class KoolSMPCoreCommand extends KoolSMPCoreBase implements CommandExecut
                 main.config.load();
                 sender.sendMessage(Messages.RELOADED);
                 main.staffactions.load();
-                sender.sendMessage(main.mmDeserialize("<green>Reloaded staff-actions.yml"));
+                sender.sendMessage(main.mmDeserialize("<green>Reloaded staff-logs.yml"));
                 return true;
             }
             catch (Exception ex)

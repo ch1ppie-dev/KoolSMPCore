@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 public class StaffActionLogger {
-    private static final File logFile = new File("plugins/KoolSMPCore/staff-actions.yml");
+    private static final File logFile = new File("plugins/KoolSMPCore/staff-logs.yml");
     private static final YamlConfiguration config = YamlConfiguration.loadConfiguration(logFile);
 
     public static void log(StaffActionType type, String actor, String target, String reason) {

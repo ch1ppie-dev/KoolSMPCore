@@ -18,12 +18,10 @@ import java.io.InputStream;
 import java.util.concurrent.*;
 import net.kyori.adventure.text.serializer.legacy.*;
 import org.bukkit.*;
-import org.bukkit.command.*;
 import java.util.*;
 
 import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public class KoolSMPCore extends JavaPlugin implements Listener {
@@ -77,7 +75,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.setServerLogger(getServer().getLogger());
 
         config = new Config(this, "config.yml");
-        staffactions = new Config(this, "staff-actions.yml");
+        staffactions = new Config(this, "staff-logs.yml");
 
         build.load(main);
     }
@@ -183,11 +181,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 FLog.severe(ex.toString());
             }
         }
-    }
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        return false;
     }
 
     public boolean isVanished(Player player) {

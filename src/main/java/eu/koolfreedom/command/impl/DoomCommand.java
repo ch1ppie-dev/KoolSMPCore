@@ -110,8 +110,8 @@ public class DoomCommand implements CommandExecutor {
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
                 // Log ban
-                DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "May your worst nightmare come true, and may you suffer by the hands of your ruler.");
-                StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), "May your worst nightmare come true, and may you suffer by the hands of your ruler.");
+                DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "May your worst nightmare come true, and may you suffer by the hands of your ruler." + finalReason);
+                StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), "May your worst nightmare come true, and may you suffer by the hands of your ruler." + finalReason);
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;
