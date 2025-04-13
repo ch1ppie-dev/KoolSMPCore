@@ -5,6 +5,8 @@ import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.config.ConfigEntry;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+
+import eu.koolfreedom.log.FLog;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.kyori.adventure.text.Component;
@@ -59,9 +61,11 @@ public class ReportCommand implements CommandExecutor
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Report for " + reportedPlayer.getName() + (reportedPlayer.isOnline() ? "" : " (offline)"));
             embed.setColor(0xFF0000);
-            embed.setDescription(report);
+            embed.setDescription("Reason: " + report);
             embed.setFooter("Reported by " + playerReporter.getName(), "https://minotar.net/helm/" + playerReporter.getName() + ".png");
             embed.setTimestamp(Instant.from(ZonedDateTime.now()));
+
+            channel.sendMessageEmbeds(embed.build()).queue();
         }
 
         for (Player players : Bukkit.getOnlinePlayers())
@@ -69,9 +73,10 @@ public class ReportCommand implements CommandExecutor
             if (!players.hasPermission("kf.admin"))
                 continue;
             players.sendMessage(Component.newline()
-                    .append(KoolSMPCore.main.mmDeserialize("<dark_gray>[" + "<red>REPORTS" + "<dark_gray>]<red>" + playerReporter + " has repoted " + reportedPlayer + " for <gold>" + report))
+                    .append(KoolSMPCore.main.mmDeserialize("<dark_gray>[" + "<red>REPORTS" + "<dark_gray>]<gold> " + playerReporter.getName() + " <red>has repoted <gold>" + reportedPlayer.getName() + " <red>for <gold>" + report))
                     .appendNewline());
         }
+        FLog.info("[REPORTS] " + playerReporter.getName() + " has reported " + reportedPlayer.getName() + " for " + report);
         return true;
     }
 }
