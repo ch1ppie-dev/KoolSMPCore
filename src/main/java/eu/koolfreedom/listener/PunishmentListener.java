@@ -45,30 +45,6 @@ public class PunishmentListener implements Listener
                 event.disallow(PlayerLoginEvent.Result.KICK_BANNED, kick.toString());
             }
         }
-
-        if (Bukkit.getBanList(BanList.Type.IP).isBanned(Objects.requireNonNull(event.getPlayer().getAddress()).getAddress().getHostAddress()))
-        {
-            String reason = Bukkit.getBanList(BanList.Type.NAME).getBanEntry(event.getPlayer().getName()).getReason();
-            String source = Bukkit.getBanList(BanList.Type.NAME).getBanEntry(event.getPlayer().getName()).getSource();
-            String appeal = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();
-            {
-                StringBuilder kick = new StringBuilder()
-                        .append(ChatColor.GOLD)
-                        .append("You've been banned from this server")
-                        .append("\nBanned by: ")
-                        .append(ChatColor.RED)
-                        .append(source)
-                        .append(ChatColor.GOLD)
-                        .append("\nReason: ")
-                        .append(ChatColor.RED)
-                        .append(reason)
-                        .append(ChatColor.GOLD)
-                        .append("\nYou may appeal your ban at: ")
-                        .append(ChatColor.RED)
-                        .append(appeal);
-                event.disallow(PlayerLoginEvent.Result.KICK_BANNED, kick.toString());
-            }
-        }
     }
 
     // Mute
