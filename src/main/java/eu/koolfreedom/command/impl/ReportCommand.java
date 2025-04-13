@@ -3,15 +3,13 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.config.ConfigEntry;
-
 import java.time.Instant;
-import java.util.ArrayList;
-
+import java.time.ZonedDateTime;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,71 +17,59 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ReportCommand implements CommandExecutor {
-    private final ArrayList<Player> antispam = new ArrayList<>();
-
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+public class ReportCommand implements CommandExecutor
+{
+    public boolean onCommand(@NotNull CommandSender playerReporter, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         Player player;
-        if (commandSender instanceof Player) {
-            player = (Player)commandSender;
+        if (playerReporter instanceof Player) {
+            player = (Player) playerReporter;
         } else {
-            commandSender.sendMessage(Messages.ONLY_IN_GAME);
+            playerReporter.sendMessage(Messages.ONLY_IN_GAME);
             return true;
         }
+
         if (args.length == 0) {
-            player.sendMessage(Component.text("Usage: /" + s + " <player> <reason>", NamedTextColor.RED));
+            player.sendMessage(KoolSMPCore.main.mmDeserialize("<red>Usage: /" + s + " <player> [reason]"));
             return true;
         }
-        Player playerArg = Bukkit.getServer().getPlayer(args[0]);
-        if (playerArg == null) {
+
+        Player reportedPlayer = Bukkit.getPlayer(args[0]);
+        if (reportedPlayer == null) {
             player.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
-        if (args.length < 2) {
+
+        String report = StringUtils.join(ArrayUtils.subarray(args, 1, args.length), " ");
+        if (report.isBlank()) {
             player.sendMessage(Messages.INVALID_REASON);
             return true;
         }
-        String reason = StringUtils.join(args, " ", 1, args.length).replace("\\n", "").replace("`", "");
-        if (reason.isBlank()) {
-            player.sendMessage(Messages.INVALID_REASON);
-            return true;
-        }
-        if (!this.antispam.contains(player)) {
-            this.antispam.add(player);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(KoolSMPCore.main, () -> this.antispam.remove(player), 60L);
-        } else {
-            player.sendMessage(Component.text("You're only allowed to execute that command every 3 seconds.", NamedTextColor.RED));
-            return true;
-        }
-        player.sendMessage(Component.newline().append(Component.text("Successfully submitted the report to staff.", NamedTextColor.GREEN)).appendNewline());
-        if (player.getName().equals(playerArg.getName()))
-            player.sendMessage(Component.text("Also, why would you report yourself?", NamedTextColor.RED));
+
+        playerReporter.sendMessage(Component.newline()
+                .append(KoolSMPCore.main.mmDeserialize("<green>Successfully submitted your report to staff members"))
+                .appendNewline()
+                .append(KoolSMPCore.main.mmDeserialize("<gold>Be mindful that spam reporting is not allowed, and you will be punished if caught doing so.")));
+
+        if (player.getName().equals(reportedPlayer.getName()))
+            player.sendMessage(Component.newline()
+                    .append(KoolSMPCore.main.mmDeserialize("<red>But why would you report yourself???")));
+
         TextChannel channel = Discord.getJDA().getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
         if (channel != null) {
-            EmbedBuilder embed = new EmbedBuilder()
-                    .setTitle("New Player Report")
-                    .setColor(0xff5555)
-                    .addField("Reporter", player.getName(), false)
-                    .addField("Reported Player", playerArg.getName(), false)
-                    .addField("Reason", reason, false)
-                    .setFooter("KoolFreedom Reports", null)
-                    .setTimestamp(Instant.now());
-
-            channel.sendMessageEmbeds(embed.build()).queue();
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle("Report for " + reportedPlayer.getName() + (reportedPlayer.isOnline() ? "" : " (offline)"));
+            embed.setColor(0xFF0000);
+            embed.setDescription(report);
+            embed.setFooter("Reported by " + playerReporter.getName(), "https://minotar.net/helm/" + playerReporter.getName() + ".png");
+            embed.setTimestamp(Instant.from(ZonedDateTime.now()));
         }
-        for (Player players : Bukkit.getOnlinePlayers()) {
+
+        for (Player players : Bukkit.getOnlinePlayers())
+        {
             if (!players.hasPermission("kf.admin"))
                 continue;
             players.sendMessage(Component.newline()
-                    .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                    .append(Component.text("Staff", NamedTextColor.RED))
-                    .append(Component.text("]", NamedTextColor.DARK_GRAY))
-                    .append(Component.text(" Received report from ", NamedTextColor.GREEN))
-                    .append(Component.text(player.getName(), NamedTextColor.GOLD))
-                    .append(Component.text(" reporting ", NamedTextColor.GREEN))
-                    .append(Component.text(playerArg.getName(), NamedTextColor.GOLD))
-                    .append(Component.text(" for ", NamedTextColor.GREEN))
-                    .append(Component.text(reason, NamedTextColor.GOLD))
+                    .append(KoolSMPCore.main.mmDeserialize("<dark_gray>[" + "<red>REPORTS" + "<dark_gray>]<red>" + playerReporter + " has repoted " + reportedPlayer + " for <gold>" + report))
                     .appendNewline());
         }
         return true;
