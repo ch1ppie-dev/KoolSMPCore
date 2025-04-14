@@ -47,6 +47,7 @@ public class ReportCommand implements CommandExecutor
         playerReporter.sendMessage(Component.newline()
                 .append(KoolSMPCore.main.mmDeserialize("<green>Successfully submitted your report to staff members"))
                 .appendNewline()
+                .appendNewline()
                 .append(KoolSMPCore.main.mmDeserialize("<gold>Be mindful that spam reporting is not allowed, and you will be punished if caught doing so.")));
 
         if (player.getName().equals(reportedPlayer.getName()))

@@ -36,6 +36,8 @@ public class DoomCommand implements CommandExecutor {
 
         FUtil.adminAction(sender.getName(), "Swinging the Russian Hammer over " + target.getName(), true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Swinging the Russian Hammer over " + target.getName() + "**");
+
+
         FUtil.bcastMsg(target.getName() + " will be squished flat", ChatColor.RED);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " will be squished flat**");
 

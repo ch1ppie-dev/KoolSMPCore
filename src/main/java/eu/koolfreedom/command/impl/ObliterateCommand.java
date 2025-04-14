@@ -45,6 +45,8 @@ public class ObliterateCommand implements CommandExecutor {
 
         FUtil.adminAction(sender.getName(), "Unleashing Majora's Wrath upon " + target.getName(), true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unleashing Majora's Wrath upon " + target.getName() + "**");
+
+
         FUtil.bcastMsg(target.getName() + " will never see the light of day", ChatColor.RED);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " will never see the light of day**");
 

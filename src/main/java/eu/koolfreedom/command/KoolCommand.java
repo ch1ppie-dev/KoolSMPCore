@@ -12,13 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public abstract class FreedomCommand implements CommandExecutor
+public abstract class KoolCommand implements CommandExecutor
 {
-    private static final Map<String, FreedomCommand> commands = new HashMap<>();
+    private static final Map<String, KoolCommand> commands = new HashMap<>();
 
     protected CommandSender sender;
 
-    public static FreedomCommand getFrom(Command command)
+    public static KoolCommand getFrom(Command command)
     {
         return commands.get(command.getName().toLowerCase());
     }
