@@ -1,7 +1,6 @@
 package eu.koolfreedom.command.impl;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import eu.koolfreedom.KoolSMPCore;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -11,26 +10,36 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class SpectateCommand implements CommandExecutor {
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        Player player;
-        if (commandSender instanceof Player) {
-            player = (Player)commandSender;
-        } else {
-            commandSender.sendMessage(Messages.ONLY_IN_GAME);
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
+    {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Messages.ONLY_IN_GAME);
             return true;
         }
-        if (args.length == 0) {
-            player.sendMessage(Component.text("Usage: /" + s + " <player>", NamedTextColor.RED));
+
+        if (args.length == 0)
+        {
+            sender.sendMessage(KoolSMPCore.main.mmDeserialize("<red>Usage: /" + s + " <player>"));
             return true;
         }
+
         Player target = Bukkit.getPlayer(args[0]);
-        if (target == null) {
-            commandSender.sendMessage(Messages.PLAYER_NOT_FOUND);
+        if (target == null)
+        {
+            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
+
+        if (target.getGameMode().equals(GameMode.SPECTATOR))
+        {
+            sender.sendMessage(KoolSMPCore.main.mmDeserialize("<red>You cannot spectate other players who are in spectator"));
+            return true;
+        }
+
         player.setGameMode(GameMode.SPECTATOR);
         player.teleport(target);
-        player.sendMessage(Component.text("Now spectating " + target.getName() + ".", NamedTextColor.GREEN));
+
+        player.sendMessage(KoolSMPCore.main.mmDeserialize("<green>Now spectating " + target.getName()));
         return true;
     }
 }

@@ -22,10 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class ReportCommand implements CommandExecutor
 {
     public boolean onCommand(@NotNull CommandSender playerReporter, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        Player player;
-        if (playerReporter instanceof Player) {
-            player = (Player) playerReporter;
-        } else {
+        if (!(playerReporter instanceof Player player)) {
             playerReporter.sendMessage(Messages.ONLY_IN_GAME);
             return true;
         }
