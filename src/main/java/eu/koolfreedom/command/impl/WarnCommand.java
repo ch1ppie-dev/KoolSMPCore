@@ -1,9 +1,6 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.discord.DiscordLogger;
-import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.StaffActionLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,8 +45,6 @@ public class WarnCommand implements CommandExecutor
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Warning " + player.getName() + "**");
         player.sendMessage(ChatColor.DARK_RED + "You have been warned for the following reason: " + reason);
         // log
-        DiscordLogger.sendStaffAction(StaffActionType.WARN, sender.getName(), player.getName(), reason);
-        StaffActionLogger.log(StaffActionType.WARN, sender.getName(), player.getName(), reason);
         return true;
     }
 }

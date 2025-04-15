@@ -2,10 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.discord.DiscordLogger;
-import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.StaffActionLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.BanList;
 import org.bukkit.ChatColor;
@@ -130,10 +127,6 @@ public class ObliterateCommand implements CommandExecutor {
                 Bukkit.getBanList(BanList.Type.IP).addBan(ip, finalReason, null, sender.getName());
                 target.kickPlayer(message.toString());
                 FUtil.adminAction(sender.getName(), "Sending " + target.getName() + " to the Moon", true);
-
-                // log ban
-                DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?" + finalReason);
-                StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), "You've met with a terrible fate, haven't you?" + finalReason);
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;

@@ -1,9 +1,6 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.discord.DiscordLogger;
-import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.StaffActionLogger;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,8 +39,6 @@ public class UnbanCommand implements CommandExecutor
         Bukkit.getBanList(BanList.Type.NAME).pardon(player.getName());
         FUtil.adminAction(sender.getName(), "Unbanning " + player.getName(), true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unbanning " + player.getName() + "**");
-        DiscordLogger.sendStaffAction(StaffActionType.UNBAN, sender.getName(), player.getName(), null);
-        StaffActionLogger.log(StaffActionType.UNBAN, sender.getName(), player.getName(), null);
         return true;
     }
 }

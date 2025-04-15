@@ -2,10 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.discord.DiscordLogger;
-import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.StaffActionLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
@@ -108,10 +105,6 @@ public class DoomCommand implements CommandExecutor {
 
                 // more explosion
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
-
-                // Log ban
-                DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), "May your worst nightmare come true, and may you suffer by the hands of your ruler." + finalReason);
-                StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), "May your worst nightmare come true, and may you suffer by the hands of your ruler." + finalReason);
             }
         }.runTaskLater(KoolSMPCore.main, 3L * 20L);
         return true;

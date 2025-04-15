@@ -1,9 +1,6 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.discord.DiscordLogger;
-import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.StaffActionLogger;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,8 +49,6 @@ public class UnbanIPCommand implements CommandExecutor
 
             if (ip != null && Bukkit.getBanList(BanList.Type.IP).isBanned(ip)) {
                 Bukkit.getBanList(BanList.Type.IP).pardon(ip);
-                DiscordLogger.sendStaffAction(StaffActionType.UNBAN, sender.getName(), player.getName(), null);
-                StaffActionLogger.log(StaffActionType.UNBAN, sender.getName(), player.getName(), null);
                 sender.sendMessage(ChatColor.GREEN + "Unbanned IP of " + target + ": " + ip);
                 FUtil.adminAction(sender.getName(), "Unbanning " + target + " and IPs", true);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unbanning " + target + " and IPs**");

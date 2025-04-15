@@ -1,10 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.discord.DiscordLogger;
-import eu.koolfreedom.discord.StaffActionType;
-import eu.koolfreedom.listener.PunishmentListener;
-import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.StaffActionLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -36,16 +31,7 @@ public class UnmuteCommand implements CommandExecutor
             return true;
         }
 
-        if (!PunishmentListener.isMuted(player))
-        {
-            sender.sendMessage(ChatColor.RED + "Player is not muted!");
-            return true;
-        }
 
-        PunishmentListener.removeMute(player);
-        FUtil.adminAction(sender.getName(), "Unmuting " + player.getName(), true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unuting " + player.getName() + "**");
-        // log
         DiscordLogger.sendStaffAction(StaffActionType.UNMUTE, sender.getName(), player.getName(), null);
         StaffActionLogger.log(StaffActionType.UNMUTE, sender.getName(), player.getName(), null);
         return true;

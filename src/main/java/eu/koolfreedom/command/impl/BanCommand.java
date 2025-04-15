@@ -2,10 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.discord.DiscordLogger;
-import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.StaffActionLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -77,10 +74,6 @@ public class BanCommand implements CommandExecutor
 
         FUtil.adminAction(sender.getName(), "Banning " + target.getName(), true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Banning " + target.getName() + "**");
-
-        // Log the ban
-        DiscordLogger.sendStaffAction(StaffActionType.BAN, sender.getName(), target.getName(), reason);
-        StaffActionLogger.log(StaffActionType.BAN, sender.getName(), target.getName(), reason);
         return true;
     }
 }
