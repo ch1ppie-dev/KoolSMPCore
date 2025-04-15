@@ -1,14 +1,11 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.command.impl.Messages;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.discord.DiscordLogger;
 import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
 import eu.koolfreedom.util.StaffActionLogger;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.BanList;
 import org.bukkit.ChatColor;
@@ -33,7 +30,7 @@ public class ObliterateCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(Component.text("Usage: /" + s + " <player> [reason]", NamedTextColor.RED));
+            sender.sendMessage(KoolSMPCore.main.mmDeserialize("<red>Usage: /" + s + " <player> [reason]"));
             return true;
         }
 

@@ -6,8 +6,6 @@ import eu.koolfreedom.discord.DiscordLogger;
 import eu.koolfreedom.discord.StaffActionType;
 import eu.koolfreedom.util.FUtil;
 import eu.koolfreedom.util.StaffActionLogger;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
@@ -24,7 +22,7 @@ public class DoomCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(Component.text("Usage: /" + s + " <player> [reason]", NamedTextColor.RED));
+            sender.sendMessage(KoolSMPCore.main.mmDeserialize("<red>Usage: /" + s + " <player> [reason]"));
             return true;
         }
 

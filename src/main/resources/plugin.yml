@@ -39,9 +39,6 @@ commands:
   koolsmpcore:
     description: Display information about the plugin
     aliases: [kfm]
-  lagsource:
-    permission: kf.admin
-    description: Displays information about potential lag sources
   mute:
     description: Mutes a player
   obliterate:
