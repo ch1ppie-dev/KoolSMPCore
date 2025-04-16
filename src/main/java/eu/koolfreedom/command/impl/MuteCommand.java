@@ -1,11 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.discord.DiscordLogger;
-import eu.koolfreedom.discord.StaffActionType;
-import eu.koolfreedom.listener.PunishmentListener;
-import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.StaffActionLogger;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -34,27 +28,6 @@ public class MuteCommand implements CommandExecutor
             sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
-
-        if (PunishmentListener.isMuted(player))
-        {
-            sender.sendMessage(ChatColor.RED + "Player is already muted!");
-            return true;
-        }
-
-        String reason = Messages.NO_REASON;
-        if (args.length > 1)
-        {
-            reason = StringUtils.join(args, " ", 1, args.length);
-        }
-
-        PunishmentListener.addMute(player);
-
-        FUtil.adminAction(sender.getName(), "Muting " + player.getName() + " | Reason: " + reason, true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Muting " + player.getName() + "**");
-        sender.sendMessage(ChatColor.GRAY + "You have been muted | Reason " + reason);
-        // log
-        DiscordLogger.sendStaffAction(StaffActionType.MUTE, sender.getName(), player.getName(), reason);
-        StaffActionLogger.log(StaffActionType.MUTE, sender.getName(), player.getName(), reason);
         return true;
     }
 }

@@ -1,7 +1,7 @@
 package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
-import eu.koolfreedom.config.Config;
+import eu.koolfreedom.config.Configuration;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
 import net.dv8tion.jda.api.JDA;
@@ -30,10 +30,11 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static final Random random = new Random();
     public static String pluginVersion;
     public static String pluginName;
+    public static final String CONFIG_FILENAME = "config.yml";
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    public Config config;
-    public Config staffactions;
+    public Configuration config;
+    public Configuration staffactions;
     public ServerListener sl;
     public Permissions perms;
     public ExploitListener el;
@@ -74,8 +75,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.setPluginLogger(main.getLogger());
         FLog.setServerLogger(getServer().getLogger());
 
-        config = new Config(this, "config.yml");
-        staffactions = new Config(this, "staff-logs.yml");
+        config = new Configuration(this, "config.yml", true);
+        staffactions = new Configuration(this, "staff-logs.yml", true);
 
         build.load(main);
     }
@@ -112,7 +113,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         sl = new ServerListener(this);
         el = new ExploitListener(this);
         lol = new LoginListener(this);
-        this.getServer().getPluginManager().registerEvents(new PunishmentListener(), this);
         tl = new TabListener(this);
     }
 

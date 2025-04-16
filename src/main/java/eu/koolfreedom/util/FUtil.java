@@ -4,9 +4,12 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.log.FLog;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
+import java.io.*;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
@@ -25,6 +28,24 @@ public class FUtil // the f stands for fuck
         {
             CHAT_COLOR_NAMES.put(chatColor.name().toLowerCase().replace("_", ""), chatColor);
         }
+    }
+
+    public static void copy(InputStream in, File file) throws IOException
+    {
+        if (!file.exists())
+        {
+            file.getParentFile().mkdirs();
+        }
+
+        final OutputStream out = new FileOutputStream(file);
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0)
+        {
+            out.write(buf, 0, len);
+        }
+        out.close();
+        in.close();
     }
 
     @SuppressWarnings("deprecation")
@@ -84,5 +105,35 @@ public class FUtil // the f stands for fuck
                 .stream()
                 .filter((players) -> (players.hasPermission("kf.admin")))
                 .forEachOrdered((players) -> players.sendMessage(format));
+    }
+
+    public static long getUnixTime()
+    {
+        return System.currentTimeMillis() / 1000L;
+    }
+
+    public static Date getUnixDate(long unix)
+    {
+        return new Date(unix * 1000);
+    }
+
+    public static long getUnixTime(Date date)
+    {
+        if (date == null)
+        {
+            return 0;
+        }
+
+        return date.getTime() / 1000L;
+    }
+
+    public static String decolorize(String string)
+    {
+        return string.replaceAll("\\u00A7(?=[0-9a-fk-or])", "&");
+    }
+
+    public static File getPluginFile(Plugin plugin, String name)
+    {
+        return new File(plugin.getDataFolder(), name);
     }
 }
