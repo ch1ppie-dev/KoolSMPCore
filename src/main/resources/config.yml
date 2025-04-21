@@ -26,4 +26,3 @@ messages:
 discord:
   bot_token: ""
   report_channel_id: ""
-  staff_action_channel_id: ""

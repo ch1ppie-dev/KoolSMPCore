@@ -1,7 +1,7 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.banning.BanList;
 import eu.koolfreedom.util.FUtil;
-import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -19,26 +19,24 @@ public class UnbanCommand implements CommandExecutor
         if (!sender.hasPermission("kf.admin"))
         {
             sender.sendMessage(Messages.MSG_NO_PERMS);
-            return true;
         }
-
         if (args.length == 0)
         {
-            sender.sendMessage(ChatColor.GRAY + "Usage: /<command> (player)");
             return false;
         }
 
-        OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
-
-        if (!player.isBanned())
+        if (args.length > 1)
         {
-            sender.sendMessage(ChatColor.GRAY + "That player is not banned");
+            return false;
+        }
+        OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+        if (!BanList.isBanned(player))
+        {
+            sender.sendMessage(ChatColor.GRAY + "That player is not banned.");
             return true;
         }
-
-        Bukkit.getBanList(BanList.Type.NAME).pardon(player.getName());
         FUtil.adminAction(sender.getName(), "Unbanning " + player.getName(), true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Unbanning " + player.getName() + "**");
+        BanList.removeBan(player);
         return true;
     }
 }

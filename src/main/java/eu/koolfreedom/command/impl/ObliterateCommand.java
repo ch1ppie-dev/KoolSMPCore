@@ -111,7 +111,7 @@ public class ObliterateCommand implements CommandExecutor {
 
 
 
-        String finalReason = reason; // same with doom, what the fuck intellij....
+        String finalReason = reason;
         new BukkitRunnable()
         {
             @Override

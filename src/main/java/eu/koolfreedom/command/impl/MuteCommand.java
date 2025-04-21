@@ -1,5 +1,9 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.listener.MuteManager;
+import eu.koolfreedom.punishment.PunishmentList;
+import eu.koolfreedom.punishment.PunishmentType;
+import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,17 +21,26 @@ public class MuteCommand implements CommandExecutor
             return true;
         }
 
-        if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /mute <player> [reason]");
-            return true;
-        }
-
-        Player player = Bukkit.getPlayer(args[0]);
-        if (player == null)
+        if (args.length != 1)
         {
-            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
+            return false;
+        }
+        if (args[0].equalsIgnoreCase("purge"))
+        {
+            int muted = MuteManager.getMutedAmount();
+            MuteManager.wipeMutes();
+            FUtil.adminAction(sender.getName(), "Unmuting all player", true);
+            sender.sendMessage(ChatColor.GRAY + "Unmuted " + muted + " players.");
             return true;
         }
+        Player player = Bukkit.getPlayer(args[0]);
+        MuteManager.setMuted(player, !MuteManager.isMuted(player));
+        if (MuteManager.isMuted(player))
+        {
+            // log mute
+            PunishmentList.logPunishment(player, PunishmentType.MUTE, sender, null);
+        }
+        FUtil.adminAction(sender.getName(), (MuteManager.isMuted(player) ? "Muting " : "Unmuting ") + player.getName(), true);
         return true;
     }
 }

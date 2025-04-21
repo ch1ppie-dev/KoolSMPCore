@@ -13,9 +13,6 @@ commands:
   ban:
     description: Ban someone
     aliases: [gtfo]
-  banip:
-    description: Ban someone....but their IP
-    aliases: [ipban]
   clearchat:
     aliases: [cc]
     permission: kf.admin
@@ -71,10 +68,6 @@ commands:
     description: Suspicious user? Spectate them
   unban:
     description: Unban someone
-  unbanip:
-    description: Unbans someone....but their IP!!!!
-  unmute:
-    description: Unmute someone
   warn:
     description: Warn someone
 permissions:

@@ -45,14 +45,11 @@ public class SmiteCommand implements CommandExecutor
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **" + target.getName() + " has been a naughty, naughty child.**");
         FUtil.bcastMsg(ChatColor.RED + "Smitten by: " + ChatColor.YELLOW + sender.getName());
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **Smitten by**: " + sender.getName());
-        // Logging
 
         if (args.length > 1) {
             String reason = String.join(" ", args).substring(args[0].length()).trim();
             FUtil.bcastMsg(ChatColor.RED + "Reason: " + ChatColor.YELLOW + reason);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord broadcast **Reason**: " + reason);
-
-            // Logging
         }
 
         return true;

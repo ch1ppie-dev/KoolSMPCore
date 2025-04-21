@@ -1,79 +1,103 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FUtil;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.BanList;
+import eu.koolfreedom.punishment.PunishmentList;
+import eu.koolfreedom.punishment.PunishmentType;
+import eu.koolfreedom.banning.BanType;
+import eu.koolfreedom.banning.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
-@SuppressWarnings("deprecation")
 public class BanCommand implements CommandExecutor
 {
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args)
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String c, String[] args)
     {
-        if(!sender.hasPermission("kf.admin"))
+        if (!sender.hasPermission("kf.admin"))
         {
             sender.sendMessage(Messages.MSG_NO_PERMS);
-            return true;
         }
 
         if (args.length == 0)
         {
-            sender.sendMessage(KoolSMPCore.main.mmDeserialize("<red>Usage: /<command> [player] (reason)"));
-            return true;
+            return false;
         }
 
-        String targetName = args[0];
-        OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
-
-        if(target == null || (!target.hasPlayedBefore() && !target.isOnline() ))
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null)
         {
             sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
 
-        StringBuilder message = new StringBuilder()
-                .append(ChatColor.GOLD)
-                .append("You've been banned!")
-                .append("\nBanned by: ")
+        StringBuilder kickMsg = new StringBuilder()
                 .append(ChatColor.RED)
+                .append("You have been banned from this server.")
+                .append("\nBanned by: ")
                 .append(sender.getName());
 
-        String reason = Messages.NO_REASON;
-        if (args.length > 1) {
+        String reason = null;
+        if (args.length > 1)
+        {
             reason = StringUtils.join(args, " ", 1, args.length);
-            message.append(ChatColor.GOLD)
-                    .append("\nReason: ")
-                    .append(ChatColor.RED)
+            kickMsg.append("\nReason: ")
                     .append(reason);
         }
 
-        String appeal = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();
-        message.append(ChatColor.GOLD)
-                .append("\nYou may appeal by DMing one of our staff members at ")
-                .append(ChatColor.RED)
-                .append(appeal);
+        // shoot the player up
+        player.setAllowFlight(true);
+        player.setFlying(false);
+        player.getWorld().createExplosion(player.getLocation(), 0.5F);
+        player.setVelocity(player.getVelocity().clone().add(new Vector(0, 20, 0)));
 
-        Bukkit.getBanList(BanList.Type.NAME).addBan(target.getName(), reason, null, sender.getName());
+        // add ban
+        BanList.addBan(player, sender, BanType.BAN, reason);
 
-        // Only kick if the player is online
-        if (target.isOnline()) {
-            Player onlinePlayer = Bukkit.getPlayer(target.getName());
-            if (onlinePlayer != null) {
-                onlinePlayer.kickPlayer(message.toString());
+        // log ban
+        PunishmentList.logPunishment(player, PunishmentType.BAN, sender, reason);
+
+        new BukkitRunnable()
+        {
+            public void run()
+            {
+                // announce
+                FUtil.adminAction(sender.getName(), "Banning " + player.getName(), true);
+
+                // de-op
+                player.setOp(false);
+
+                // set to survival
+                player.setGameMode(GameMode.SURVIVAL);
+
+                // clear inventory
+                player.getInventory().clear();
+
+                // strike 4 lightning bolts
+                for (int i = 0; i < 4; i++)
+                {
+                    player.getWorld().strikeLightning(player.getLocation());
+                }
+
+                // large explosion
+                player.getWorld().createExplosion(player.getLocation(), 8F);
+
+                // kill
+                player.setHealth(0.0);
+
+                // kick player
+                player.kickPlayer(kickMsg.toString());
             }
-        }
-
-        FUtil.adminAction(sender.getName(), "Banning " + target.getName(), true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Banning " + target.getName() + "**");
+        }.runTaskLater(KoolSMPCore.main, 2L * 20L);
         return true;
     }
 }

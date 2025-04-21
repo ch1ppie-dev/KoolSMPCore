@@ -1,7 +1,6 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.command.impl.Messages;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.util.KoolSMPCoreBase;
 import org.bukkit.command.Command;
@@ -38,8 +37,6 @@ public class KoolSMPCoreCommand extends KoolSMPCoreBase implements CommandExecut
             {
                 main.config.load();
                 sender.sendMessage(Messages.RELOADED);
-                main.staffactions.load();
-                sender.sendMessage(main.mmDeserialize("<green>Reloaded staff-logs.yml"));
                 return true;
             }
             catch (Exception ex)

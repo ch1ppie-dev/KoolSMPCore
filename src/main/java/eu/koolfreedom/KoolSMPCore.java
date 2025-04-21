@@ -1,6 +1,7 @@
 package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
+import eu.koolfreedom.banning.BanListener;
 import eu.koolfreedom.config.Configuration;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
@@ -34,7 +35,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     public Configuration config;
-    public Configuration staffactions;
+    public Configuration bans;
+    public Configuration permbans;
     public ServerListener sl;
     public Permissions perms;
     public ExploitListener el;
@@ -76,7 +78,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.setServerLogger(getServer().getLogger());
 
         config = new Configuration(this, "config.yml", true);
-        staffactions = new Configuration(this, "staff-logs.yml", true);
+        config = new Configuration(this, "bans.yml", true);
+        config = new Configuration(this, "permbans.yml", true);
 
         build.load(main);
     }
@@ -89,10 +92,13 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Compiled " + build.date + " by " + build.author);
         server.getPluginManager().registerEvents(this, this);
         loadCommands();
+        FLog.info("Loaded commands");
         loadListeners();
+        FLog.info("Loaded listeners");
         perms = new Permissions();
         config.load();
-        staffactions.load();
+        bans.load();
+        permbans.load();
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
 
@@ -105,11 +111,16 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("KoolSMPCore has been disabled");
         if (jda != null) jda.shutdownNow();
         config.save();
-        staffactions.save();
+        bans.save();
+        permbans.save();
     }
 
     public void loadListeners()
     {
+        PluginManager manager = Bukkit.getServer().getPluginManager();
+
+        manager.registerEvents(new BanListener(this), this);
+        manager.registerEvents(new MuteManager(this), this);
         sl = new ServerListener(this);
         el = new ExploitListener(this);
         lol = new LoginListener(this);
@@ -120,7 +131,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     {
         Objects.requireNonNull(getCommand("adminchat")).setExecutor(new AdminChatCommand());
         Objects.requireNonNull(getCommand("ban")).setExecutor(new BanCommand());
-        Objects.requireNonNull(getCommand("banip")).setExecutor(new BanIPCommand());
         Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
         Objects.requireNonNull(getCommand("commandspy")).setExecutor(new CommandSpyCommand());
         Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
@@ -144,8 +154,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("smite")).setExecutor(new SmiteCommand());
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
         Objects.requireNonNull(getCommand("unban")).setExecutor(new UnbanCommand());
-        Objects.requireNonNull(getCommand("unbanip")).setExecutor(new UnbanIPCommand());
-        Objects.requireNonNull(getCommand("unmute")).setExecutor(new UnmuteCommand());
         Objects.requireNonNull(getCommand("warn")).setExecutor(new WarnCommand());
     }
 
@@ -182,7 +190,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         }
     }
 
-    public boolean isVanished(Player player) {
+    public boolean isVanished(Player player)
+    {
         Plugin essentials = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
 
         if (essentials == null) {
@@ -192,16 +201,20 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         return essentials.isEnabled() && ((Essentials) essentials).getUser(player).isVanished();
     }
 
-    private void announcerRunnable() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+    private void announcerRunnable()
+    {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () ->
+        {
             List<String> messageKeys = new ArrayList<>(getConfig().getConfigurationSection("messages").getKeys(false));
-            if (messageKeys.isEmpty()) {
+            if (messageKeys.isEmpty())
+            {
                 getLogger().warning("No messages found in configuration.");
                 return;
             }
             String randomKey = messageKeys.get(ThreadLocalRandom.current().nextInt(messageKeys.size()));
             List<String> lines = getConfig().getStringList("messages." + randomKey);
-            if (lines.isEmpty()) {
+            if (lines.isEmpty())
+            {
                 getLogger().warning("Message '" + randomKey + "' has no lines.");
                 return;
             }
@@ -219,8 +232,10 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             return;
         }
 
-        if (player.hasPermission("kf.admin")) {
-            if (message.contains("@everyone")) {
+        if (player.hasPermission("kf.admin"))
+        {
+            if (message.contains("@everyone"))
+            {
                 String lastColor = ChatColor.getLastColors(message);
                 message = message.replace("@everyone", "§b@everyone" + (lastColor.isEmpty() ? "§r" : lastColor));
                 for (Player p : Bukkit.getOnlinePlayers()) {
@@ -230,7 +245,9 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 event.setMessage(message);
                 return;
             }
-        } else {
+        }
+        else
+        {
             if (message.trim().toLowerCase().contains("nigger") ||
                     (message.trim().toLowerCase().contains("nigga") ||
                             (message.trim().toLowerCase().contains("faggot") ||
@@ -247,9 +264,12 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
 
                 Bukkit.getScheduler().runTaskLater(this, () -> {
-                    if (player.isOnline()) {
+                    if (player.isOnline())
+                    {
                         getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + "Slurs");
-                    } else {
+                    }
+                    else
+                    {
                         getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " You've met with a terrible fate, haven't you, " + player.getName() + "? (Slurs)");
                     }
                 }, 50L);
@@ -258,10 +278,12 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             }
         }
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
             if (isVanished(p)) continue;
 
-            if (message.contains("@" + p.getName())) {
+            if (message.contains("@" + p.getName()))
+            {
                 String lastColor = ChatColor.getLastColors(message);
                 message = message.replace("@" + p.getName(), "§b@" + p.getName() + (lastColor.isEmpty() ? "§r" : lastColor));
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
