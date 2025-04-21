@@ -2,6 +2,8 @@ package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
 import eu.koolfreedom.banning.BanListener;
+import eu.koolfreedom.banning.Bans;
+import eu.koolfreedom.banning.PermBans;
 import eu.koolfreedom.config.Configuration;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
@@ -78,8 +80,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.setServerLogger(getServer().getLogger());
 
         config = new Configuration(this, "config.yml", true);
-        config = new Configuration(this, "bans.yml", true);
-        config = new Configuration(this, "permbans.yml", true);
 
         build.load(main);
     }
@@ -97,8 +97,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Loaded listeners");
         perms = new Permissions();
         config.load();
-        bans.load();
-        permbans.load();
+        loadBansConfig();
+        FLog.info("Loaded configurations");
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
 
@@ -112,6 +112,16 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         if (jda != null) jda.shutdownNow();
         config.save();
         bans.save();
+        permbans.save();
+    }
+
+    public void loadBansConfig()
+    {
+        Bans bans = Bans.getConfig();
+        bans.options().copyDefaults(true);
+        bans.save();
+        PermBans permbans = PermBans.getConfig();
+        permbans.options().copyDefaults(true);
         permbans.save();
     }
 
