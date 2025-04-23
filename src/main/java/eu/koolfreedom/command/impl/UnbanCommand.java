@@ -19,6 +19,7 @@ public class UnbanCommand implements CommandExecutor
         if (!sender.hasPermission("kf.admin"))
         {
             sender.sendMessage(Messages.MSG_NO_PERMS);
+            return true;
         }
         if (args.length == 0)
         {
