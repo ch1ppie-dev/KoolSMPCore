@@ -44,6 +44,8 @@ commands:
     description: trol
   pat:
     description: pat pat
+  permbans:
+    description: Reload the PermBans configuration file.
   poke:
     description: poke
   rawsay:

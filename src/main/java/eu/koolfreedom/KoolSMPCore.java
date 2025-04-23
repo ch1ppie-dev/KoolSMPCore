@@ -154,6 +154,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
         Objects.requireNonNull(getCommand("orbit")).setExecutor(new OrbitCommand());
         Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
+        Objects.requireNonNull(getCommand("permbans")).setExecutor(new PermBansCommand());
         Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
         Objects.requireNonNull(getCommand("rawsay")).setExecutor(new RawSayCommand());
         Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());

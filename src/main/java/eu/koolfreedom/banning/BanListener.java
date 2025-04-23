@@ -1,6 +1,7 @@
 package eu.koolfreedom.banning;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.config.ConfigEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,6 +10,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.text.SimpleDateFormat;
 
+@SuppressWarnings("deprecation")
 public class BanListener implements Listener
 {
     private KoolSMPCore plugin;
@@ -29,7 +31,12 @@ public class BanListener implements Listener
         Player player = e.getPlayer();
         if (permbans.getStringList("names").contains(player.getName()) || permbans.getStringList("ips").contains(e.getAddress().getHostAddress().trim()))
         {
-            e.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "You currently permanently banned from this server.");
+            StringBuilder permMsg = new StringBuilder()
+                    .append(ChatColor.GOLD)
+                    .append("You are " + ChatColor.RED + ChatColor.BOLD + " permanently " + ChatColor.GOLD + " banned from this server.")
+                    .append("\nAppeal at: ")
+                    .append(ChatColor.RED + ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString());
+            e.disallow(PlayerLoginEvent.Result.KICK_OTHER, permMsg.toString());
             return;
         }
         if (BanList.isBanned(player))
