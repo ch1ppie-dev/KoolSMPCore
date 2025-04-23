@@ -26,3 +26,6 @@ messages:
 discord:
   bot_token: ""
   report_channel_id: ""
+
+unbannable_usernames:
+  - gamingto12
