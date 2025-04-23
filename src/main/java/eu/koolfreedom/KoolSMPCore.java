@@ -37,8 +37,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     public Configuration config;
-    public Configuration bans;
-    public Configuration permbans;
     public ServerListener sl;
     public Permissions perms;
     public ExploitListener el;
@@ -111,8 +109,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("KoolSMPCore has been disabled");
         if (jda != null) jda.shutdownNow();
         config.save();
-        bans.save();
-        permbans.save();
     }
 
     public void loadBansConfig()
