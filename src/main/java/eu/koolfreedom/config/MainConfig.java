@@ -13,21 +13,20 @@ import java.util.List;
 public class MainConfig
 {
     public static final File CONFIG_FILE = new File(KoolSMPCore.main.getDataFolder(), KoolSMPCore.CONFIG_FILENAME);
-    //
     private static final EnumMap<ConfigEntry, Object> ENTRY_MAP;
-    private static final TFM_Defaults DEFAULTS;
+    private static final Deefawlts DEFAULTS;
 
     static
     {
         ENTRY_MAP = new EnumMap<ConfigEntry, Object>(ConfigEntry.class);
 
-        TFM_Defaults tempDefaults = null;
+        Deefawlts tempDefaults = null;
         try
         {
             try
             {
                 InputStream defaultConfig = getDefaultConfig();
-                tempDefaults = new TFM_Defaults(defaultConfig);
+                tempDefaults = new Deefawlts(defaultConfig);
                 for (ConfigEntry entry : ConfigEntry.values())
                 {
                     ENTRY_MAP.put(entry, tempDefaults.get(entry.getConfigName()));
