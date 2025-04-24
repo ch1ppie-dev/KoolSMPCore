@@ -273,11 +273,11 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 Bukkit.getScheduler().runTaskLater(this, () -> {
                     if (player.isOnline())
                     {
-                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + "Slurs");
+                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + "Hate-Speech");
                     }
                     else
                     {
-                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " You've met with a terrible fate, haven't you, " + player.getName() + "? (Slurs)");
+                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " Hate-Speech");
                     }
                 }, 50L);
 
