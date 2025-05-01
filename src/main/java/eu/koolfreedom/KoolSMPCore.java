@@ -29,7 +29,6 @@ import org.bukkit.entity.*;
 @SuppressWarnings("deprecation")
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
-    public static Server server;
     public static final Random random = new Random();
     public static String pluginVersion;
     public static String pluginName;
@@ -70,7 +69,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public void onLoad()
     {
         main = this;
-        server = main.getServer();
         KoolSMPCore.pluginName = main.getDescription().getName();
         KoolSMPCore.pluginVersion = main.getDescription().getVersion();
 
@@ -88,7 +86,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         FLog.info("Created by gamingto12 and 0x7694C9");
         FLog.info("Version " + build.version);
         FLog.info("Compiled " + build.date + " by " + build.author);
-        server.getPluginManager().registerEvents(this, this);
+        Bukkit.getPluginManager().registerEvents(this, this);
         loadCommands();
         FLog.info("Loaded commands");
         loadListeners();

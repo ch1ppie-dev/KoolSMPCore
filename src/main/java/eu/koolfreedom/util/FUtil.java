@@ -15,19 +15,13 @@ import java.util.*;
 @SuppressWarnings("deprecation")
 public class FUtil // the f stands for fuck
 {
-    public static Map<String, ChatColor> CHAT_COLOR_NAMES;
     public static List<ChatColor> CHAT_COLOR_POOL;
     private static Random RANDOM;
 
     static
     {
         RANDOM = new Random();
-        CHAT_COLOR_NAMES = new HashMap<>();
-        CHAT_COLOR_POOL = Arrays.asList(ChatColor.DARK_RED, ChatColor.RED, ChatColor.GOLD, ChatColor.YELLOW, ChatColor.GREEN, ChatColor.DARK_GREEN, ChatColor.AQUA, ChatColor.DARK_AQUA, ChatColor.BLUE, ChatColor.DARK_BLUE, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE);
-        for (final ChatColor chatColor : CHAT_COLOR_POOL)
-        {
-            CHAT_COLOR_NAMES.put(chatColor.name().toLowerCase().replace("_", ""), chatColor);
-        }
+        CHAT_COLOR_POOL = Arrays.stream(ChatColor.values()).toList();
     }
 
     public static void copy(InputStream in, File file) throws IOException

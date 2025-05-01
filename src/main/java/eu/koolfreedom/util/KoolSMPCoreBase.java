@@ -9,6 +9,4 @@ public class KoolSMPCoreBase
 {
     protected static LuckPerms api = KoolSMPCore.getLuckPermsAPI();
     protected KoolSMPCore main = KoolSMPCore.main;
-    protected Server server = KoolSMPCore.server;
-
 }

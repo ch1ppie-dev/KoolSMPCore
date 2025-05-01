@@ -3,7 +3,7 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.BanList;
 import org.bukkit.ChatColor;
 import org.bukkit.Bukkit;

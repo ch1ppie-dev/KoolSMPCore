@@ -79,3 +79,5 @@ permissions:
     default: op
   kf.exec:
     default: op
+libraries:
+  - org.apache.commons:commons-lang3:3.17.0

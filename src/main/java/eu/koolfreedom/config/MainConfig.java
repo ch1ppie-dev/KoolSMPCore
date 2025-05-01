@@ -2,11 +2,11 @@ package eu.koolfreedom.config;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.log.FLog;
-import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class MainConfig
 
     static
     {
-        ENTRY_MAP = new EnumMap<ConfigEntry, Object>(ConfigEntry.class);
+        ENTRY_MAP = new EnumMap<>(ConfigEntry.class);
 
         Deefawlts tempDefaults = null;
         try
@@ -249,7 +249,7 @@ public class MainConfig
         try
         {
             InputStream defaultConfig = getDefaultConfig();
-            FileUtils.copyInputStreamToFile(defaultConfig, targetFile);
+            Files.copy(defaultConfig, targetFile.toPath());
             defaultConfig.close();
         }
         catch (IOException ex)
@@ -263,16 +263,16 @@ public class MainConfig
         return KoolSMPCore.main.getResource(KoolSMPCore.CONFIG_FILENAME);
     }
 
-    public static TFM_Defaults getDefaults()
+    public static Deefawlts getDefaults()
     {
         return DEFAULTS;
     }
 
-    public static class TFM_Defaults
+    public static class Deefawlts
     {
         private YamlConfiguration defaults = null;
 
-        private TFM_Defaults(InputStream defaultConfig)
+        private Deefawlts(InputStream defaultConfig)
         {
             try
             {
