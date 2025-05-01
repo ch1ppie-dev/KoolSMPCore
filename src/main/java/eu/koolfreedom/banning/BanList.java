@@ -33,12 +33,6 @@ public class BanList
         bans.save();
     }
 
-    public static void removeBan(OfflinePlayer banned)
-    {
-        bans.set(banned.getName().toLowerCase(), null);
-        bans.save();
-    }
-
     public static boolean isBanned(OfflinePlayer player)
     {
         return bans.contains(player.getName().toLowerCase());

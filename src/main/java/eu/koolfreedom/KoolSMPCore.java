@@ -1,17 +1,12 @@
 package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
-import eu.koolfreedom.banning.BanListener;
-import eu.koolfreedom.banning.Bans;
-import eu.koolfreedom.banning.PermBans;
+import eu.koolfreedom.banning.BanManager;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.config.Configuration;
-import eu.koolfreedom.config.MainConfig;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
-import net.dv8tion.jda.api.JDA;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
@@ -37,12 +32,12 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     public Configuration config;
+    public BanManager bm;
     public ServerListener sl;
     public Permissions perms;
     public ExploitListener el;
     public TabListener tl;
     public LoginListener lol; // lol
-    public static JDA jda;
 
     public static KoolSMPCore getPlugin()
     {
@@ -106,25 +101,26 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public void onDisable()
     {
         FLog.info("KoolSMPCore has been disabled");
-        if (jda != null) jda.shutdownNow();
+
+        if (Discord.getJDA() != null)
+        {
+            Discord.getJDA().shutdownNow();
+        }
+
         config.save();
+        bm.save();
     }
 
     public void loadBansConfig()
     {
-        Bans bans = Bans.getConfig();
-        bans.options().copyDefaults(true);
-        bans.save();
-        PermBans permbans = PermBans.getConfig();
-        permbans.options().copyDefaults(true);
-        permbans.save();
+        bm = new BanManager();
+        bm.load();
     }
 
     public void loadListeners()
     {
         PluginManager manager = Bukkit.getServer().getPluginManager();
 
-        manager.registerEvents(new BanListener(this), this);
         manager.registerEvents(new MuteManager(this), this);
         sl = new ServerListener(this);
         el = new ExploitListener(this);

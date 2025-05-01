@@ -1,9 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.banning.PermBans;
 import eu.koolfreedom.log.FLog;
-import eu.koolfreedom.util.KoolSMPCoreBase;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,7 +27,6 @@ public class PermBansCommand implements CommandExecutor
             }
             try
             {
-                PermBans.getConfig().reload();
                 sender.sendMessage(KoolSMPCore.main.mmDeserialize("<green>Reloaded PermBans config."));
                 return true;
             }

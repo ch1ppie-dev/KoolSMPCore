@@ -15,7 +15,7 @@ public class FLog
         logger.info(message);
     }
 
-    public static void info(String message, String... args)
+    public static void info(String message, Object... args)
     {
         logger.info(message, args);
     }

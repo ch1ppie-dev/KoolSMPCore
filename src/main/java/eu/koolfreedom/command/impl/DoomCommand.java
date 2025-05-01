@@ -40,14 +40,6 @@ public class DoomCommand implements CommandExecutor {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Removing " + target.getName() + " from the staff list**");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
 
-        // Remove from whitelist
-        target.setWhitelisted(false);
-
-        // De-op (if already op'd)
-        target.setOp(false);
-
-        // Set gamemode to survival (if not in survival)
-        target.setGameMode(GameMode.SURVIVAL);
 
         // Ignite player
         target.setFireTicks(10000);
