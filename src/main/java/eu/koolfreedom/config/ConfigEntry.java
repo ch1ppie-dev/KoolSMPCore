@@ -16,7 +16,7 @@ public enum ConfigEntry
     SERVER_WEBSITE_OR_FORUM(String.class, "server.website_or_forum"),
     DISCORD_BOT_TOKEN(String.class, "discord.bot_token"),
     DISCORD_STAFF_ACTION_CHANNEL_ID(String.class, "discord.staff_action_channel_id"),
-    CHAT_FILTER_HATE_SPEECH(List.class, "chat_filter.hate_speech"),
+    CHAT_FILTER_HATE_SPEECH(List.class, "chat-filter.hate-speech"),
     FORMATS_ADMIN_CHAT(String.class, "formats.admin_chat"),
     FORMATS_SAY(String.class, "formats.say"),
     UNBANNABLE_USERNAMES(List.class, "unbannable_usernames"),
