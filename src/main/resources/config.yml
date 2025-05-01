@@ -38,6 +38,13 @@ chat-filter:
     - seig heil
     - tranny
 
+# Admin Chat Format
+# ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
+#                + ChatColor.DARK_GRAY + "] " + ChatColor.GOLD + message
+formats:
+  admin_chat: "<dark_gray>[<aqua>AC</aqua>] <blue><name></blue> [<rank>] <gold><message>"
+  say: "<light_purple>[Server:<name>] <message>"
+
 discord:
   bot_token: ""
   report_channel_id: ""

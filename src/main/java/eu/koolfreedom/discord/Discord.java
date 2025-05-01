@@ -29,9 +29,8 @@ public class Discord {
                     .build()
                     .awaitReady();
             FLog.info("[Discord] Discord bot initialized.");
-        } catch (Exception e) {
-            FLog.severe("[Discord] Failed to initialize Discord bot:");
-            e.printStackTrace();
+        } catch (Exception ex) {
+            FLog.error("[Discord] Failed to initialize Discord bot", ex);
         }
     }
 

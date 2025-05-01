@@ -68,18 +68,15 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             FLog.info("Successfully loaded the LuckPerms API.");
             return provider.getProvider();
         }
-        FLog.severe("The LuckPerms API was not loaded successfully. The plugin will not function properly.");
+
+        FLog.error("The LuckPerms API was not loaded successfully. The plugin will not function properly.");
         return null;
     }
 
-
+    @Override
     public void onLoad()
     {
         main = this;
-
-        FLog.setPluginLogger(main.getLogger());
-        FLog.setServerLogger(getServer().getLogger());
-
         config = new Configuration(this, "config.yml", true);
 
         build.load(main);
@@ -193,8 +190,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             }
             catch (Exception ex)
             {
-                FLog.severe("Could not load build properties! Did you compile with NetBeans/Maven?");
-                FLog.severe(ex.toString());
+                FLog.error("Could not load build properties! Did you compile with NetBeans/Maven?", ex);
             }
         }
     }

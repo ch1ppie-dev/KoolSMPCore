@@ -9,6 +9,8 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.util.Objects;
 
 public class Configuration extends YamlConfiguration
 {
@@ -57,7 +59,7 @@ public class Configuration extends YamlConfiguration
                     configFile.getParentFile().mkdirs();
                     try
                     {
-                        FUtil.copy(plugin.getResource(configFile.getName()), configFile);
+                        Files.copy(Objects.requireNonNull(plugin.getResource(configFile.getName())), configFile.toPath());
                     }
                     catch (IOException ex)
                     {

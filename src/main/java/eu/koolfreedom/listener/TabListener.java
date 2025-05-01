@@ -21,6 +21,6 @@ public class TabListener extends KoolSMPCoreBase implements Listener
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         Player player = event.getPlayer();
-        player.setPlayerListName(main.perms.getRankColor(player) + player.getName());
+        player.playerListName(main.perms.getColoredName(player));
     }
 }

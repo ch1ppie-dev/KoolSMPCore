@@ -17,6 +17,8 @@ public enum ConfigEntry
     DISCORD_BOT_TOKEN(String.class, "discord.bot_token"),
     DISCORD_STAFF_ACTION_CHANNEL_ID(String.class, "discord.staff_action_channel_id"),
     CHAT_FILTER_HATE_SPEECH(List.class, "chat_filter.hate_speech"),
+    FORMATS_ADMIN_CHAT(String.class, "formats.admin_chat"),
+    FORMATS_SAY(String.class, "formats.say"),
     UNBANNABLE_USERNAMES(List.class, "unbannable_usernames"),
     DISCORD_REPORT_CHANNEL_ID(String.class, "discord.report_channel_id");
 

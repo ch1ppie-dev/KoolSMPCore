@@ -35,7 +35,7 @@ public class PermBansCommand implements CommandExecutor
             }
             catch (Exception ex)
             {
-                FLog.severe(ex.toString());
+                FLog.error("Failed to reload permban configuration", ex);
                 sender.sendMessage(Messages.FAILED);
             }
             return true;

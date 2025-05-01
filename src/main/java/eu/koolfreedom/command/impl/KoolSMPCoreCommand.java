@@ -41,7 +41,7 @@ public class KoolSMPCoreCommand extends KoolSMPCoreBase implements CommandExecut
             }
             catch (Exception ex)
             {
-                FLog.severe(ex.toString());
+                FLog.error("Failed to load configuration", ex);
                 sender.sendMessage(Messages.FAILED);
             }
             return true;

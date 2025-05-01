@@ -1,99 +1,71 @@
 package eu.koolfreedom.api;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+
 import eu.koolfreedom.util.KoolSMPCoreBase;
-import net.luckperms.api.model.user.UserManager;
-import org.bukkit.ChatColor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("deprecation")
 public class Permissions extends KoolSMPCoreBase
 {
-    public String getGroup(Player player)
+    public Group getSenderGroup(CommandSender sender)
     {
-        UUID uuid = player.getUniqueId();
-        UserManager userManager = api.getUserManager();
-        return Objects.requireNonNull(userManager.getUser(uuid)).getPrimaryGroup();
-    }
-
-    public Group getPlayerGroup(Player player)
-    {
-        return Group.getByName(getGroup(player).toLowerCase());
-    }
-
-    public String getRankName(Player player)
-    {
-        if (!(player instanceof Player))
+        if (sender instanceof Player player)
         {
-            return "Console";
+            return Group.getByName(Objects.requireNonNull(api.getUserManager().getUser(player.getUniqueId())).getPrimaryGroup());
         }
-        Group group = getPlayerGroup(player);
-        return group.getName();
-    }
-
-    public ChatColor getRankColor(Player player)
-    {
-        if (!(player instanceof Player))
+        else if (sender instanceof ConsoleCommandSender)
         {
-            return ChatColor.BLUE;
+            return Group.CONSOLE;
         }
-        Group group = getPlayerGroup(player);
-        return group.getChatColor();
+        else
+        {
+            return Group.DEFAULT;
+        }
     }
 
-    public String getDisplay(Player player)
+    public Component getColoredName(CommandSender sender)
     {
-        return getRankColor(player) + getRankName(player);
+        Objects.requireNonNull(sender);
+
+        return Component.text(sender.getName()).color(getSenderGroup(sender).getColor());
     }
 
     // are we gaming or are we gaming
-    public enum Group
+    // yes we are
+    @Getter
+    @RequiredArgsConstructor
+	public enum Group
     {
-        DEFAULT("Member", ChatColor.GRAY),
-        MOD("Moderator", ChatColor.GREEN),
-        ADMIN("Admin", ChatColor.AQUA),
-        SENIOR("Senior", ChatColor.GOLD),
-        DEVELOPER("Developer", ChatColor.DARK_PURPLE),
-        MANAGER("Manager", ChatColor.LIGHT_PURPLE),
-        CO_OWNER("Co-Owner", ChatColor.RED),
-        EXECUTIVE("Executive", ChatColor.DARK_RED),
-        OWNER("Owner", ChatColor.RED);
-
-        private static final Map<String, Group> BY_NAME = new HashMap<>();
-
-        static
-        {
-            for (Group group : Group.values())
-            {
-                BY_NAME.put(group.toString().toLowerCase(), group);
-            }
-        }
+        DEFAULT("Member", NamedTextColor.GRAY),
+        MOD("Moderator", NamedTextColor.GREEN),
+        ADMIN("Admin", NamedTextColor.AQUA),
+        SENIOR("Senior", NamedTextColor.GOLD),
+        DEVELOPER("Developer", NamedTextColor.DARK_PURPLE),
+        MANAGER("Manager", NamedTextColor.LIGHT_PURPLE),
+        CO_OWNER("Co-Owner", NamedTextColor.RED),
+        EXECUTIVE("Executive", NamedTextColor.DARK_RED),
+        OWNER("Owner", NamedTextColor.RED),
+        CONSOLE("Console", NamedTextColor.BLUE);
 
         private final String name;
-        private final ChatColor chatColor;
+        private final TextColor color;
 
-        Group(String name, ChatColor chatColor)
+        public Component getColoredName()
         {
-            this.name = name;
-            this.chatColor = chatColor;
+            return Component.text(name).color(color);
         }
 
         public static Group getByName(String name)
         {
-            return BY_NAME.getOrDefault(name, DEFAULT);
-        }
-
-        public String getName()
-        {
-            return this.name;
-        }
-
-        public ChatColor getChatColor()
-        {
-            return this.chatColor;
+            return Arrays.stream(values()).filter(group -> group.getName().equalsIgnoreCase(name)).findAny()
+                    .orElse(DEFAULT);
         }
     }
 }

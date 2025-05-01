@@ -35,7 +35,7 @@ public class MainConfig
             }
             catch (IOException ex)
             {
-                FLog.severe(ex);
+                FLog.error("Failed to load default configuration", ex);
             }
 
             copyDefaultConfig(CONFIG_FILE);
@@ -44,7 +44,7 @@ public class MainConfig
         }
         catch (Exception ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to load configuration", ex);
         }
 
         DEFAULTS = tempDefaults;
@@ -84,19 +84,11 @@ public class MainConfig
                 }
             }
         }
-        catch (FileNotFoundException ex)
+        catch (IOException | InvalidConfigurationException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to load configuration", ex);
         }
-        catch (IOException ex)
-        {
-            FLog.severe(ex);
-        }
-        catch (InvalidConfigurationException ex)
-        {
-            FLog.severe(ex);
-        }
-    }
+	}
 
     public static String getString(ConfigEntry entry)
     {
@@ -106,8 +98,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as a string (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -119,7 +112,7 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to set configuration entry as a string (incorrect type?)", ex);
         }
     }
 
@@ -131,8 +124,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as a double (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -144,7 +138,7 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to set configuration entry as a double (incorrect type?)", ex);
         }
     }
 
@@ -156,8 +150,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as a boolean (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -169,7 +164,7 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to set configuration entry as a boolean (incorrect type?)", ex);
         }
     }
 
@@ -181,8 +176,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as an integer (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -194,11 +190,11 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to set configuration entry as an integer (incorrect type?)", ex);
         }
     }
 
-    public static List getList(ConfigEntry entry)
+    public static List<?> getList(ConfigEntry entry)
     {
         try
         {
@@ -206,8 +202,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as a list (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -244,7 +241,7 @@ public class MainConfig
             return;
         }
 
-        FLog.info("Installing default configuration file template: " + targetFile.getPath());
+        FLog.info("Installing default configuration file template: %s", targetFile.getPath());
 
         try
         {
@@ -254,7 +251,7 @@ public class MainConfig
         }
         catch (IOException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to install default configuration file", ex);
         }
     }
 
@@ -274,22 +271,17 @@ public class MainConfig
 
         private Deefawlts(InputStream defaultConfig)
         {
-            try
+            defaults = new YamlConfiguration();
+
+            try (final InputStreamReader isr = new InputStreamReader(defaultConfig))
             {
-                defaults = new YamlConfiguration();
-                final InputStreamReader isr = new InputStreamReader(defaultConfig);
                 defaults.load(isr);
-                isr.close();
             }
-            catch (IOException ex)
+            catch (IOException | InvalidConfigurationException ex)
             {
-                FLog.severe(ex);
+                FLog.error("An error occurred while attempting to read the defaults", ex);
             }
-            catch (InvalidConfigurationException ex)
-            {
-                FLog.severe(ex);
-            }
-        }
+		}
 
         public Object get(String path)
         {

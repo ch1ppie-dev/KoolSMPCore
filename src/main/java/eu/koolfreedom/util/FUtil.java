@@ -1,7 +1,10 @@
 package eu.koolfreedom.util;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.log.FLog;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -22,24 +25,6 @@ public class FUtil // the f stands for fuck
     {
         RANDOM = new Random();
         CHAT_COLOR_POOL = Arrays.stream(ChatColor.values()).toList();
-    }
-
-    public static void copy(InputStream in, File file) throws IOException
-    {
-        if (!file.exists())
-        {
-            file.getParentFile().mkdirs();
-        }
-
-        final OutputStream out = new FileOutputStream(file);
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0)
-        {
-            out.write(buf, 0, len);
-        }
-        out.close();
-        in.close();
     }
 
     @SuppressWarnings("deprecation")
@@ -90,40 +75,17 @@ public class FUtil // the f stands for fuck
 
     public static void adminChat(CommandSender sender, String message)
     {
-        Player player = Bukkit.getPlayer(sender.getName());
-        String rank = KoolSMPCore.main.perms.getDisplay(player);
-        String format = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
-                + ChatColor.DARK_GRAY + "] " + ChatColor.GOLD + message;
-        Bukkit.getLogger().info(format);
+        Component formattedMessage = KoolSMPCore.main.mmDeserialize(ConfigEntry.FORMATS_ADMIN_CHAT.getString(),
+                Placeholder.unparsed("name", sender.getName()),
+                Placeholder.component("rank", KoolSMPCore.main.perms.getSenderGroup(sender).getColoredName()),
+                Placeholder.unparsed("message", message));
+
+        FLog.info(formattedMessage);
+
         Bukkit.getOnlinePlayers()
                 .stream()
                 .filter((players) -> (players.hasPermission("kf.admin")))
-                .forEachOrdered((players) -> players.sendMessage(format));
-    }
-
-    public static long getUnixTime()
-    {
-        return System.currentTimeMillis() / 1000L;
-    }
-
-    public static Date getUnixDate(long unix)
-    {
-        return new Date(unix * 1000);
-    }
-
-    public static long getUnixTime(Date date)
-    {
-        if (date == null)
-        {
-            return 0;
-        }
-
-        return date.getTime() / 1000L;
-    }
-
-    public static String decolorize(String string)
-    {
-        return string.replaceAll("\\u00A7(?=[0-9a-fk-or])", "&");
+                .forEachOrdered((players) -> players.sendMessage(formattedMessage));
     }
 
     public static File getPluginFile(Plugin plugin, String name)
@@ -134,19 +96,5 @@ public class FUtil // the f stands for fuck
     public static String getIp(Player player)
     {
         return player.getAddress().getAddress().getHostAddress().trim();
-    }
-
-    public static String getFormattedEndDate(long end) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(end);
-
-        return String.format(
-                "%02d/%02d/%02d %02dH:%02dM",
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH),
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE)
-        );
     }
 }
