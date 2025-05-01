@@ -4,11 +4,15 @@ import eu.koolfreedom.api.Permissions;
 import eu.koolfreedom.banning.BanListener;
 import eu.koolfreedom.banning.Bans;
 import eu.koolfreedom.banning.PermBans;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.config.Configuration;
+import eu.koolfreedom.config.MainConfig;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
 import net.dv8tion.jda.api.JDA;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
@@ -30,8 +34,6 @@ import org.bukkit.entity.*;
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
     public static final Random random = new Random();
-    public static String pluginVersion;
-    public static String pluginName;
     public static final String CONFIG_FILENAME = "config.yml";
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
@@ -53,6 +55,11 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         return MINI_MESSAGE.deserialize(message).clickEvent(null).hoverEvent(null);
     }
 
+    public Component mmDeserialize(String message, TagResolver... placeholders)
+    {
+        return MINI_MESSAGE.deserialize(message, placeholders);
+    }
+
     public static LuckPerms getLuckPermsAPI()
     {
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
@@ -69,8 +76,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
     public void onLoad()
     {
         main = this;
-        KoolSMPCore.pluginName = main.getDescription().getName();
-        KoolSMPCore.pluginVersion = main.getDescription().getVersion();
 
         FLog.setPluginLogger(main.getLogger());
         FLog.setServerLogger(getServer().getLogger());
@@ -162,7 +167,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("warn")).setExecutor(new WarnCommand());
     }
 
-
     public static class BuildProperties
     {
         public String author;
@@ -183,7 +187,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 }
 
                 author = props.getProperty("buildAuthor", "gamingto12");
-                version = props.getProperty("buildVersion", pluginVersion);
+                version = props.getProperty("buildVersion", plugin.getDescription().getVersion());
                 number = props.getProperty("buildNumber", "1");
                 date = props.getProperty("buildDate", "unknown");
             }
@@ -253,22 +257,20 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         }
         else
         {
-            if (message.trim().toLowerCase().contains("nigger") ||
-                    (message.trim().toLowerCase().contains("nigga") ||
-                            (message.trim().toLowerCase().contains("faggot") ||
-                                    (message.trim().toLowerCase().contains("n1gga")) ||
-                                    (message.trim().toLowerCase().contains("fag")) ||
-                                    (message.trim().toLowerCase().contains("heil hitler")) ||
-                                    (message.trim().toLowerCase().contains("tranny")) ||
-                                    (message.trim().toLowerCase().contains("n1gger")) ||
-                                    (message.trim().toLowerCase().contains("fagg0t")) ||
-                                    (message.trim().toLowerCase().contains("sieg heil")) ||
-                                    (message.trim().toLowerCase().contains("niga"))))){
+            final String fuckYouJava = message;
+
+            if (ConfigEntry.CHAT_FILTER_HATE_SPEECH.getStringList().stream()
+                    .anyMatch(entry -> fuckYouJava.trim().toLowerCase().contains(entry)))
+            {
                 event.setCancelled(true);
 
-                player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
+                if (player.isOnline())
+                {
+                    player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
+                }
 
-                Bukkit.getScheduler().runTaskLater(this, () -> {
+                Bukkit.getScheduler().runTaskLater(this, () ->
+                {
                     if (player.isOnline())
                     {
                         getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + "Hate-Speech");
