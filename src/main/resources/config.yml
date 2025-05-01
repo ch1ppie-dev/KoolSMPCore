@@ -3,9 +3,9 @@
 #
 
 server:
-  motd: KoolFreedom SMP (Native 1.21.1)
-  tablist_header: ' \n  &dWelcome to &6KoolFreedom SMP&d!  \n '
-  tablist_footer: ' \n  &dJoin our &5/discord \n  '
+  motd: '<randomize>KoolFreedom SMP (Native 1.21.1)'
+  tablist_header: ' <newline>  <light_purple>Welcome to <gold>KoolFreedom SMP</gold>!  <newline> '
+  tablist_footer: ' <newline>  <light_purple>Join our <dark_purple>/discord</dark_purple> <newline>  '
   website_or_forum: 'Put your own forum/website here.'
 
 # Toggles the announcer
@@ -39,10 +39,9 @@ chat-filter:
     - tranny
 
 # Admin Chat Format
-# ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
-#                + ChatColor.DARK_GRAY + "] " + ChatColor.GOLD + message
 formats:
   admin_chat: "<dark_gray>[<aqua>AC</aqua>] <blue><name></blue> [<rank>] <gold><message>"
+  commandspy: "<gray><hover:show_text:'<translate:chat.copy.click>'><click:copy_to_clipboard:<name>><name></click></hover>: <click:suggest_command:'<raw_command>'><command>"
   say: "<light_purple>[Server:<name>] <message>"
 
 discord:

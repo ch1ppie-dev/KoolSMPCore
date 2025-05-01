@@ -24,13 +24,15 @@ public class LoginListener extends KoolSMPCoreBase implements Listener
 
         String header = main.config.getString("server.tablist_header");
         String footer = main.config.getString("server.tablist_footer");
-        if (!(header == null))
+
+        if (header != null)
         {
-            player.setPlayerListHeader(FUtil.colorize(header).replace("\\n", "\n"));
+            player.sendPlayerListHeader(main.mmDeserialize(header));
         }
-        if (!(footer == null))
+
+        if (footer != null)
         {
-            player.setPlayerListFooter(FUtil.colorize(footer).replace("\\n", "\n"));
+            player.sendPlayerListFooter(main.mmDeserialize(footer));
         }
     }
 }

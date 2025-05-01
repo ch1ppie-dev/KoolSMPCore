@@ -1,6 +1,5 @@
 package eu.koolfreedom.listener;
 
-
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.util.KoolSMPCoreBase;
 import org.bukkit.Bukkit;

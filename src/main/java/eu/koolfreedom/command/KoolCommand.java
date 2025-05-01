@@ -1,6 +1,7 @@
 package eu.koolfreedom.command;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -14,6 +15,9 @@ import java.util.List;
 
 public abstract class KoolCommand implements TabExecutor
 {
+    protected final String playerNotFound = "<gray>Could not find the specified player on the server (are they online?)";
+    protected final String playersOnly = "<red>This command can only be executed in-game.";
+
     @Override
     public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String commandLabel, @NotNull String[] args)
     {
@@ -23,14 +27,14 @@ public abstract class KoolCommand implements TabExecutor
             {
                 msg(sender, "<gray>Usage: <usage>", Placeholder.component("usage",
                         KoolSMPCore.main.mmDeserialize(cmd.getUsage(), Placeholder.unparsed("command", commandLabel))));
-                return true;
             }
         }
         catch (Throwable ex)
         {
             msg(sender, Component.text(ex.getMessage()).color(NamedTextColor.RED));
         }
-        return false;
+
+        return true;
     }
 
     @Override
@@ -53,13 +57,23 @@ public abstract class KoolCommand implements TabExecutor
         return List.of();
     }
 
-    protected void msg(CommandSender sender, String message, TagResolver... placeholders)
+    protected final void msg(CommandSender sender, String message, TagResolver... placeholders)
     {
-        msg(sender, KoolSMPCore.main.mmDeserialize(message, placeholders));
+        sender.sendRichMessage(message, placeholders);
     }
 
-    protected void msg(CommandSender sender, Component message)
+    protected final void msg(CommandSender sender, Component message)
     {
         sender.sendMessage(message);
+    }
+
+    protected final void broadcast(Component messsge)
+    {
+        FUtil.broadcast(messsge);
+    }
+
+    protected final void broadcast(String message, TagResolver... placeholders)
+    {
+        FUtil.broadcast(message, placeholders);
     }
 }

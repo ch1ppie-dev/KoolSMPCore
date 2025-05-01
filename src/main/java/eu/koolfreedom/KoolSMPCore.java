@@ -33,7 +33,6 @@ import org.bukkit.entity.*;
 @SuppressWarnings("deprecation")
 public class KoolSMPCore extends JavaPlugin implements Listener {
     public static KoolSMPCore main;
-    public static final Random random = new Random();
     public static final String CONFIG_FILENAME = "config.yml";
     public static final BuildProperties build = new BuildProperties();
     private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();

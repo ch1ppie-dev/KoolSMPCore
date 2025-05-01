@@ -1,33 +1,48 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.util.FUtil;
+import eu.koolfreedom.command.KoolCommand;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-public class SlapCommand implements CommandExecutor {
+import java.util.List;
+
+public class SlapCommand extends KoolCommand
+{
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /slap <player>");
-            return true;
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    {
+        if (args.length != 1)
+        {
+            return false;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
-        if (target == null || !target.isOnline()) {
-            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
+        if (target == null)
+        {
+            msg(sender, playerNotFound);
             return true;
         }
 
-        // Determine the sender's name (console or player)
-        String senderName = sender instanceof Player ? sender.getName() : "Console";
+        if (!senderIsConsole && playerSender != null && playerSender.equals(target))
+        {
+            playerSender.damage(Math.max(playerSender.getHealth() / 4, 1.0));
+            msg(sender, "<red>Ouch! That looks like it must have hurt.");
+            return true;
+        }
 
-        // Broadcast the slap message
-        FUtil.bcastMsg(ChatColor.AQUA + senderName + " gave " + target.getName() + " a nice slap to the face!");
+        broadcast("<aqua><sender> gave <player> a nice slap to the face!",
+                Placeholder.unparsed("sender", sender.getName()),
+                Placeholder.unparsed("player", target.getName()));
         return true;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
+                .filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
     }
 }

@@ -177,7 +177,6 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.jetbrains:annotations</include>
-                                    <include>net.dv8tion:JDA</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

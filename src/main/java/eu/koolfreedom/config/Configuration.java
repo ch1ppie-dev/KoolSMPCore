@@ -20,7 +20,7 @@ public class Configuration extends YamlConfiguration
 
     public Configuration(Plugin plugin, String fileName, boolean copyDefaults)
     {
-        this(plugin, FUtil.getPluginFile(plugin, fileName), copyDefaults);
+        this(plugin, new File(plugin.getDataFolder(), fileName), copyDefaults);
     }
 
     public Configuration(Plugin plugin, File file, boolean copyDefaults)

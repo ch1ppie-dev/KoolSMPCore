@@ -1,30 +1,48 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.util.FUtil;
+import eu.koolfreedom.command.KoolCommand;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-public class PatCommand implements CommandExecutor {
+import java.util.List;
+
+public class PatCommand extends KoolCommand
+{
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /pat <player>");
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    {
+        if (args.length != 1)
+        {
+            return false;
+        }
+
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null)
+        {
+            msg(sender, playerNotFound);
             return true;
         }
 
-        Player target = Bukkit.getPlayer(args[0]);
-        if (target == null || !target.isOnline()) {
-            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
+        if (!senderIsConsole && player.equals(playerSender))
+        {
+            msg(sender, "<red>You can't pat yourself.");
             return true;
         }
 
-        String senderName = sender instanceof Player ? ((Player) sender).getName() : "Console";
-        FUtil.bcastMsg(ChatColor.AQUA + senderName + " gave " + target.getName() + " a pat on the head.");
+        broadcast("<aqua><sender> gave <target> a pat on the head.",
+                Placeholder.unparsed("sender", sender.getName()),
+                Placeholder.unparsed("target", player.getName()));
+
         return true;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
+                .filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
     }
 }
