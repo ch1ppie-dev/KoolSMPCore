@@ -9,69 +9,101 @@ commands:
   adminchat:
     usage: /<command> <message>
     description: Speak with other staff members
+    permission: kf.admin
     aliases: [ o, oc, adminchat, ac ]
   ban:
     description: Ban someone
+    usage: /<command> <player> [reason]
     aliases: [gtfo]
+    permission: kf.admin
   clearchat:
+    description: Clears the chat
     aliases: [cc]
     permission: kf.admin
-    description: Clears the chat
   commandspy:
-    aliases: [cmdspy, cspy]
     description: Spy on another player's commands.
+    aliases: [cmdspy, cspy]
+    permission: kf.admin
   crash:
-    permission: kf.exec
     description: Crash a person's client
+    permission: kf.exec
   cry:
     description: womp womp
   doom:
     description: Swing the Russian Hammer
+    usage: /doom <player>
+    permission: kf.senior
   hug:
     descriptions: Hug a player
+    usage: /hug <player>
   kick:
     description: Kick someone
+    usage: /kick <player>
+    permission: kf.admin
   kiss:
     description: For the lovebirds, give em a big ol kiss
+    usage: /kiss <player>
   koolsmpcore:
     description: Display information about the plugin
-    aliases: [kfm]
+    aliases: [kfc]
+    usage: /kfc [reload]
   mute:
     description: Mutes a player
+    usage: /kick <player> [reason]
+    permission: kf.admin
   obliterate:
     description: Unleash hell upon a player
+    usage: /obliterate <player> [reason]
+    permission: kf.senior
   orbit:
     description: trol
+    usage: /orbit <user> <<power> | stop>
+    permission: kf.admin
   pat:
     description: pat pat
   permbans:
     description: Reload the PermBans configuration file.
+    usage: /permbans <reload>
+    permission: kf.senior
   poke:
     description: poke
   rawsay:
     description: Tellraw...but better
+    usage: /rawsay <message>
     permission: kf.admin
   report:
     description: Report a suspicious user
+    usage: /report <player> <reason>
   satisfyall:
     description: Feed and heal everyone online
     usage: /<command>
-  say:
     permission: kf.admin
+  say:
     description: what the fuck else does it do
+    usage: /say <message>
+    permission: kf.admin
   ship:
     description: Make a really unfunny joke about how you ship 2 people
   slap:
     description: Slap the shit out of someone
+    usage: /slap <player>
   smite:
-    permission: kf.admin
     description: Smite that motherfucker
+    usage: /smite <player> [reason]
+    permission: kf.admin
+    permission-message: kf.admin
   spectate:
     description: Suspicious user? Spectate them
+    usage: /spectate <player>
+    permission: kf.admin
   unban:
     description: Unban someone
+    usage: /unban <player>
+    permission: kf.admin
   warn:
     description: Warn someone
+    usage: /warn <player> [reason]
+    permission: kf.admin
 permissions:
   kf.admin:
     default: op

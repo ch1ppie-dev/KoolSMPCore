@@ -5,6 +5,7 @@ import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.log.FLog;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -61,6 +62,11 @@ public class FUtil // the f stands for fuck
     public static void bcastMsg(String message)
     {
         FUtil.bcastMsg(message, null, true);
+    }
+
+    public static void broadcast(String message, TagResolver... placeholders)
+    {
+        Bukkit.broadcast(KoolSMPCore.main.mmDeserialize(message, placeholders));
     }
 
     public static String colorize(final String string)

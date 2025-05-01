@@ -24,7 +24,7 @@ public class SlapCommand implements CommandExecutor {
         }
 
         // Determine the sender's name (console or player)
-        String senderName = sender instanceof Player ? ((Player) sender).getName() : "Console";
+        String senderName = sender instanceof Player ? sender.getName() : "Console";
 
         // Broadcast the slap message
         FUtil.bcastMsg(ChatColor.AQUA + senderName + " gave " + target.getName() + " a nice slap to the face!");
