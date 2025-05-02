@@ -59,7 +59,7 @@ commands:
     usage: /kfc [reload]
   mute:
     description: Mutes a player
-    usage: /kick <player> [reason]
+    usage: /mute <player>
     permission: kf.admin
   orbit:
     description: trol
