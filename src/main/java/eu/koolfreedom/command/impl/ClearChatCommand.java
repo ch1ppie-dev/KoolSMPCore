@@ -15,9 +15,9 @@ public class ClearChatCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
     {
-        Bukkit.getScheduler().runTaskAsynchronously(KoolSMPCore.getPlugin(), () ->
+        Bukkit.getScheduler().runTaskAsynchronously(KoolSMPCore.getInstance(), () ->
         {
-            // Messages are not unique between players with this implementation, mainly for better optimization but it
+            // Messages are not unique between players with this implementation, mainly for better optimization, but it
             //  still works pretty effectively
             for (int i = 0; i < 2000; i++)
             {

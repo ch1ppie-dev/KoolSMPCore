@@ -26,7 +26,7 @@ public abstract class KoolCommand implements TabExecutor
             if (!run(sender, sender instanceof ConsoleCommandSender ? null : (Player) sender, cmd, commandLabel, args, sender instanceof ConsoleCommandSender))
             {
                 msg(sender, "<gray>Usage: <usage>", Placeholder.component("usage",
-                        KoolSMPCore.main.mmDeserialize(cmd.getUsage(), Placeholder.unparsed("command", commandLabel))));
+                        FUtil.miniMessage(cmd.getUsage(), Placeholder.unparsed("command", commandLabel))));
             }
         }
         catch (Throwable ex)
@@ -72,8 +72,18 @@ public abstract class KoolCommand implements TabExecutor
         FUtil.broadcast(messsge);
     }
 
+    protected final void broadcast(Component messsge, String permission)
+    {
+        FUtil.broadcast(messsge, permission);
+    }
+
     protected final void broadcast(String message, TagResolver... placeholders)
     {
         FUtil.broadcast(message, placeholders);
+    }
+
+    protected final void broadcast(String permission, String message, TagResolver... placeholders)
+    {
+        FUtil.broadcast(permission, message, placeholders);
     }
 }

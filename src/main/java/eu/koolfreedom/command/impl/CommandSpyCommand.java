@@ -21,7 +21,7 @@ public class CommandSpyCommand extends KoolCommand implements Listener
 
     public CommandSpyCommand()
     {
-        Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getPlugin());
+        Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
     }
 
     @Override

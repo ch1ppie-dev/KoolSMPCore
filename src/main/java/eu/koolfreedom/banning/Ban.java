@@ -1,6 +1,5 @@
 package eu.koolfreedom.banning;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.util.FUtil;
 import lombok.Builder;
@@ -8,7 +7,6 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
@@ -51,7 +49,7 @@ public class Ban
 			}
 			catch (IllegalArgumentException ex)
 			{
-				FLog.warning("Entry %s contains invalid UUID: %s", builder.id, section.get("uuid"));
+				FLog.warning("Entry {} contains invalid UUID: {}", builder.id, section.get("uuid"));
 			}
 		}
 
@@ -136,7 +134,7 @@ public class Ban
 			builder.append("<newline>Expires: <yellow><expires></yellow>");
 		}
 
-		return KoolSMPCore.getPlugin().mmDeserialize(builder.toString(),
+		return FUtil.miniMessage(builder.toString(),
 				Placeholder.unparsed("expires", expirationDateFormat.format(new Date(expires))),
 				Placeholder.unparsed("reason", reason != null ? reason : ""),
 				Placeholder.unparsed("by", by != null ? by : ""));

@@ -2,54 +2,30 @@ package eu.koolfreedom.util;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.log.FLog;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.internal.serializer.SerializableResolver;
-import net.kyori.adventure.text.minimessage.tag.Inserting;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Modifying;
-import net.kyori.adventure.text.minimessage.tag.PreProcess;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.examination.Examinable;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
 import java.util.*;
 
 public class FUtil // the f stands for fuck
 {
     private static final Random RANDOM = new Random();
-
-    @Deprecated(forRemoval = true)
-    public static void adminAction(String adminName, String action, boolean isRed)
-    {
-        FUtil.bcastMsg(adminName + " - " + action, (isRed ? ChatColor.RED : ChatColor.AQUA));
-    }
-
-    @Deprecated(forRemoval = true)
-    public static void bcastMsg(String message, ChatColor color)
-    {
-        FLog.info(message);
-
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-            player.sendMessage((color == null ? "" : color) + message);
-        }
-    }
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     public static void staffAction(CommandSender sender, String message, TagResolver... placeholders)
     {
         broadcast("<gray><i>[<sender>: <action>]", Placeholder.unparsed("sender", sender.getName()),
-                Placeholder.component("action", KoolSMPCore.main.mmDeserialize(message, placeholders)));
+                Placeholder.component("action", FUtil.miniMessage(message, placeholders)));
     }
 
     public static void broadcast(Component component)
@@ -57,9 +33,24 @@ public class FUtil // the f stands for fuck
         Bukkit.broadcast(component);
     }
 
+    public static void broadcast(Component component, String permission)
+    {
+        Bukkit.broadcast(component, permission);
+    }
+
     public static void broadcast(String message, TagResolver... placeholders)
     {
-        Bukkit.broadcast(KoolSMPCore.main.mmDeserialize(message, placeholders));
+        Bukkit.broadcast(miniMessage(message, placeholders));
+    }
+
+    public static void broadcast(String permission, String message, TagResolver... placeholders)
+    {
+        Bukkit.broadcast(miniMessage(message, placeholders), permission);
+    }
+
+    public static Component miniMessage(String message, TagResolver... placeholders)
+    {
+        return MINI_MESSAGE.deserialize(message, placeholders);
     }
 
     public static int randomNumber()
@@ -74,17 +65,12 @@ public class FUtil // the f stands for fuck
 
     public static void adminChat(CommandSender sender, String message)
     {
-        Component formattedMessage = KoolSMPCore.main.mmDeserialize(ConfigEntry.FORMATS_ADMIN_CHAT.getString(),
+        Component formattedMessage = miniMessage(ConfigEntry.FORMATS_ADMIN_CHAT.getString(),
                 Placeholder.unparsed("name", sender.getName()),
-                Placeholder.component("rank", KoolSMPCore.main.perms.getSenderGroup(sender).getColoredName()),
+                Placeholder.component("rank", KoolSMPCore.getInstance().perms.getSenderGroup(sender).getColoredName()),
                 Placeholder.unparsed("message", message));
 
-        FLog.info(formattedMessage);
-
-        Bukkit.getOnlinePlayers()
-                .stream()
-                .filter((players) -> (players.hasPermission("kf.admin")))
-                .forEachOrdered((players) -> players.sendMessage(formattedMessage));
+        broadcast(formattedMessage, "kf.admin");
     }
 
     public static String getIp(Player player)

@@ -39,7 +39,7 @@ public class BanManager extends KoolSMPCoreBase implements Listener
 			}
 		}
 
-		Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getPlugin());
+		Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
 	}
 
 	public void load()
@@ -64,7 +64,12 @@ public class BanManager extends KoolSMPCoreBase implements Listener
 
 		FLog.info("Loading bans file");
 		final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(bansFile);
-		banMap.clear();
+
+		// Avoid wiping the ban list in memory if the configuration failed to load
+		if (!banMap.isEmpty() && !configuration.getKeys(true).isEmpty())
+		{
+			banMap.clear();
+		}
 
 		long banId;
 		for (String id : configuration.getKeys(false))
@@ -87,7 +92,7 @@ public class BanManager extends KoolSMPCoreBase implements Listener
 			}
 		}
 
-		FLog.info("%s bans were loaded.", banMap.size());
+		FLog.info("{} bans were loaded.", banMap.size());
 	}
 
 	public void save()
@@ -210,6 +215,11 @@ public class BanManager extends KoolSMPCoreBase implements Listener
 	public boolean isBanned(OfflinePlayer player)
 	{
 		return findBan(player).isPresent();
+	}
+
+	public long getBanCount()
+	{
+		return banMap.values().stream().filter(ban -> !ban.isExpired()).count();
 	}
 
 	@EventHandler

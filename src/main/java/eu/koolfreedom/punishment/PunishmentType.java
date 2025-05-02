@@ -6,5 +6,6 @@ public enum PunishmentType
     KICK,
     DOOM,
     BAN,
-    QUICKBAN
+    QUICKBAN,
+    WARN
 }

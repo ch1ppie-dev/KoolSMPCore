@@ -1,78 +1,123 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanType;
-import eu.koolfreedom.banning.BanList;
+import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.luckperms.api.LuckPerms;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
-public class DoomCommand implements CommandExecutor {
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args)
+import java.util.Objects;
+
+public class DoomCommand extends KoolCommand
+{
+    @Override
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
     {
-        if (!sender.hasPermission("kf.admin")) {
-            sender.sendMessage(Messages.MSG_NO_PERMS);
+        if (args.length == 0)
+        {
             return false;
         }
 
-        if (args.length == 0) {
-            sender.sendMessage(KoolSMPCore.main.mmDeserialize("<red>Usage: /" + s + " <player> [reason]"));
-            return true;
-        }
-
         Player target = Bukkit.getPlayer(args[0]);
-        if (target == null) {
-            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
+        if (target == null)
+        {
+            msg(sender, playerNotFound);
             return true;
         }
 
-        FUtil.adminAction(sender.getName(), "Swinging the Russian Hammer over " + target.getName(), true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Swinging the Russian Hammer over " + target.getName() + "**");
+        String reason = args.length >= 2 ? String.join(" ", ArrayUtils.remove(args, 0)) : null;
 
+        eviscerate(target, sender, reason);
+        return true;
+    }
 
-        FUtil.bcastMsg(target.getName() + " will be squished flat", ChatColor.RED);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + target.getName() + " will be squished flat**");
+    public static void eviscerate(Player target, CommandSender sender, String reason)
+    {
+        // Get the technical side of things out of the way first, we want this user banned first and foremost
+        final Ban ban = Ban.fromPlayer(target, sender.getName(), reason != null ? reason : "You've met with a terrible fate, haven't you?", BanType.BAN);
+        KoolSMPCore.getInstance().bm.addBan(ban);
 
-        FUtil.adminAction(sender.getName(), "Removing " + target.getName() + " from the staff list", true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Removing " + target.getName() + " from the staff list**");
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
+        // Strip them of their data in LuckPerms
+        Objects.requireNonNull(KoolSMPCore.getLuckPermsAPI()).getUserManager().deletePlayerData(target.getUniqueId());
+        if (KoolSMPCore.getLuckPermsAPI() != null)
+        {
+            LuckPerms luckPerms = KoolSMPCore.getLuckPermsAPI();
 
-
-        // Ignite player
-        target.setFireTicks(10000);
-
-        // Explosions
-        target.getWorld().createExplosion(target.getLocation(), 0F, false);
-
-        new BukkitRunnable() {
-            @Override
-            public void run()
+            luckPerms.getUserManager().deletePlayerData(target.getUniqueId());
+            luckPerms.getUserManager().modifyUser(target.getUniqueId(), user ->
             {
-                // strike lightning
-                target.getWorld().strikeLightningEffect(target.getLocation());
+                user.setPrimaryGroup("default");
+                user.data().clear();
+            });
+        }
 
-                // kill if not killed already
-                target.setHealth(0.0);
-            }
-        }.runTaskLater(KoolSMPCore.main, 2L * 20L);
+        // Stop them dead in their tracks
+        target.spawnParticle(Particle.ASH, target.getLocation(), Integer.MAX_VALUE, 1, 1, 1, 1, null, true);
+
+        // Now we can have our fun
+        FUtil.broadcast("<red>Hey, <player>, what's the difference between jelly and jam?",
+                Placeholder.unparsed("player", target.getName()));
+
+        // ZAP
+        target.setGameMode(GameMode.ADVENTURE);
+        target.getWorld().strikeLightning(target.getLocation());
+        target.getWorld().createExplosion(target.getLocation(), 0F, false);
 
         new BukkitRunnable()
         {
             @Override
             public void run()
             {
-                // Add ban
-                BanList.addBan(target, sender, BanType.BAN, "May your worst nightmare come true, and may you suffer by the hands of your ruler.");
-                FUtil.adminAction(sender.getName(), "Banning " + target.getName(), true);
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **" + sender.getName() + " - Banning " + target.getName() + "**");
+                FUtil.broadcast("<red>I can't jelly my ban hammer down your throat.");
 
-                // more explosion
+                if (!target.isOnline())
+                {
+                    FUtil.broadcast("<red>Not even running away will save you.");
+                }
+
+                target.getWorld().strikeLightning(target.getLocation());
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
             }
-        }.runTaskLater(KoolSMPCore.main, 3L * 20L);
-        return true;
+        }.runTaskLater(KoolSMPCore.getInstance(), 20L);
+
+        for (int i = 1; i < 4; i++)
+        {
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    target.getWorld().strikeLightning(target.getLocation());
+                    target.getWorld().createExplosion(target.getLocation(), 0F, false);
+                }
+            }.runTaskLater(KoolSMPCore.getInstance(), 30 * i);
+        }
+
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                if (target.isOnline())
+                {
+                    target.kick(ban.getKickMessage());
+                }
+
+                target.getWorld().strikeLightning(target.getLocation());
+                target.getWorld().createExplosion(target.getLocation(), 0F, false);
+
+                FUtil.staffAction(sender, "Banned <player> with excessive violence",
+                        Placeholder.unparsed("player", target.getName()));
+            }
+        }.runTaskLater(KoolSMPCore.getInstance(), 135L);
     }
+
+
 }

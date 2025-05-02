@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 
 public class FLog
 {
-    private static final Logger logger = KoolSMPCore.main.getSLF4JLogger();
-    private static final ComponentLogger componentLogger = KoolSMPCore.main.getComponentLogger();
+    private static final Logger logger = KoolSMPCore.getInstance().getSLF4JLogger();
+    private static final ComponentLogger componentLogger = KoolSMPCore.getInstance().getComponentLogger();
 
     public static void info(String message)
     {

@@ -2,7 +2,6 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
-import eu.koolfreedom.banning.BanList;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -21,7 +20,7 @@ public class UnbanCommand extends KoolCommand
             return false;
         }
 
-        Ban ban = KoolSMPCore.getPlugin().bm.removeBan(args[0]);
+        Ban ban = KoolSMPCore.getInstance().bm.removeBan(args[0]);
 
         if (ban == null)
         {
@@ -37,7 +36,7 @@ public class UnbanCommand extends KoolCommand
 
             if (name != null)
             {
-                FUtil.staffAction(sender, "Unbanned <player>", Placeholder.unparsed("player", "name"));
+                FUtil.staffAction(sender, "Unbanned <player>", Placeholder.unparsed("player", name));
             }
             else
             {

@@ -1,14 +1,16 @@
 package eu.koolfreedom;
 
 import eu.koolfreedom.api.Permissions;
+import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanManager;
+import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.config.Configuration;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import lombok.Getter;
 import net.luckperms.api.LuckPerms;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import net.kyori.adventure.text.*;
@@ -26,54 +28,47 @@ import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
 
 @SuppressWarnings("deprecation")
-public class KoolSMPCore extends JavaPlugin implements Listener {
-    public static KoolSMPCore main;
+public class KoolSMPCore extends JavaPlugin implements Listener
+{
+    @Getter
+    private static KoolSMPCore instance;
+    private static LuckPerms luckPermsAPI = null;
     public static final String CONFIG_FILENAME = "config.yml";
     public static final BuildProperties build = new BuildProperties();
-    private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    public Configuration config;
+
     public BanManager bm;
+    public MuteManager mum;
     public ServerListener sl;
     public Permissions perms;
     public ExploitListener el;
     public TabListener tl;
     public LoginListener lol; // lol
 
-    public static KoolSMPCore getPlugin()
-    {
-        return main;
-    }
-
-    public Component mmDeserialize(String message)
-    {
-        return MINI_MESSAGE.deserialize(message).clickEvent(null).hoverEvent(null);
-    }
-
-    public Component mmDeserialize(String message, TagResolver... placeholders)
-    {
-        return MINI_MESSAGE.deserialize(message, placeholders);
-    }
-
     public static LuckPerms getLuckPermsAPI()
     {
-        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-        if (provider != null)
+        if (luckPermsAPI == null)
         {
-            FLog.info("Successfully loaded the LuckPerms API.");
-            return provider.getProvider();
+            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+            if (provider != null)
+            {
+                FLog.info("Successfully loaded the LuckPerms API.");
+                luckPermsAPI = provider.getProvider();
+            }
+            else
+            {
+                FLog.error("The LuckPerms API was not loaded successfully. The plugin will not function properly.");
+            }
         }
 
-        FLog.error("The LuckPerms API was not loaded successfully. The plugin will not function properly.");
-        return null;
+        return luckPermsAPI;
     }
 
     @Override
     public void onLoad()
     {
-        main = this;
-        config = new Configuration(this, "config.yml", true);
+        instance = this;
 
-        build.load(main);
+        build.load(instance);
     }
 
     @Override
@@ -88,13 +83,13 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         loadListeners();
         FLog.info("Loaded listeners");
         perms = new Permissions();
-        config.load();
         loadBansConfig();
         FLog.info("Loaded configurations");
 
         if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
 
         Discord.init();
+        getLuckPermsAPI();
     }
 
     @Override
@@ -107,7 +102,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
             Discord.getJDA().shutdownNow();
         }
 
-        config.save();
+        //config.save();
         bm.save();
     }
 
@@ -119,9 +114,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
     public void loadListeners()
     {
-        PluginManager manager = Bukkit.getServer().getPluginManager();
-
-        manager.registerEvents(new MuteManager(this), this);
+        mum = new MuteManager();
         sl = new ServerListener(this);
         el = new ExploitListener(this);
         lol = new LoginListener(this);
@@ -130,33 +123,32 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
 
     public void loadCommands()
     {
-        Objects.requireNonNull(getCommand("adminchat")).setExecutor(new AdminChatCommand());
-        Objects.requireNonNull(getCommand("ban")).setExecutor(new BanCommand());
-        Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
-        Objects.requireNonNull(getCommand("commandspy")).setExecutor(new CommandSpyCommand());
-        Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
-        Objects.requireNonNull(getCommand("cry")).setExecutor(new CryCommand());
-        Objects.requireNonNull(getCommand("doom")).setExecutor(new DoomCommand());
-        Objects.requireNonNull(getCommand("hug")).setExecutor(new HugCommand());
-        Objects.requireNonNull(getCommand("kick")).setExecutor(new KickCommand());
-        Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
-        Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
-        Objects.requireNonNull(getCommand("mute")).setExecutor(new MuteCommand());
-        Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
-        Objects.requireNonNull(getCommand("orbit")).setExecutor(new OrbitCommand());
-        Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
-        Objects.requireNonNull(getCommand("permbans")).setExecutor(new PermBansCommand());
-        Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
-        Objects.requireNonNull(getCommand("rawsay")).setExecutor(new RawSayCommand());
-        Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
-        Objects.requireNonNull(getCommand("satisfyall")).setExecutor(new SatisfyAllCommand());
-        Objects.requireNonNull(getCommand("say")).setExecutor(new SayCommand());
-        Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
-        Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
-        Objects.requireNonNull(getCommand("smite")).setExecutor(new SmiteCommand());
-        Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
-        Objects.requireNonNull(getCommand("unban")).setExecutor(new UnbanCommand());
-        Objects.requireNonNull(getCommand("warn")).setExecutor(new WarnCommand());
+        registerCommand("adminchat", new AdminChatCommand());
+        registerCommand("ban", new BanCommand());
+        registerCommand("banlist", new BanListCommand());
+        registerCommand("clearchat", new ClearChatCommand());
+        registerCommand("commandspy", new CommandSpyCommand());
+        registerCommand("crash", new CrashCommand());
+        registerCommand("cry", new CryCommand());
+        registerCommand("doom", new DoomCommand());
+        registerCommand("hug", new HugCommand());
+        registerCommand("kick", new KickCommand());
+        registerCommand("kiss", new KissCommand());
+        registerCommand("koolsmpcore", new KoolSMPCoreCommand());
+        registerCommand("mute", new MuteCommand());
+        registerCommand("orbit", new OrbitCommand());
+        registerCommand("pat", new PatCommand());
+        registerCommand("poke", new PokeCommand());
+        registerCommand("rawsay", new RawSayCommand());
+        registerCommand("report", new ReportCommand());
+        registerCommand("satisfyall", new SatisfyAllCommand());
+        registerCommand("say", new SayCommand());
+        registerCommand("ship", new ShipCommand());
+        registerCommand("slap", new SlapCommand());
+        registerCommand("smite", new SmiteCommand());
+        registerCommand("spectate", new SpectateCommand());
+        registerCommand("unban", new UnbanCommand());
+        registerCommand("warn", new WarnCommand());
     }
 
     public static class BuildProperties
@@ -188,6 +180,14 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 FLog.error("Could not load build properties! Did you compile with NetBeans/Maven?", ex);
             }
         }
+    }
+
+    private void registerCommand(String name, TabExecutor executor)
+    {
+        final PluginCommand cmd = Objects.requireNonNull(getCommand(name));
+
+        cmd.setExecutor(executor);
+        cmd.setTabCompleter(executor);
     }
 
     public boolean isVanished(Player player)
@@ -222,6 +222,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
         }, 0L, getConfig().getLong("announcer-time"));
     }
 
+    // TODO: Rewrite this
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onChat(AsyncPlayerChatEvent event) {
         String message = event.getMessage();
@@ -264,11 +265,12 @@ public class KoolSMPCore extends JavaPlugin implements Listener {
                 {
                     if (player.isOnline())
                     {
-                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + "Hate-Speech");
+                        DoomCommand.eviscerate(player, Bukkit.getConsoleSender(), "Hate Speech");
                     }
                     else
                     {
-                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " Hate-Speech");
+                        Ban ban = Ban.fromPlayer(player, Bukkit.getConsoleSender().getName(), "Hate Speech", BanType.BAN);
+                        bm.addBan(ban);
                     }
                 }, 50L);
 

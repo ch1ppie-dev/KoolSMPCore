@@ -35,13 +35,13 @@ public class BanCommand extends KoolCommand
         }
 
         final Ban ban = Ban.fromPlayer(target, sender.getName(), args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null, BanType.BAN);
-        KoolSMPCore.getPlugin().bm.addBan(ban);
+        KoolSMPCore.getInstance().bm.addBan(ban);
+
         FUtil.staffAction(sender, "Banned <player>", Placeholder.unparsed("player", target.getName() != null ? target.getName() : args[0]));
+        PunishmentList.logPunishment(target, PunishmentType.BAN, sender, ban.getReason());
 
         if (target instanceof Player online)
         {
-            PunishmentList.logPunishment(online, PunishmentType.BAN, sender, ban.getReason());
-
             // Now for the fun part...
             for (int i = 0; i < 4; i++)
             {

@@ -1,6 +1,7 @@
 package eu.koolfreedom.listener;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FUtil;
 import eu.koolfreedom.util.KoolSMPCoreBase;
 import org.bukkit.Bukkit;
@@ -22,17 +23,17 @@ public class LoginListener extends KoolSMPCoreBase implements Listener
     {
         Player player = event.getPlayer();
 
-        String header = main.config.getString("server.tablist_header");
-        String footer = main.config.getString("server.tablist_footer");
+        String header = ConfigEntry.SERVER_TABLIST_HEADER.getString();
+        String footer = ConfigEntry.SERVER_TABLIST_FOOTER.getString();
 
         if (header != null)
         {
-            player.sendPlayerListHeader(main.mmDeserialize(header));
+            player.sendPlayerListHeader(FUtil.miniMessage(header));
         }
 
         if (footer != null)
         {
-            player.sendPlayerListFooter(main.mmDeserialize(footer));
+            player.sendPlayerListFooter(FUtil.miniMessage(footer));
         }
     }
 }

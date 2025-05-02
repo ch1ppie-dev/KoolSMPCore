@@ -23,7 +23,7 @@ public class Punishments extends YamlConfiguration
 
     public Punishments()
     {
-        plugin = KoolSMPCore.getPlugin();
+        plugin = KoolSMPCore.getInstance();
         configuration = new File(plugin.getDataFolder(), "punishments.yml");
         saveDefault();
         reload();

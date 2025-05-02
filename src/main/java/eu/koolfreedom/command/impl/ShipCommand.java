@@ -1,7 +1,7 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.KoolCommand;
+import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -45,7 +45,7 @@ public class ShipCommand extends KoolCommand
                 final ItemStack stack = new ItemStack(Material.COOKIE);
                 final ItemMeta meta = stack.getItemMeta();
                 meta.displayName(Component.text("Idiot of the Day Award").color(NamedTextColor.GOLD));
-                meta.lore(List.of(KoolSMPCore.main.mmDeserialize("<gradient:gold:yellow:gold>Imagine trying to ship someone with themselves.")));
+                meta.lore(List.of(FUtil.miniMessage("<gradient:gold:yellow:gold>Imagine trying to ship someone with themselves.")));
                 stack.setItemMeta(meta);
 
                 if (!playerSender.getInventory().addItem(stack).isEmpty())

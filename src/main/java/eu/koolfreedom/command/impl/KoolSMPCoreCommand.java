@@ -38,7 +38,6 @@ public class KoolSMPCoreCommand extends KoolCommand
             try
             {
                 MainConfig.load();
-                KoolSMPCore.main.config.load();
                 sender.sendMessage(Messages.RELOADED);
             }
             catch (Exception ex)

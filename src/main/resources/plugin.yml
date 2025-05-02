@@ -16,6 +16,10 @@ commands:
     usage: /<command> <player> [reason]
     aliases: [gtfo]
     permission: kf.admin
+  banlist:
+    description: Manage the ban list
+    usage: /banlist [reload]
+    permission: kf.admin
   clearchat:
     description: Clears the chat
     aliases: [cc]
@@ -30,8 +34,9 @@ commands:
   cry:
     description: womp womp
   doom:
-    description: Swing the Russian Hammer
-    usage: /doom <player>
+    description: Ban someone with excessive violence
+    usage: /doom <player> [reason]
+    aliases: [obliterate]
     permission: kf.senior
   hug:
     descriptions: Hug a player
@@ -51,10 +56,6 @@ commands:
     description: Mutes a player
     usage: /kick <player> [reason]
     permission: kf.admin
-  obliterate:
-    description: Unleash hell upon a player
-    usage: /obliterate <player> [reason]
-    permission: kf.senior
   orbit:
     description: trol
     usage: /orbit <user> <<power> | stop>

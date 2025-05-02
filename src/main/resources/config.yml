@@ -42,6 +42,7 @@ chat-filter:
 formats:
   admin_chat: "<dark_gray>[<aqua>AC</aqua>] <blue><name></blue> [<rank>] <gold><message>"
   commandspy: "<gray><hover:show_text:'<translate:chat.copy.click>'><click:copy_to_clipboard:<name>><name></click></hover>: <click:suggest_command:'<raw_command>'><command>"
+  report: "<dark_gray>[<red>REPORTS</red>] <gold><reporter></gold> <red>has reported <gold><player></gold> for <gold><reason></gold>."
   say: "<light_purple>[Server:<name>] <message>"
 
 discord:

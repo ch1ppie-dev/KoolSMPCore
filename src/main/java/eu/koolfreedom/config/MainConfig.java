@@ -12,7 +12,7 @@ import java.util.List;
 
 public class MainConfig
 {
-    public static final File CONFIG_FILE = new File(KoolSMPCore.main.getDataFolder(), KoolSMPCore.CONFIG_FILENAME);
+    public static final File CONFIG_FILE = new File(KoolSMPCore.getInstance().getDataFolder(), "config.yml");
     private static final EnumMap<ConfigEntry, Object> ENTRY_MAP;
     private static final Deefawlts DEFAULTS;
 
@@ -241,7 +241,7 @@ public class MainConfig
             return;
         }
 
-        FLog.info("Installing default configuration file template: %s", targetFile.getPath());
+        FLog.info("Installing default configuration file template: {}", targetFile.getPath());
 
         try
         {
@@ -257,7 +257,7 @@ public class MainConfig
 
     private static InputStream getDefaultConfig()
     {
-        return KoolSMPCore.main.getResource(KoolSMPCore.CONFIG_FILENAME);
+        return KoolSMPCore.getInstance().getResource("config.yml");
     }
 
     public static Deefawlts getDefaults()
