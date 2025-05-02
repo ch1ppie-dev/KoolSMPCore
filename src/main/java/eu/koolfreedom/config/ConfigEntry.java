@@ -9,14 +9,20 @@
 
 package eu.koolfreedom.config;
 
+import lombok.Getter;
+
 import java.util.List;
 
+@Getter
 public enum ConfigEntry
 {
     SERVER_MOTD(String.class, "server.motd"),
     SERVER_TABLIST_HEADER(String.class, "server.tablist_header"),
     SERVER_TABLIST_FOOTER(String.class, "server.tablist_footer"),
     SERVER_WEBSITE_OR_FORUM(String.class, "server.website_or_forum"),
+    ANNOUNCER_ENABLED(Boolean.class, "announcer.enable"),
+    ANNOUNCER_DELAY(Integer.class, "announcer.delay"),
+    ANNOUNCER_MESSAGES(List.class, "announcer.messages"),
     DISCORD_BOT_TOKEN(String.class, "discord.bot_token"),
     DISCORD_STAFF_ACTION_CHANNEL_ID(String.class, "discord.staff_action_channel_id"),
     CHAT_FILTER_HATE_SPEECH(List.class, "chat-filter.hate-speech"),
@@ -35,17 +41,7 @@ public enum ConfigEntry
         this.configName = configName;
     }
 
-    public Class<?> getType()
-    {
-        return type;
-    }
-
-    public String getConfigName()
-    {
-        return configName;
-    }
-
-    public String getString()
+	public String getString()
     {
         return MainConfig.getString(this);
     }
@@ -86,6 +82,17 @@ public enum ConfigEntry
     public Integer setInteger(Integer value)
     {
         MainConfig.setInteger(this, value);
+        return value;
+    }
+
+    public Long getLong()
+    {
+        return MainConfig.getLong(this);
+    }
+
+    public Long setInteger(Long value)
+    {
+        MainConfig.setLong(this, value);
         return value;
     }
 

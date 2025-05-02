@@ -194,6 +194,32 @@ public class MainConfig
         }
     }
 
+    public static Long getLong(ConfigEntry entry)
+    {
+        try
+        {
+            return get(entry, Long.class);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            FLog.error("Failed to read configuration entry as a long (incorrect type?)", ex);
+        }
+
+        return null;
+    }
+
+    public static void setLong(ConfigEntry entry, Long value)
+    {
+        try
+        {
+            set(entry, value, Long.class);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            FLog.error("Failed to set configuration entry as an integer (incorrect type?)", ex);
+        }
+    }
+
     public static List<?> getList(ConfigEntry entry)
     {
         try

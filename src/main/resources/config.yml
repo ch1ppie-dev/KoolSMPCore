@@ -8,20 +8,19 @@ server:
   tablist_footer: ' <newline>  <light_purple>Join our <dark_purple>/discord</dark_purple> <newline>  '
   website_or_forum: 'Put your own forum/website here.'
 
-# Toggles the announcer
-enable-announcer: true
+# All things related to the announcer
+announcer:
+  # Toggles the announcer
+  enable: true
 
-# Time between each announcement
-announcer-time: 2400
+  # Time in ticks between each announcement
+  delay: 2400
 
-# Announcements
-messages:
-  discord:
-    - "&c[&6KoolFreedom&c] Remember to join our Discord with &6'/discord'&c."
-  report:
-    - "&c[&6KoolFreedom&c] Got a rule breaker on the server? use &6'/report' &cto submit a report."
-  owner:
-    - "&c[&6KoolFreedom&c] &6gamingto12&c is the Owner of KoolFreedom."
+  # Announcer's messages, formatted in MiniMessage
+  messages:
+    - "<red>[<gold>KoolFreedom</gold>] Remember to join our Discord with <gold><click:suggest_command:/discord>'/discord'</click></gold>."
+    - "<red>[<gold>KoolFreedom</gold>] Dealing with a rule-breaker? Use <gold><click:suggest_command:/report>'/report'</click></gold> to submit a report."
+    - "<red>[<gold>KoolFreedom</gold>] <gold>gamingto12</gold> is the owner of KoolFreedom."
 
 # Words that if detected in a chat message, results in the user being banned for hate speech
 chat-filter:

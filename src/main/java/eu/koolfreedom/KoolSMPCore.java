@@ -7,27 +7,25 @@ import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FUtil;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Getter;
+import net.kyori.adventure.audience.Audience;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
-import net.kyori.adventure.text.*;
 import eu.koolfreedom.command.impl.*;
 import eu.koolfreedom.listener.*;
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;
 import java.io.InputStream;
-import java.util.concurrent.*;
-import net.kyori.adventure.text.serializer.legacy.*;
 import org.bukkit.*;
 import java.util.*;
 
-import org.bukkit.event.player.*;
 import org.bukkit.entity.*;
 
-@SuppressWarnings("deprecation")
 public class KoolSMPCore extends JavaPlugin implements Listener
 {
     @Getter
@@ -84,7 +82,10 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         loadBansConfig();
         FLog.info("Loaded configurations");
 
-        if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
+        if (ConfigEntry.ANNOUNCER_ENABLED.getBoolean())
+        {
+            announcerRunnable();
+        }
 
         Discord.init();
         getLuckPermsAPI();
@@ -148,6 +149,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         registerCommand("warn", new WarnCommand());
     }
 
+    @SuppressWarnings("deprecation")
     public static class BuildProperties
     {
         public String author;
@@ -202,89 +204,58 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () ->
         {
-            List<String> messageKeys = new ArrayList<>(getConfig().getConfigurationSection("messages").getKeys(false));
-            if (messageKeys.isEmpty())
+            List<String> messages = ConfigEntry.ANNOUNCER_MESSAGES.getStringList();
+
+            // Messages aren't configured, so we're not going to bother
+            if (messages.isEmpty())
             {
-                getLogger().warning("No messages found in configuration.");
                 return;
             }
-            String randomKey = messageKeys.get(ThreadLocalRandom.current().nextInt(messageKeys.size()));
-            List<String> lines = getConfig().getStringList("messages." + randomKey);
-            if (lines.isEmpty())
-            {
-                getLogger().warning("Message '" + randomKey + "' has no lines.");
-                return;
-            }
-            Bukkit.broadcast(Component.newline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(String.join("\n", lines))).appendNewline());
-        }, 0L, getConfig().getLong("announcer-time"));
+
+            FUtil.broadcast(messages.get(FUtil.randomNumber(0, messages.size())));
+        }, 0L, ConfigEntry.ANNOUNCER_DELAY.getInteger());
     }
 
-    // TODO: Rewrite this
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onChat(AsyncPlayerChatEvent event) {
-        String message = event.getMessage();
-        Player player = event.getPlayer();
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    private void onChat(AsyncChatEvent event)
+    {
+        final Player player = event.getPlayer();
+        final String message = event.signedMessage().message();
 
-        if (message.startsWith("/") && !player.isOp()) {
+        // Hate speech filter
+        if (!player.hasPermission("kf.admin") && ConfigEntry.CHAT_FILTER_HATE_SPEECH.getStringList().stream()
+                .anyMatch(entry -> message.trim().toLowerCase().contains(entry)))
+        {
             event.setCancelled(true);
-            return;
-        }
 
-        if (player.hasPermission("kf.admin"))
-        {
-            if (message.contains("@everyone"))
+            if (player.isOnline())
             {
-                String lastColor = ChatColor.getLastColors(message);
-                message = message.replace("@everyone", "§b@everyone" + (lastColor.isEmpty() ? "§r" : lastColor));
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
-                }
-
-                event.setMessage(message);
-                return;
+                player.sendMessage(event.renderer().render(player, player.displayName(), event.message(),
+                        Audience.audience(player)));
             }
-        }
-        else
-        {
-            final String fuckYouJava = message;
 
-            if (ConfigEntry.CHAT_FILTER_HATE_SPEECH.getStringList().stream()
-                    .anyMatch(entry -> fuckYouJava.trim().toLowerCase().contains(entry)))
+            Bukkit.getScheduler().runTaskLater(this, () ->
             {
-                event.setCancelled(true);
-
                 if (player.isOnline())
                 {
-                    player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
+                    DoomCommand.eviscerate(player, Bukkit.getConsoleSender(), "Hate Speech");
                 }
-
-                Bukkit.getScheduler().runTaskLater(this, () ->
+                else
                 {
-                    if (player.isOnline())
-                    {
-                        DoomCommand.eviscerate(player, Bukkit.getConsoleSender(), "Hate Speech");
-                    }
-                    else
-                    {
-                        Ban ban = Ban.fromPlayer(player, Bukkit.getConsoleSender().getName(), "Hate Speech", BanType.BAN);
-                        banManager.addBan(ban);
-                    }
-                }, 50L);
-
-                return;
-            }
+                    Ban ban = Ban.fromPlayer(player, Bukkit.getConsoleSender().getName(), "Hate Speech", BanType.BAN);
+                    banManager.addBan(ban);
+                }
+            }, 50L);
         }
 
-        for (Player p : Bukkit.getOnlinePlayers())
+        // In-game pinging
+        if (message.contains("@"))
         {
-            if (isVanished(p)) continue;
-
-            if (message.contains("@" + p.getName()))
-            {
-                String lastColor = ChatColor.getLastColors(message);
-                message = message.replace("@" + p.getName(), "§b@" + p.getName() + (lastColor.isEmpty() ? "§r" : lastColor));
-                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
-            }
+            Arrays.stream(message.split(" ")).filter(word -> word.startsWith("@")).filter(word ->
+                    !word.equalsIgnoreCase("@everyone") || player.hasPermission("kf.admin"))
+                    .map(ping -> ping.replaceAll("@", "")).map(Bukkit::getPlayer)
+                    .filter(Objects::nonNull).distinct().forEach(target -> target.playSound(target.getLocation(),
+                            Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F));
         }
     }
 }
