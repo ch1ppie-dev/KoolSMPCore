@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class CryCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
         broadcast("<aqua><name> has started to cry :(", Placeholder.unparsed("name", sender.getName()));
         return true;

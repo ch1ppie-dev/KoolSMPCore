@@ -14,7 +14,7 @@ import java.util.List;
 public class PokeCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
         if (args.length != 1)
         {
@@ -28,7 +28,7 @@ public class PokeCommand extends KoolCommand
             return true;
         }
 
-        if (!senderIsConsole && player.equals(playerSender))
+        if (player.equals(playerSender))
         {
             msg(sender, "<red>You accidentally poked yourself in the eye.");
             player.damage(playerSender.getHealth() / 10);

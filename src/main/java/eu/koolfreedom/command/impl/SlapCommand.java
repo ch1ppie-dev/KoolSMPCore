@@ -12,7 +12,7 @@ import java.util.List;
 public class SlapCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
         if (args.length != 1)
         {
@@ -26,7 +26,7 @@ public class SlapCommand extends KoolCommand
             return true;
         }
 
-        if (!senderIsConsole && playerSender != null && playerSender.equals(target))
+        if (target.equals(playerSender))
         {
             playerSender.damage(Math.max(playerSender.getHealth() / 4, 1.0));
             msg(sender, "<red>Ouch! That looks like it must have hurt.");

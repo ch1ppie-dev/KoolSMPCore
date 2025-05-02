@@ -13,9 +13,9 @@ import java.util.List;
 public class SpectateCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
-        if (senderIsConsole)
+        if (playerSender != null)
         {
             msg(sender, playersOnly);
             return true;

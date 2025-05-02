@@ -12,7 +12,7 @@ import java.util.List;
 public class CrashCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
         if (args.length == 0)
         {
@@ -30,7 +30,7 @@ public class CrashCommand extends KoolCommand
             }
             else
             {
-                if (senderIsConsole)
+                if (playerSender == null)
                 {
                     msg(sender, "<red>We couldn't find that player. Since you're doing this from console, we can't reflect it back at you :(");
                 }

@@ -23,7 +23,7 @@ public abstract class KoolCommand implements TabExecutor
     {
         try
         {
-            if (!run(sender, sender instanceof ConsoleCommandSender ? null : (Player) sender, cmd, commandLabel, args, sender instanceof ConsoleCommandSender))
+            if (!run(sender, sender instanceof Player player ? player : null, cmd, commandLabel, args))
             {
                 msg(sender, "<gray>Usage: <usage>", Placeholder.component("usage",
                         FUtil.miniMessage(cmd.getUsage(), Placeholder.unparsed("command", commandLabel))));
@@ -51,7 +51,7 @@ public abstract class KoolCommand implements TabExecutor
         return entries.stream().filter(entry -> entry.toLowerCase().startsWith(args[args.length - 1].toLowerCase())).toList();
     }
 
-    public abstract boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole);
+    public abstract boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args);
 
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {

@@ -12,7 +12,7 @@ import java.util.List;
 public class KissCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
         if (args.length != 1)
         {
@@ -26,7 +26,7 @@ public class KissCommand extends KoolCommand
             return true;
         }
 
-        if (!senderIsConsole && player.equals(playerSender))
+        if (player.equals(playerSender))
         {
             msg(sender, "<red>You must be pretty desperate for love if you're trying to kiss yourself.");
             return true;
