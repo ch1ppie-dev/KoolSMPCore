@@ -15,7 +15,7 @@ public class SpectateCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
-        if (playerSender != null)
+        if (playerSender == null)
         {
             msg(sender, playersOnly);
             return true;

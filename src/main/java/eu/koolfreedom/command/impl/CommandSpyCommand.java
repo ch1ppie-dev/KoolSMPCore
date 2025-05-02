@@ -6,18 +6,19 @@ import eu.koolfreedom.config.ConfigEntry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-
-import java.util.*;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class CommandSpyCommand extends KoolCommand implements Listener
 {
-    private final List<UUID> commandSpyEnabled = new ArrayList<>();
+    private final NamespacedKey commandSpyKey = new NamespacedKey(KoolSMPCore.getInstance(), "commandspy");
 
     public CommandSpyCommand()
     {
@@ -33,15 +34,17 @@ public class CommandSpyCommand extends KoolCommand implements Listener
             return true;
         }
 
-        if (commandSpyEnabled.contains(playerSender.getUniqueId()))
+        PersistentDataContainer container = playerSender.getPersistentDataContainer();
+
+        if (!container.getOrDefault(commandSpyKey, PersistentDataType.BOOLEAN, false))
         {
-            commandSpyEnabled.remove(playerSender.getUniqueId());
             msg(sender, "<gray>CommandSpy <green>enabled</green>.");
+            container.set(commandSpyKey, PersistentDataType.BOOLEAN, true);
         }
         else
         {
-            commandSpyEnabled.add(playerSender.getUniqueId());
             msg(sender, "<gray>CommandSpy <green>enabled</green>.");
+            container.set(commandSpyKey, PersistentDataType.BOOLEAN, false);
         }
 
         return true;
@@ -54,7 +57,7 @@ public class CommandSpyCommand extends KoolCommand implements Listener
         String commandMessage = event.getMessage();
 
         Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("kf.admin"))
-                .filter(player -> commandSpyEnabled.contains(player.getUniqueId()))
+                .filter(player -> player.getPersistentDataContainer().getOrDefault(commandSpyKey, PersistentDataType.BOOLEAN, false))
                 .forEach(player -> msg(player, ConfigEntry.FORMATS_COMMANDSPY.getString(),
                         Placeholder.parsed("name", sender.getName()),
                         Placeholder.parsed("raw_command", commandMessage),
