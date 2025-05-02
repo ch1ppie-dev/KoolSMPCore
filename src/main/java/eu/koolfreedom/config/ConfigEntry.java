@@ -10,6 +10,7 @@
 package eu.koolfreedom.config;
 
 import lombok.Getter;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public enum ConfigEntry
     FORMATS_COMMANDSPY(String.class, "formats.commandspy"),
     FORMATS_REPORT(String.class, "formats.report"),
     FORMATS_SAY(String.class, "formats.say"),
+    GROUPS(ConfigurationSection.class, "groups"),
     UNBANNABLE_USERNAMES(List.class, "unbannable_usernames"),
     DISCORD_REPORT_CHANNEL_ID(String.class, "discord.report_channel_id");
 
@@ -104,6 +106,11 @@ public enum ConfigEntry
     public List<String> getStringList()
     {
         return (List<String>) MainConfig.getList(this);
+    }
+
+    public ConfigurationSection getConfigurationSection()
+    {
+        return MainConfig.getConfigurationSection(this);
     }
 
     public static ConfigEntry findConfigEntry(String name)

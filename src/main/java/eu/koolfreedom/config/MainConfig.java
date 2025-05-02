@@ -2,6 +2,7 @@ package eu.koolfreedom.config;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.log.FLog;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -229,6 +230,20 @@ public class MainConfig
         catch (IllegalArgumentException ex)
         {
             FLog.error("Failed to read configuration entry as a list (incorrect type?)", ex);
+        }
+
+        return null;
+    }
+
+    public static ConfigurationSection getConfigurationSection(ConfigEntry entry)
+    {
+        try
+        {
+            return get(entry, ConfigurationSection.class);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            FLog.error("Failed to read configuration entry as a configuration section (incorrect type?)", ex);
         }
 
         return null;

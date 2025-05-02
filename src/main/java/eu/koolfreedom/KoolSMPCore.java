@@ -1,6 +1,6 @@
 package eu.koolfreedom;
 
-import eu.koolfreedom.api.Permissions;
+import eu.koolfreedom.api.GroupCosmetics;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanManager;
 import eu.koolfreedom.banning.BanType;
@@ -40,7 +40,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
 
     public LoginListener loginListener;
     public ServerListener serverListener;
-    public Permissions groupCosmetics;
+    public GroupCosmetics groupCosmetics;
     public ExploitListener exploitListener;
 
     public static LuckPerms getLuckPermsAPI()
@@ -81,7 +81,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         FLog.info("Loaded commands");
         loadListeners();
         FLog.info("Loaded listeners");
-        groupCosmetics = new Permissions();
+        groupCosmetics = new GroupCosmetics();
         loadBansConfig();
         FLog.info("Loaded configurations");
 

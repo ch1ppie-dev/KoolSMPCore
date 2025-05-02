@@ -69,7 +69,7 @@ public class FUtil // the f stands for fuck
     {
         Component formattedMessage = miniMessage(ConfigEntry.FORMATS_ADMIN_CHAT.getString(),
                 Placeholder.unparsed("name", sender.getName()),
-                Placeholder.component("rank", KoolSMPCore.getInstance().groupCosmetics.getSenderGroup(sender).getColoredName()),
+                Placeholder.component("rank", KoolSMPCore.getInstance().groupCosmetics.getSenderGroup(sender).getDisplayName()),
                 Placeholder.unparsed("message", message));
 
         broadcast(formattedMessage, "kf.admin");

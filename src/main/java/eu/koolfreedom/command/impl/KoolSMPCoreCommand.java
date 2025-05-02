@@ -4,12 +4,9 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.MainConfig;
 import eu.koolfreedom.log.FLog;
-import eu.koolfreedom.util.KoolSMPCoreBase;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +35,7 @@ public class KoolSMPCoreCommand extends KoolCommand
             try
             {
                 MainConfig.load();
+                KoolSMPCore.getInstance().groupCosmetics.loadGroups();
                 msg(sender, "<green>The configuration file has been reloaded.");
             }
             catch (Exception ex)

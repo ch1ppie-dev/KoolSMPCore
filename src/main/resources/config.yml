@@ -48,5 +48,44 @@ discord:
   bot_token: ""
   report_channel_id: ""
 
+# Groups that show up in places like admin chat
+groups:
+  default:
+    name: default
+    color: gray
+    displayName: <gray>Member
+  mod:
+    name: mod
+    color: green
+    displayName: <green>Moderator
+  admin:
+    name: admin
+    color: aqua
+    displayName: <aqua>Admin
+  senior:
+    name: senior
+    color: gold
+    displayName: <gold>Senior
+  developer:
+    name: developer
+    color: dark_purple
+    displayName: <dark_purple>Developer
+  manager:
+    name: manager
+    color: light_purple
+    displayName: <light_purple>Manager
+  co_owner:
+    name: co_owner
+    color: red
+    displayName: <red>Co-Owner
+  executive:
+    name: executive
+    color: dark_red
+    displayName: <dark_red>Executive
+  owner:
+    name: owner
+    color: red
+    displayName: <red>Owner
+
 unbannable_usernames:
   - gamingto12
