@@ -41,6 +41,8 @@ public class FUtil // the f stands for fuck
     public static void broadcast(String message, TagResolver... placeholders)
     {
         Bukkit.broadcast(miniMessage(message, placeholders));
+
+        // TODO: Add calls to Discord broadcasts to here so that all broadcasts get sent to the Discord
     }
 
     public static void broadcast(String permission, String message, TagResolver... placeholders)
