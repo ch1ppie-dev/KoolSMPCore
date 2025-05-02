@@ -44,7 +44,14 @@ public class BanIPCommand extends KoolCommand
                 .ips(new ArrayList<>(List.of(ip)))
                 .reason(args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null)
                 .build();
-        KoolSMPCore.getInstance().banManager.addBan(ban);
+
+        boolean success = KoolSMPCore.getInstance().banManager.addBan(ban);
+
+        if (!success)
+        {
+            msg(sender, "<red>That IP address is already permanently banned.");
+            return true;
+        }
 
         // TODO: Figure out how to implement IP bans in the punishment log
         FUtil.staffAction(sender, "Banned an IP");

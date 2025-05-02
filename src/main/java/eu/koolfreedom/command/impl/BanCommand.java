@@ -35,7 +35,13 @@ public class BanCommand extends KoolCommand
         }
 
         final Ban ban = Ban.fromPlayer(target, sender.getName(), args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null, BanType.BAN);
-        KoolSMPCore.getInstance().banManager.addBan(ban);
+        boolean success = KoolSMPCore.getInstance().banManager.addBan(ban);
+
+        if (!success && !target.isOnline())
+        {
+            msg(sender, "<red>That user is already permanently banned.");
+            return true;
+        }
 
         FUtil.staffAction(sender, "Banned <player>", Placeholder.unparsed("player", target.getName() != null ? target.getName() : args[0]));
         PunishmentList.logPunishment(target, PunishmentType.BAN, sender, ban.getReason());
