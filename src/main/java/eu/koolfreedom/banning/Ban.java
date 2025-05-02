@@ -35,7 +35,7 @@ public class Ban
 	@Builder.Default
 	private List<String> ips = new ArrayList<>();
 
-	public static Ban fromYamlConfiguration(long id, ConfigurationSection section)
+	public static Ban fromYamlConfiguration(Long id, ConfigurationSection section)
 	{
 		BanBuilder builder = builder();
 

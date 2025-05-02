@@ -1,8 +1,8 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.KoolCommand;
-import eu.koolfreedom.punishment.PunishmentList;
-import eu.koolfreedom.punishment.PunishmentType;
+import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.ArrayUtils;
@@ -39,7 +39,12 @@ public class WarnCommand extends KoolCommand
         String reason = String.join(" ", ArrayUtils.remove(args, 0));
 
         // Record it to logs
-        PunishmentList.logPunishment(target, PunishmentType.WARN, sender, reason);
+        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.builder()
+                .uuid(target.getUniqueId())
+                .name(target.getName())
+                .ip(FUtil.getIp(target))
+                .type("WARN")
+                .build());
 
         // Let the user know they are being warned
         msg(target, "<red>You have been warned for the following reason: <yellow><reason></yellow>",

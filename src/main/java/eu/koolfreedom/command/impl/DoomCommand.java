@@ -4,6 +4,7 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.command.KoolCommand;
+import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.luckperms.api.LuckPerms;
@@ -43,6 +44,7 @@ public class DoomCommand extends KoolCommand
         // Get the technical side of things out of the way first, we want this user banned first and foremost
         final Ban ban = Ban.fromPlayer(target, sender.getName(), reason != null ? reason : "You've met with a terrible fate, haven't you?", BanType.BAN);
         KoolSMPCore.getInstance().banManager.addBan(ban);
+        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.fromBan(ban));
 
         // Strip them of their data in LuckPerms
         Objects.requireNonNull(KoolSMPCore.getLuckPermsAPI()).getUserManager().deletePlayerData(target.getUniqueId());

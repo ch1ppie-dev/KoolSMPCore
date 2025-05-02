@@ -3,8 +3,7 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.listener.MuteManager;
-import eu.koolfreedom.punishment.PunishmentList;
-import eu.koolfreedom.punishment.PunishmentType;
+import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -52,7 +51,12 @@ public class MuteCommand extends KoolCommand
         if (mum.isMuted(target))
         {
             FUtil.staffAction(sender, "Muted <player>", Placeholder.unparsed("player", target.getName()));
-            PunishmentList.logPunishment(target, PunishmentType.MUTE, sender, null);
+            KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.builder()
+                    .uuid(target.getUniqueId())
+                    .name(target.getName())
+                    .ip(FUtil.getIp(target))
+                    .type("MUTE")
+                    .build());
         }
         else
         {

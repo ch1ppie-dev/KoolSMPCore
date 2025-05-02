@@ -7,6 +7,7 @@ import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Getter;
@@ -35,6 +36,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
 
     public BanManager banManager;
     public MuteManager muteManager;
+    public RecordKeeper recordKeeper;
+
     public LoginListener loginListener;
     public ServerListener serverListener;
     public Permissions groupCosmetics;
@@ -108,6 +111,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     {
         banManager = new BanManager();
         banManager.load();
+        recordKeeper = new RecordKeeper();
     }
 
     public void loadListeners()

@@ -1,6 +1,8 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.KoolCommand;
+import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -31,6 +33,14 @@ public class KickCommand extends KoolCommand
         }
 
         String reason = args.length >= 2 ? String.join(" ", ArrayUtils.remove(args, 0)) : null;
+
+        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.builder()
+                .uuid(target.getUniqueId())
+                .name(target.getName())
+                .ip(FUtil.getIp(target))
+                .type("KICK")
+                .reason(reason)
+                .build());
 
         target.kick(FUtil.miniMessage("<red>You have been kicked from the server." +
                         "<newline>Kicked by: <yellow><sender></yellow><reason_if_present>",

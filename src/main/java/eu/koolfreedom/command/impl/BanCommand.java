@@ -3,9 +3,8 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.command.KoolCommand;
+import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.punishment.PunishmentList;
-import eu.koolfreedom.punishment.PunishmentType;
 import eu.koolfreedom.banning.BanType;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.ArrayUtils;
@@ -44,7 +43,7 @@ public class BanCommand extends KoolCommand
         }
 
         FUtil.staffAction(sender, "Banned <player>", Placeholder.unparsed("player", target.getName() != null ? target.getName() : args[0]));
-        PunishmentList.logPunishment(target, PunishmentType.BAN, sender, ban.getReason());
+        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.fromBan(ban));
 
         if (target instanceof Player online)
         {

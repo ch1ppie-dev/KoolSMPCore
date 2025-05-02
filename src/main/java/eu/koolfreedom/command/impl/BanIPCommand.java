@@ -5,19 +5,14 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.command.KoolCommand;
-import eu.koolfreedom.punishment.PunishmentList;
-import eu.koolfreedom.punishment.PunishmentType;
+import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +48,8 @@ public class BanIPCommand extends KoolCommand
             return true;
         }
 
-        // TODO: Figure out how to implement IP bans in the punishment log
-        FUtil.staffAction(sender, "Banned an IP");
+        FUtil.staffAction(sender, "Banned an IP address");
+        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.fromBan(ban));
 
         // Now for the fun part...
         Bukkit.getOnlinePlayers().stream().filter(player -> FUtil.getIp(player).equalsIgnoreCase(ip)).forEach(player ->
