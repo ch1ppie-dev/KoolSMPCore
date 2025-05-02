@@ -38,12 +38,12 @@ public class KoolSMPCoreCommand extends KoolCommand
             try
             {
                 MainConfig.load();
-                sender.sendMessage(Messages.RELOADED);
+                msg(sender, "<green>The configuration file has been reloaded.");
             }
             catch (Exception ex)
             {
                 FLog.error("Failed to load configuration", ex);
-                sender.sendMessage(Messages.FAILED);
+                msg(sender, "<red>An error occurred whilst attempting to reload the configuration.");
             }
 
             return true;

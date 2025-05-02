@@ -42,7 +42,7 @@ public class DoomCommand extends KoolCommand
     {
         // Get the technical side of things out of the way first, we want this user banned first and foremost
         final Ban ban = Ban.fromPlayer(target, sender.getName(), reason != null ? reason : "You've met with a terrible fate, haven't you?", BanType.BAN);
-        KoolSMPCore.getInstance().bm.addBan(ban);
+        KoolSMPCore.getInstance().banManager.addBan(ban);
 
         // Strip them of their data in LuckPerms
         Objects.requireNonNull(KoolSMPCore.getLuckPermsAPI()).getUserManager().deletePlayerData(target.getUniqueId());

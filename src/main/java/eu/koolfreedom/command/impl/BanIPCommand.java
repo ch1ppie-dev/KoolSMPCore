@@ -1,0 +1,74 @@
+package eu.koolfreedom.command.impl;
+
+import com.google.common.net.InetAddresses;
+import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.banning.Ban;
+import eu.koolfreedom.banning.BanType;
+import eu.koolfreedom.command.KoolCommand;
+import eu.koolfreedom.punishment.PunishmentList;
+import eu.koolfreedom.punishment.PunishmentType;
+import eu.koolfreedom.util.FUtil;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.apache.commons.lang3.ArrayUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BanIPCommand extends KoolCommand
+{
+    @Override
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
+    {
+        if (args.length == 0)
+        {
+            return false;
+        }
+
+        if (!InetAddresses.isInetAddress(args[0]))
+        {
+            msg(sender, "<red>That is not a valid IP address.");
+            return true;
+        }
+
+        final String ip = args[0].toLowerCase();
+        final Ban ban = Ban.builder().by(sender.getName())
+                .id(System.currentTimeMillis())
+                .expires(System.currentTimeMillis() + BanType.BAN.getLength())
+                .ips(new ArrayList<>(List.of(ip)))
+                .reason(args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null)
+                .build();
+        KoolSMPCore.getInstance().banManager.addBan(ban);
+
+        // TODO: Figure out how to implement IP bans in the punishment log
+        FUtil.staffAction(sender, "Banned an IP");
+
+        // Now for the fun part...
+        Bukkit.getOnlinePlayers().stream().filter(player -> FUtil.getIp(player).equalsIgnoreCase(ip)).forEach(player ->
+        {
+            // Now for the fun part...
+            for (int i = 0; i < 4; i++)
+            {
+                player.getWorld().strikeLightning(player.getLocation());
+            }
+            player.setHealth(0);
+
+            // We had our fun, they're gone
+            player.kick(ban.getKickMessage());
+        });
+
+        return true;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(FUtil::getIp).toList() : List.of();
+    }
+}

@@ -16,6 +16,11 @@ commands:
     usage: /<command> <player> [reason]
     aliases: [gtfo]
     permission: kf.admin
+  banip:
+    description: Ban an IP address
+    usage: /<command> <ip> [reason]
+    aliases: [ ban-ip ]
+    permission: kf.admin
   banlist:
     description: Manage the ban list
     usage: /banlist [reload]

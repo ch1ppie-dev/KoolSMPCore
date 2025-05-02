@@ -35,7 +35,7 @@ public class BanCommand extends KoolCommand
         }
 
         final Ban ban = Ban.fromPlayer(target, sender.getName(), args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null, BanType.BAN);
-        KoolSMPCore.getInstance().bm.addBan(ban);
+        KoolSMPCore.getInstance().banManager.addBan(ban);
 
         FUtil.staffAction(sender, "Banned <player>", Placeholder.unparsed("player", target.getName() != null ? target.getName() : args[0]));
         PunishmentList.logPunishment(target, PunishmentType.BAN, sender, ban.getReason());
@@ -51,6 +51,18 @@ public class BanCommand extends KoolCommand
 
             // We had our fun, they're gone
             online.kick(ban.getKickMessage());
+
+            // Just for good measure...
+            Bukkit.getOnlinePlayers().stream().filter(player -> FUtil.getIp(player).equalsIgnoreCase(FUtil.getIp(online))).forEach(player ->
+            {
+                // ZAP, and they're gone
+                for (int i = 0; i < 4; i++)
+                {
+                    player.getWorld().strikeLightning(player.getLocation());
+                }
+                player.setHealth(0);
+                player.kick(ban.getKickMessage());
+            });
         }
         return true;
     }

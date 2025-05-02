@@ -33,16 +33,14 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     @Getter
     private static KoolSMPCore instance;
     private static LuckPerms luckPermsAPI = null;
-    public static final String CONFIG_FILENAME = "config.yml";
     public static final BuildProperties build = new BuildProperties();
 
-    public BanManager bm;
-    public MuteManager mum;
-    public ServerListener sl;
-    public Permissions perms;
-    public ExploitListener el;
-    public TabListener tl;
-    public LoginListener lol; // lol
+    public BanManager banManager;
+    public MuteManager muteManager;
+    public LoginListener loginListener;
+    public ServerListener serverListener;
+    public Permissions groupCosmetics;
+    public ExploitListener exploitListener;
 
     public static LuckPerms getLuckPermsAPI()
     {
@@ -82,7 +80,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         FLog.info("Loaded commands");
         loadListeners();
         FLog.info("Loaded listeners");
-        perms = new Permissions();
+        groupCosmetics = new Permissions();
         loadBansConfig();
         FLog.info("Loaded configurations");
 
@@ -102,29 +100,28 @@ public class KoolSMPCore extends JavaPlugin implements Listener
             Discord.getJDA().shutdownNow();
         }
 
-        //config.save();
-        bm.save();
+        banManager.save();
     }
 
     public void loadBansConfig()
     {
-        bm = new BanManager();
-        bm.load();
+        banManager = new BanManager();
+        banManager.load();
     }
 
     public void loadListeners()
     {
-        mum = new MuteManager();
-        sl = new ServerListener(this);
-        el = new ExploitListener(this);
-        lol = new LoginListener(this);
-        tl = new TabListener(this);
+        muteManager = new MuteManager();
+        serverListener = new ServerListener(this);
+        exploitListener = new ExploitListener(this);
+        loginListener = new LoginListener();
     }
 
     public void loadCommands()
     {
         registerCommand("adminchat", new AdminChatCommand());
         registerCommand("ban", new BanCommand());
+        registerCommand("banip", new BanIPCommand());
         registerCommand("banlist", new BanListCommand());
         registerCommand("clearchat", new ClearChatCommand());
         registerCommand("commandspy", new CommandSpyCommand());
@@ -270,7 +267,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
                     else
                     {
                         Ban ban = Ban.fromPlayer(player, Bukkit.getConsoleSender().getName(), "Hate Speech", BanType.BAN);
-                        bm.addBan(ban);
+                        banManager.addBan(ban);
                     }
                 }, 50L);
 

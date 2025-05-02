@@ -1,6 +1,6 @@
 package eu.koolfreedom.command;
 
-import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -31,7 +31,8 @@ public abstract class KoolCommand implements TabExecutor
         }
         catch (Throwable ex)
         {
-            msg(sender, Component.text(ex.getMessage()).color(NamedTextColor.RED));
+            msg(sender, Component.text(ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName()).color(NamedTextColor.RED));
+            FLog.error("Command error", ex);
         }
 
         return true;

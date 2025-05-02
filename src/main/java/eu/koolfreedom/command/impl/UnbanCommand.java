@@ -20,7 +20,7 @@ public class UnbanCommand extends KoolCommand
             return false;
         }
 
-        Ban ban = KoolSMPCore.getInstance().bm.removeBan(args[0]);
+        Ban ban = KoolSMPCore.getInstance().banManager.removeBan(args[0]);
 
         if (ban == null)
         {

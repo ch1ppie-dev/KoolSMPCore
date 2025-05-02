@@ -15,7 +15,7 @@ public class BanListCommand extends KoolCommand
 	@Override
 	public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
 	{
-		BanManager banManager = KoolSMPCore.getInstance().bm;
+		BanManager banManager = KoolSMPCore.getInstance().banManager;
 
 		if (args.length == 0 || !sender.hasPermission("kf.senior"))
 		{

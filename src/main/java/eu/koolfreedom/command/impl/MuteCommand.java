@@ -19,7 +19,7 @@ public class MuteCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
     {
-        MuteManager mum = KoolSMPCore.getInstance().mum;
+        MuteManager mum = KoolSMPCore.getInstance().muteManager;
         if (args.length == 0)
         {
             msg(sender, "<gray><amount> player(s) are currently muted.",

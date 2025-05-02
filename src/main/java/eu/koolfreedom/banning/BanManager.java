@@ -101,7 +101,16 @@ public class BanManager extends KoolSMPCoreBase implements Listener
 
 		final YamlConfiguration storage = new YamlConfiguration();
 		banMap.entrySet().stream().filter(entry -> !entry.getValue().isExpired()).forEach(entry ->
-				storage.set(entry.getKey().toString(), entry.getValue().toConfigurationSection()));
+				{
+					try
+					{
+						storage.set(entry.getKey().toString(), entry.getValue().toConfigurationSection());
+					}
+					catch (Throwable ex)
+					{
+						FLog.error("Fuck", ex);
+					}
+				});
 
 		try
 		{
@@ -118,7 +127,8 @@ public class BanManager extends KoolSMPCoreBase implements Listener
 		return banMap.values().stream().filter(ban -> !ban.isExpired()).filter(ban ->
 				(ban.getName() != null && player.getName() != null && player.getName().equalsIgnoreCase(ban.getName())) ||
 						(ban.getUuid() != null && player.getUniqueId().equals(ban.getUuid())) ||
-						(player instanceof Player actualPlayer && ban.getIps().contains(FUtil.getIp(actualPlayer)))).findAny();
+						(player instanceof Player actualPlayer && actualPlayer.getAddress() != null &&
+								ban.getIps().contains(FUtil.getIp(actualPlayer)))).findAny();
 	}
 
 	public Optional<Ban> findBan(String value)
@@ -225,7 +235,7 @@ public class BanManager extends KoolSMPCoreBase implements Listener
 	@EventHandler
 	public void onPlayerJoin(PlayerLoginEvent event)
 	{
-		findBan(event.getPlayer()).ifPresent(ban ->
+		findBan(event.getPlayer()).or(() -> findBan(event.getAddress().getHostAddress())).ifPresent(ban ->
 				event.disallow(PlayerLoginEvent.Result.KICK_BANNED, ban.getKickMessage()));
 	}
 }

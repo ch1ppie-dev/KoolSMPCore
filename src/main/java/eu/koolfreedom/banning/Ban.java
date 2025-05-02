@@ -90,7 +90,7 @@ public class Ban
 		final MemoryConfiguration section = new MemoryConfiguration();
 
 		section.set("id", id);
-		section.set("uuid", uuid.toString());
+		if (uuid != null) section.set("uuid", uuid.toString());
 		section.set("name", name);
 		section.set("by", by);
 		section.set("reason", reason);
