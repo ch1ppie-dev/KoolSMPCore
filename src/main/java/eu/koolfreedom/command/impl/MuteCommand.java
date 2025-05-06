@@ -26,7 +26,7 @@ public class MuteCommand extends KoolCommand
             return false;
         }
 
-        if (args[0].equalsIgnoreCase("purge") && Bukkit.getPlayer("purge") != null)
+        if (args[0].equalsIgnoreCase("purge") && Bukkit.getPlayer("purge") == null)
         {
             msg(sender, "<gray><amount> players were unmuted.",
                     Placeholder.unparsed("amount", String.valueOf(mum.wipeMutes())));
