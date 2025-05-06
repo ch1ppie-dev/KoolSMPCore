@@ -14,8 +14,6 @@ import org.bukkit.entity.*;
 import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Objects;
-
 public class DoomCommand extends KoolCommand
 {
     @Override
@@ -47,7 +45,6 @@ public class DoomCommand extends KoolCommand
         KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.fromBan(ban));
 
         // Strip them of their data in LuckPerms
-        Objects.requireNonNull(KoolSMPCore.getLuckPermsAPI()).getUserManager().deletePlayerData(target.getUniqueId());
         if (KoolSMPCore.getLuckPermsAPI() != null)
         {
             LuckPerms luckPerms = KoolSMPCore.getLuckPermsAPI();
