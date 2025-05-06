@@ -25,17 +25,20 @@ announcer:
 # Words that if detected in a chat message, results in the user being banned for hate speech
 chat-filter:
   hate-speech:
-    - nigger
-    - n1gger
-    - nigga
-    - n1gga
-    - niga
-    - faggot
-    - fagg0t
-    - fag
-    - heil hitler
-    - seig heil
-    - tranny
+    - "nigger"
+    - "n1gger"
+    - "nigga"
+    - "n1gga"
+    - "niga"
+    - "faggot"
+    - "fagg0t"
+    - "fag"
+    - "heil hitler"
+    - "seig heil"
+    - "tranny"
+    - "troon"
+    - "卐"
+    - "卍"
 
 # Admin Chat Format
 formats:
