@@ -25,15 +25,16 @@ public enum ConfigEntry
     ANNOUNCER_DELAY(Integer.class, "announcer.delay"),
     ANNOUNCER_MESSAGES(List.class, "announcer.messages"),
     DISCORD_BOT_TOKEN(String.class, "discord.bot_token"),
+    DISCORD_SERVER_ID(String.class, "discord.server_id"),
     DISCORD_STAFF_ACTION_CHANNEL_ID(String.class, "discord.staff_action_channel_id"),
+    DISCORD_REPORT_CHANNEL_ID(String.class, "discord.report_channel_id"),
     CHAT_FILTER_HATE_SPEECH(List.class, "chat-filter.hate-speech"),
     FORMATS_ADMIN_CHAT(String.class, "formats.admin_chat"),
     FORMATS_COMMANDSPY(String.class, "formats.commandspy"),
     FORMATS_REPORT(String.class, "formats.report"),
     FORMATS_SAY(String.class, "formats.say"),
     GROUPS(ConfigurationSection.class, "groups"),
-    UNBANNABLE_USERNAMES(List.class, "unbannable_usernames"),
-    DISCORD_REPORT_CHANNEL_ID(String.class, "discord.report_channel_id");
+    UNBANNABLE_USERNAMES(List.class, "unbannable_usernames");
 
     private final Class<?> type;
     private final String configName;

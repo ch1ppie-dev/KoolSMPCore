@@ -15,6 +15,7 @@ import net.kyori.adventure.audience.Audience;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import eu.koolfreedom.command.impl.*;
@@ -220,7 +221,23 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         }, 0L, ConfigEntry.ANNOUNCER_DELAY.getInteger());
     }
 
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @SuppressWarnings("deprecation")
+    private void silentlyCancelDeprecatedChatEventIfCalled(AsyncPlayerChatEvent event)
+    {
+        // This is here because Paper's developers decided that AsyncChatEvent being cancelled does not influence the
+        //  outcome of AsyncPlayerChatEvent. We cancel AsyncChatEvent, but AsyncPlayerChatEvent still gets called, which
+        //  is incredibly annoying when you realize that Paper then deprecated APCE, despite you still needing to catch
+        //  it. So, you're inevitably going to get warnings about deprecation that are *not* your fault.
+        if (!event.getPlayer().hasPermission("kf.admin") && ConfigEntry.CHAT_FILTER_HATE_SPEECH.getStringList().stream()
+                .anyMatch(entry -> event.getMessage().trim().toLowerCase().contains(entry)))
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
     private void onChat(AsyncChatEvent event)
     {
         final Player player = event.getPlayer();

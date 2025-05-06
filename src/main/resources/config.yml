@@ -46,6 +46,7 @@ formats:
 
 discord:
   bot_token: ""
+  server_id: ""
   report_channel_id: ""
 
 # Groups that show up in places like admin chat

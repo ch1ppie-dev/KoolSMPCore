@@ -65,13 +65,13 @@ public class MuteManager extends KoolSMPCoreBase implements Listener
 
     // Fallback in case AsyncChatEvent doesn't block it effectively enough
     @EventHandler
+    @SuppressWarnings("deprecation")
     public void onPlayerChat(AsyncPlayerChatEvent event)
     {
         Player player = event.getPlayer();
 
         if (isMuted(player))
         {
-            player.sendMessage(FUtil.miniMessage("<gray>You are currently muted."));
             event.setCancelled(true);
         }
     }

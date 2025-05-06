@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.config.ConfigEntry;
@@ -11,6 +10,7 @@ import java.util.List;
 
 import eu.koolfreedom.log.FLog;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.ArrayUtils;
@@ -46,23 +46,28 @@ public class ReportCommand extends KoolCommand
 
         if (Discord.getJDA() != null && !ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString().isBlank())
         {
-            TextChannel channel = Discord.getJDA().getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
+            Guild guild = Discord.getJDA().getGuildById(ConfigEntry.DISCORD_SERVER_ID.getString());
 
-            if (channel != null)
+            if (guild != null)
             {
-                try
+                TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
+
+                if (channel != null)
                 {
-                    channel.sendMessageEmbeds(new EmbedBuilder()
-                            .setTitle("Report for " + target.getName() + (!target.isOnline() ? " (offline)" : ""))
-                            .setColor(Color.RED)
-                            .setDescription(reason)
-                            .setFooter("Reported by " + sender.getName(), "https://minotar.net/helm/" + sender.getName() + ".png")
-                            .setTimestamp(ZonedDateTime.now())
-                            .build()).queue();
-                }
-                catch (Exception ex)
-                {
-                    FLog.error("Failed to send report data to Discord", ex);
+                    try
+                    {
+                        channel.sendMessageEmbeds(new EmbedBuilder()
+                                .setTitle("Report for " + target.getName() + (!target.isOnline() ? " (offline)" : ""))
+                                .setColor(Color.RED)
+                                .setDescription(reason)
+                                .setFooter("Reported by " + sender.getName(), "https://minotar.net/helm/" + sender.getName() + ".png")
+                                .setTimestamp(ZonedDateTime.now())
+                                .build()).queue();
+                    }
+                    catch (Exception ex)
+                    {
+                        FLog.error("Failed to send report data to Discord", ex);
+                    }
                 }
             }
         }
