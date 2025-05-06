@@ -43,7 +43,7 @@ public class CommandSpyCommand extends KoolCommand implements Listener
         }
         else
         {
-            msg(sender, "<gray>CommandSpy <green>enabled</green>.");
+            msg(sender, "<gray>CommandSpy <red>disabled</red>.");
             container.set(commandSpyKey, PersistentDataType.BOOLEAN, false);
         }
 
