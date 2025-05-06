@@ -55,6 +55,7 @@ public class MuteCommand extends KoolCommand
                     .uuid(target.getUniqueId())
                     .name(target.getName())
                     .ip(FUtil.getIp(target))
+                    .by(sender.getName())
                     .type("MUTE")
                     .build());
         }

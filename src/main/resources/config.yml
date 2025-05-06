@@ -22,17 +22,43 @@ announcer:
     - "<red>[<gold>KoolFreedom</gold>] Dealing with a rule-breaker? Use <gold><click:suggest_command:/report>'/report'</click></gold> to submit a report."
     - "<red>[<gold>KoolFreedom</gold>] <gold>gamingto12</gold> is the owner of KoolFreedom."
 
-# Regex filters that if detected in a chat message, results in the user being banned for hate speech
+# Chat filter
 chat-filter:
-  hate-speech:
-    - "n[i1]+g+(a|e+r)"
-    - "f[a4]g+([o0]t)?"
-    - "heil hitler"
-    - "seig heil"
-    - "tran{2,}y"
-    - "tro{2,}n"
-    - "卐"
-    - "卍"
+  # Toggles the filter
+  enabled: true
+
+  # Delay in ticks before the action takes place
+  delay: 50
+
+  # Categories of filters
+  categories:
+    # Example entry
+    example:
+      # The permission node required to bypass this filter
+      bypassPermission: kf.admin
+      # The action to take. Currently available options: ban, doom, log, mute, nothing
+      action: log
+      # Whether to cancel the chat event
+      cancel: false
+      # The message/reason to give in regard to the action. This doesn't do anything if the action is set to "mute"
+      reason: "{} is spitting facts right now: '{}'"
+      # A list of regex patterns
+      filters:
+        - "gamingto12 is smelly"
+        - "video(gamesm12)? is not a bunny"
+
+    # Generic hate speech filter which dooms players who say naughty phrases
+    hate-speech:
+      action: doom
+      cancel: true
+      reason: Hate Speech
+      filters:
+        - "(?i)n[i1]+g+(a|e+r)"
+        - "(?i)f[a4]g+([o0]t)?"
+        - "(?i)heil hitler"
+        - "(?i)seig heil"
+        - "(?i)tran{2,}y"
+        - "(?i)tro{2,}n"
 
 # Admin Chat Format
 formats:

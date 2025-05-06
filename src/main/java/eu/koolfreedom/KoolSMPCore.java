@@ -1,9 +1,7 @@
 package eu.koolfreedom;
 
 import eu.koolfreedom.api.GroupCosmetics;
-import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanManager;
-import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
@@ -11,11 +9,9 @@ import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Getter;
-import net.kyori.adventure.audience.Audience;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import eu.koolfreedom.command.impl.*;
@@ -43,6 +39,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public ServerListener serverListener;
     public GroupCosmetics groupCosmetics;
     public ExploitListener exploitListener;
+    public ChatFilter chatFilter;
 
     public static LuckPerms getLuckPermsAPI()
     {
@@ -121,6 +118,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         serverListener = new ServerListener(this);
         exploitListener = new ExploitListener(this);
         loginListener = new LoginListener();
+        chatFilter = new ChatFilter();
     }
 
     public void loadCommands()
@@ -221,54 +219,11 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         }, 0L, ConfigEntry.ANNOUNCER_DELAY.getInteger());
     }
 
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    @SuppressWarnings("deprecation")
-    private void silentlyCancelDeprecatedChatEventIfCalled(AsyncPlayerChatEvent event)
-    {
-        // This is here because Paper's developers decided that AsyncChatEvent being cancelled does not influence the
-        //  outcome of AsyncPlayerChatEvent. We cancel AsyncChatEvent, but AsyncPlayerChatEvent still gets called, which
-        //  is incredibly annoying when you realize that Paper then deprecated APCE, despite you still needing to catch
-        //  it. So, you're inevitably going to get warnings about deprecation that are *not* your fault.
-        if (!event.getPlayer().hasPermission("kf.admin") && ConfigEntry.CHAT_FILTER_HATE_SPEECH.getStringList().stream()
-                .anyMatch(entry -> event.getMessage().trim().toLowerCase().contains(entry)))
-        {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    @SuppressWarnings("OverrideOnly")
+    @EventHandler(priority = EventPriority.HIGHEST)
     private void onChat(AsyncChatEvent event)
     {
         final Player player = event.getPlayer();
         final String message = event.signedMessage().message();
-
-        // Hate speech filter
-        if (!player.hasPermission("kf.admin") && ConfigEntry.CHAT_FILTER_HATE_SPEECH.getStringList().stream()
-                .anyMatch(entry -> message.trim().toLowerCase().matches(entry)))
-        {
-            event.setCancelled(true);
-
-            if (player.isOnline())
-            {
-                player.sendMessage(event.renderer().render(player, player.displayName(), event.message(),
-                        Audience.audience(player)));
-            }
-
-            Bukkit.getScheduler().runTaskLater(this, () ->
-            {
-                if (player.isOnline())
-                {
-                    DoomCommand.eviscerate(player, Bukkit.getConsoleSender(), "Hate Speech");
-                }
-                else
-                {
-                    Ban ban = Ban.fromPlayer(player, Bukkit.getConsoleSender().getName(), "Hate Speech", BanType.BAN);
-                    banManager.addBan(ban);
-                }
-            }, 50L);
-        }
 
         // In-game pinging
         if (message.contains("@"))

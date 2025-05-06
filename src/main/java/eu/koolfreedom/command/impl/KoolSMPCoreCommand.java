@@ -36,6 +36,7 @@ public class KoolSMPCoreCommand extends KoolCommand
             {
                 MainConfig.load();
                 KoolSMPCore.getInstance().groupCosmetics.loadGroups();
+                KoolSMPCore.getInstance().chatFilter.load();
                 msg(sender, "<green>The configuration file has been reloaded.");
             }
             catch (Exception ex)
