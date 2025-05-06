@@ -14,6 +14,8 @@ import org.bukkit.entity.*;
 import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.List;
+
 public class DoomCommand extends KoolCommand
 {
     @Override
@@ -35,6 +37,13 @@ public class DoomCommand extends KoolCommand
 
         eviscerate(target, sender, reason);
         return true;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
+                .filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
     }
 
     public static void eviscerate(Player target, CommandSender sender, String reason)
@@ -117,6 +126,4 @@ public class DoomCommand extends KoolCommand
             }
         }.runTaskLater(KoolSMPCore.getInstance(), 135L);
     }
-
-
 }

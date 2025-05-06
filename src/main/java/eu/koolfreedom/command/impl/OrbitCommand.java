@@ -105,7 +105,7 @@ public class OrbitCommand extends KoolCommand implements Listener
             return params;
         }
 
-        return null;
+        return List.of();
     }
 
     @EventHandler

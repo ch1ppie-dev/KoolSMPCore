@@ -43,7 +43,7 @@ public abstract class KoolCommand implements TabExecutor
     {
         final List<String> entries = tabComplete(sender, cmd, commandLabel, args);
 
-        if (entries == null || entries.isEmpty() || args.length == 0)
+        if (entries == null || args.length == 0)
         {
             return null;
         }

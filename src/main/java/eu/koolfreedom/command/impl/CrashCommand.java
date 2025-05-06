@@ -48,12 +48,7 @@ public class CrashCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {
-        if (sender.hasPermission("kf.exec"))
-        {
-            return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-        }
-
-        return null;
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList() : List.of();
     }
 
     private void crashPlayer(Player victim)

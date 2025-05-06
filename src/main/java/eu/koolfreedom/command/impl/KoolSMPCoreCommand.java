@@ -53,13 +53,13 @@ public class KoolSMPCoreCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
     {
-        if (sender.hasPermission("kf.senior"))
+        if (sender.hasPermission("kf.senior") && args.length == 1)
         {
             return Collections.singletonList("reload");
         }
         else
         {
-            return null;
+            return List.of();
         }
     }
 }
