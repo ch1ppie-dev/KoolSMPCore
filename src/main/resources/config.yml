@@ -22,21 +22,15 @@ announcer:
     - "<red>[<gold>KoolFreedom</gold>] Dealing with a rule-breaker? Use <gold><click:suggest_command:/report>'/report'</click></gold> to submit a report."
     - "<red>[<gold>KoolFreedom</gold>] <gold>gamingto12</gold> is the owner of KoolFreedom."
 
-# Words that if detected in a chat message, results in the user being banned for hate speech
+# Regex filters that if detected in a chat message, results in the user being banned for hate speech
 chat-filter:
   hate-speech:
-    - "nigger"
-    - "n1gger"
-    - "nigga"
-    - "n1gga"
-    - "niga"
-    - "faggot"
-    - "fagg0t"
-    - "fag"
+    - "n[i1]+g+(a|e+r)"
+    - "f[a4]g+([o0]t)?"
     - "heil hitler"
     - "seig heil"
-    - "tranny"
-    - "troon"
+    - "tran{2,}y"
+    - "tro{2,}n"
     - "卐"
     - "卍"
 

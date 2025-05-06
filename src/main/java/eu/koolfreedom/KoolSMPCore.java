@@ -246,7 +246,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
 
         // Hate speech filter
         if (!player.hasPermission("kf.admin") && ConfigEntry.CHAT_FILTER_HATE_SPEECH.getStringList().stream()
-                .anyMatch(entry -> message.trim().toLowerCase().contains(entry)))
+                .anyMatch(entry -> message.trim().toLowerCase().matches(entry)))
         {
             event.setCancelled(true);
 
