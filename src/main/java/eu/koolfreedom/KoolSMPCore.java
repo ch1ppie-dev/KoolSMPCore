@@ -238,6 +238,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
+    @SuppressWarnings("OverrideOnly")
     private void onChat(AsyncChatEvent event)
     {
         final Player player = event.getPlayer();
