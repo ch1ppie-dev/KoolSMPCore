@@ -4,6 +4,7 @@ import com.google.common.net.InetAddresses;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanType;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
@@ -16,6 +17,8 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+@CommandParameters(name = "banip", description = "Ban an IP address from the server'.",
+        usage = "/<command> <ip> [reason]", aliases = "ban-ip")
 public class BanIPCommand extends KoolCommand
 {
     @Override

@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -18,12 +19,14 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
+@CommandParameters(name = "orbit", description = ":trol:", usage = "/<command> <player> <<power> | stop>")
 public class OrbitCommand extends KoolCommand implements Listener
 {
     private final Map<UUID, Integer> orbitMap = new HashMap<>();
 
     public OrbitCommand()
     {
+        super();
         Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
     }
 

@@ -2,6 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.BanManager;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@CommandParameters(name = "banlist", description = "Manage the ban list.", usage = "/banlist [reload]")
 public class BanListCommand extends KoolCommand
 {
 	@Override
@@ -17,7 +19,7 @@ public class BanListCommand extends KoolCommand
 	{
 		BanManager banManager = KoolSMPCore.getInstance().banManager;
 
-		if (args.length == 0 || !sender.hasPermission("kf.senior"))
+		if (args.length == 0 || !sender.hasPermission("kfc.command.banlist.reload"))
 		{
 			msg(sender, "<gray>There are currently <amount> entries in the ban list.",
 					Placeholder.unparsed("amount", String.valueOf(banManager.getBanCount())));
@@ -37,6 +39,6 @@ public class BanListCommand extends KoolCommand
 	@Override
 	public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
 	{
-		return args.length == 1 && sender.hasPermission("kf.senior") ? List.of("reload") : null;
+		return args.length == 1 && sender.hasPermission("kfc.command.banlist.reload") ? List.of("reload") : null;
 	}
 }

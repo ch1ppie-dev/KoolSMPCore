@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
@@ -15,6 +16,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 
 import java.util.List;
 
+@CommandParameters(name = "kick", description = "Kick someone from the server.", usage = "/<command> <player> <reason>")
 public class KickCommand extends KoolCommand
 {
     @Override

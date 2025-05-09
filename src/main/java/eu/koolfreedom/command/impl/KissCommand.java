@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -9,6 +10,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@CommandParameters(name = "kiss", description = "For the lovebirds, give em a big ol' kiss!",
+        usage = "/<command> <player>")
 public class KissCommand extends KoolCommand
 {
     @Override

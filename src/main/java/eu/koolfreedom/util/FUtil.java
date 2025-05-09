@@ -80,7 +80,7 @@ public class FUtil // the f stands for fuck
                 Placeholder.component("rank", KoolSMPCore.getInstance().groupCosmetics.getSenderGroup(sender).getDisplayName()),
                 Placeholder.unparsed("message", message));
 
-        broadcast(formattedMessage, "kf.admin");
+        broadcast(formattedMessage, "kfc.command.adminchat");
     }
 
     public static String getIp(Player player)

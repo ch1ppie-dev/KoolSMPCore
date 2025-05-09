@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
@@ -10,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@CommandParameters(name = "clearchat", description = "Clears the chat for non-admins online", aliases = {"cc", "cleanchat"})
 public class ClearChatCommand extends KoolCommand
 {
     @Override
@@ -30,7 +32,7 @@ public class ClearChatCommand extends KoolCommand
 
                 final Component blankComponent = blank.color(TextColor.color(FUtil.randomNumber(0, 0xFFFFFF)));
 
-                Bukkit.getOnlinePlayers().stream().filter(player -> !player.hasPermission("kf.admin"))
+                Bukkit.getOnlinePlayers().stream().filter(player -> !player.hasPermission("kfc.command.clearchat.immune"))
                         .forEach(player -> player.sendMessage(blankComponent));
             }
 

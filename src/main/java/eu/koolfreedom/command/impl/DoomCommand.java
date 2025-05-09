@@ -3,6 +3,7 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanType;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
@@ -16,6 +17,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
+@CommandParameters(name = "doom", description = "Ban someone from the server, but with extra violence.",
+        usage = "/<command> <player> [reason]", aliases = {"obliterate"})
 public class DoomCommand extends KoolCommand
 {
     @Override

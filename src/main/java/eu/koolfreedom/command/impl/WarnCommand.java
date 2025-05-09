@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@CommandParameters(name = "warn", description = "Formally warn a player.", usage = "/<command> <player> <reason>")
 public class WarnCommand extends KoolCommand
 {
     @Override
@@ -30,7 +32,7 @@ public class WarnCommand extends KoolCommand
             return true;
         }
 
-        if (target.hasPermission("kf.admin"))
+        if (target.hasPermission("kfc.command.warn.immune"))
         {
             msg(sender, "<red>That player can't be warned.");
             return true;
@@ -58,7 +60,7 @@ public class WarnCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {
-        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().filter(player -> !player.hasPermission("kf.admin"))
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().filter(player -> !player.hasPermission("kfc.command.warn.immune"))
                 .map(Player::getName).toList() : List.of();
     }
 }

@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -10,6 +11,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@CommandParameters(name = "spectate", description = "Be like Big Brother and watch suspicious players.",
+        usage = "/<command> <player>", aliases = "watch")
 public class SpectateCommand extends KoolCommand
 {
     @Override

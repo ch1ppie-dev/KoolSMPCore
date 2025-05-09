@@ -2,6 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -10,6 +11,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@CommandParameters(name = "unban", description = "Unban a player or IP address.", usage = "/<command> <playerOrIp>",
+        aliases = {"pardon", "pardon-ip", "unbanip"})
 public class UnbanCommand extends KoolCommand
 {
     @Override

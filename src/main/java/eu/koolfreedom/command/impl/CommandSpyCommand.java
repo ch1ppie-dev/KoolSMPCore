@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.ConfigEntry;
 import net.kyori.adventure.text.Component;
@@ -16,6 +17,9 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Objects;
+
+@CommandParameters(name = "commandspy", description = "Spy on other people's commands", aliases = {"cmdspy", "cspy"})
 public class CommandSpyCommand extends KoolCommand implements Listener
 {
     private final NamespacedKey commandSpyKey = new NamespacedKey(KoolSMPCore.getInstance(), "commandspy");
@@ -56,8 +60,9 @@ public class CommandSpyCommand extends KoolCommand implements Listener
         Player sender = event.getPlayer();
         String commandMessage = event.getMessage();
 
-        Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("kf.admin"))
+        Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission(Objects.requireNonNull(getPermission())))
                 .filter(player -> player.getPersistentDataContainer().getOrDefault(commandSpyKey, PersistentDataType.BOOLEAN, false))
+                .filter(player -> !sender.equals(player))
                 .forEach(player -> msg(player, ConfigEntry.FORMATS_COMMANDSPY.getString(),
                         Placeholder.parsed("name", sender.getName()),
                         Placeholder.parsed("raw_command", commandMessage),

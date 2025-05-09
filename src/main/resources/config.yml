@@ -35,7 +35,7 @@ chat-filter:
     # Example entry
     example:
       # The permission node required to bypass this filter
-      bypassPermission: kf.admin
+      bypassPermission: kfc.bypass_filter.example
       # The action to take. Currently available options: ban, doom, log, mute, nothing
       action: log
       # Whether to cancel the chat event

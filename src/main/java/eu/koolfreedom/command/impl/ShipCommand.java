@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
@@ -15,6 +16,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
+@CommandParameters(name = "ship", description = "Ship two players together, then proceed to get laughed at.",
+        usage = "/<command> <player1> <player2>")
 public class ShipCommand extends KoolCommand
 {
     @Override

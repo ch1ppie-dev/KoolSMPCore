@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
+@CommandParameters(name = "satisfyall", description = "Feed and heal everyone online.", aliases = {"feedall"})
 public class SatisfyAllCommand extends KoolCommand
 {
     @Override

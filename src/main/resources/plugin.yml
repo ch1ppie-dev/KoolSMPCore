@@ -7,127 +7,66 @@ depend:
 softdepend:
   - ProtocolLib
 authors:
-  - gamingto12
-  - 0x7694C9
-  - videogamesm12
-commands:
-  adminchat:
-    usage: /<command> <message>
-    description: Speak with other staff members
-    permission: kf.admin
-    aliases: [ o, oc, adminchat, ac ]
-  ban:
-    description: Ban someone
-    usage: /<command> <player> [reason]
-    aliases: [gtfo]
-    permission: kf.admin
-  banip:
-    description: Ban an IP address
-    usage: /<command> <ip> [reason]
-    aliases: [ ban-ip ]
-    permission: kf.admin
-  banlist:
-    description: Manage the ban list
-    usage: /banlist [reload]
-    permission: kf.admin
-  clearchat:
-    description: Clears the chat
-    aliases: [cc]
-    permission: kf.admin
-  commandspy:
-    description: Spy on another player's commands.
-    aliases: [cmdspy, cspy]
-    permission: kf.admin
-  crash:
-    description: Crash a person's client
-    permission: kf.exec
-  cry:
-    description: womp womp
-  doom:
-    description: Ban someone with excessive violence
-    usage: /doom <player> [reason]
-    aliases: [obliterate]
-    permission: kf.senior
-  hug:
-    descriptions: Hug a player
-    usage: /hug <player>
-  kick:
-    description: Kick someone
-    usage: /kick <player>
-    permission: kf.admin
-  kiss:
-    description: For the lovebirds, give em a big ol kiss
-    usage: /kiss <player>
-  koolsmpcore:
-    description: Display information about the plugin
-    aliases: [kfc]
-    usage: /kfc [reload]
-  mute:
-    description: Mutes a player
-    usage: /mute <player>
-    permission: kf.admin
-  orbit:
-    description: trol
-    usage: /orbit <user> <<power> | stop>
-    permission: kf.admin
-  pat:
-    description: pat pat
-  permbans:
-    description: Reload the PermBans configuration file.
-    usage: /permbans <reload>
-    permission: kf.senior
-  poke:
-    description: poke
-  rawsay:
-    description: Tellraw...but better
-    usage: /rawsay <message>
-    permission: kf.admin
-  report:
-    description: Report a suspicious user
-    usage: /report <player> <reason>
-  reports:
-    description: Manage player reports
-    usage: /reports <list | unresolved | <summary> <id> | purge <player> | <close | handle | reopen> <id> <reason>>
-    permission: kf.admin
-  satisfyall:
-    description: Feed and heal everyone online
-    usage: /<command>
-    permission: kf.admin
-  say:
-    description: what the fuck else does it do
-    usage: /say <message>
-    permission: kf.admin
-  ship:
-    description: Make a really unfunny joke about how you ship 2 people.
-    usage: /ship <player1> <player2>
-  slap:
-    description: Slap the shit out of someone
-    usage: /slap <player>
-  smite:
-    description: Smite that motherfucker
-    usage: /smite <player> [reason]
-    permission: kf.admin
-    permission-message: kf.admin
-  spectate:
-    description: Suspicious user? Spectate them
-    usage: /spectate <player>
-    permission: kf.admin
-  unban:
-    description: Unban someone
-    usage: /unban <player>
-    permission: kf.admin
-  warn:
-    description: Warn someone
-    usage: /warn <player> [reason]
-    permission: kf.admin
+  - "gamingto12"
+  - "0x7694C9"
+  - "videogamesm12"
+api-version: 1.21.1
 permissions:
-  kf.admin:
+  kfc.member:
+    description: Permissions for regular players
+    default: not op
+    children:
+      - kfc.command.cry
+      - kfc.command.hug
+      - kfc.command.kiss
+      - kfc.command.koolsmpcore
+      - kfc.command.pat
+      - kfc.command.poke
+      - kfc.command.report
+      - kfc.command.ship
+      - kfc.command.slap
+  kfc.admin:
+    description: Permission group offering basic administrative tools, but leaving the more important stuff locked away
     default: op
-  kf.senior:
+    children:
+      - kfc.member
+      - kfc.command.adminchat
+      - kfc.command.ban
+      - kfc.command.banip
+      - kfc.command.clearchat
+      - kfc.command.clearchat.immune
+      - kfc.command.commandspy
+      - kfc.command.kick
+      - kfc.command.mute
+      - kfc.command.mute.immune
+      - kfc.command.orbit
+      - kfc.command.rawsay
+      - kfc.command.reports
+      - kfc.command.satisfyall
+      - kfc.command.say
+      - kfc.command.smite
+      - kfc.command.spectate
+      - kfc.command.unban
+      - kfc.command.warn
+      - kfc.command.warn.immune
+      - kfc.ping_everyone
+  kfc.senior:
+    description: Permission group offering some additional administrative capabilities, plus the ability to doom people.
     default: op
-  kf.exec:
+    children:
+      - kf.admin
+      - kfc.command.banlist.reload
+      - kfc.command.koolsmpcore.reload
+      - kfc.command.doom
+  kfc.exec:
+    description: Permission group offering pretty much everything the plugin has to offer, plus some fun commands
     default: op
+    children:
+      - kf.senior
+      - kfc.command.crash
+      - kfc.command.reports.purge
 libraries:
+  - org.javassist:javassist:3.29.1-GA
   - org.jetbrains:annotations:26.0.2
   - org.apache.commons:commons-lang3:3.17.0
   - net.dv8tion:JDA:5.5.1

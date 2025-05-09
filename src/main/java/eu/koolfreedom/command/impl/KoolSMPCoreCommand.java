@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.MainConfig;
 import eu.koolfreedom.log.FLog;
@@ -14,12 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+@CommandParameters(name = "koolsmpcore", description = "Display information about the plugin or reload it.",
+        usage = "/<command> [reload]", aliases = "kfc")
 public class KoolSMPCoreCommand extends KoolCommand
 {
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
-        if (args.length == 0 || !sender.hasPermission("kf.senior"))
+        if (args.length == 0 || !sender.hasPermission("kfc.command.koolsmpcore.reload"))
         {
             BuildProperties build = KoolSMPCore.getInstance().buildMeta;
             msg(sender, "<white><b>KoolSMPCore - The Core of KoolFreedom SMP.");
@@ -55,7 +58,7 @@ public class KoolSMPCoreCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
     {
-        if (sender.hasPermission("kf.senior") && args.length == 1)
+        if (sender.hasPermission("kfc.command.koolsmpcore.reload") && args.length == 1)
         {
             return Collections.singletonList("reload");
         }

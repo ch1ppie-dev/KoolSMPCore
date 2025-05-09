@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -9,6 +10,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@CommandParameters(name = "crash", description = "Crash people's clients.", usage = "/<command> [player]",
+        aliases = {"370"})
 public class CrashCommand extends KoolCommand
 {
     @Override

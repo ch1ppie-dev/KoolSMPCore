@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.listener.MuteManager;
 import eu.koolfreedom.punishment.Punishment;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@CommandParameters(name = "mute", description = "Mutes a player.", usage = "/<command> <player>")
 public class MuteCommand extends KoolCommand
 {
     @Override
@@ -41,7 +43,7 @@ public class MuteCommand extends KoolCommand
             return true;
         }
 
-        if (target.hasPermission("kf.admin"))
+        if (target.hasPermission("kfc.command.mute.immune"))
         {
             msg(sender, "<red>That player can't be muted.");
             return true;
@@ -69,7 +71,8 @@ public class MuteCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {
-        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().filter(player -> !player.hasPermission("kf.admin"))
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream()
+                .filter(player ->!player.hasPermission("kfc.command.mute.immune"))
                 .map(Player::getName).toList() : List.of();
     }
 }

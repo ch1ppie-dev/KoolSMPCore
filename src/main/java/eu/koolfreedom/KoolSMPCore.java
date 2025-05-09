@@ -2,6 +2,7 @@ package eu.koolfreedom;
 
 import eu.koolfreedom.api.GroupCosmetics;
 import eu.koolfreedom.banning.BanManager;
+import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
@@ -34,6 +35,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     private static LuckPerms luckPermsAPI = null;
 
     public BuildProperties buildMeta = new BuildProperties();
+
+    public CommandLoader commandLoader;
 
     public BanManager banManager;
     public MuteManager muteManager;
@@ -70,8 +73,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public void onLoad()
     {
         instance = this;
-
-        buildMeta = new BuildProperties();
     }
 
     @Override
@@ -81,8 +82,13 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         FLog.info("Version " + buildMeta.getVersion());
         FLog.info("Compiled " + buildMeta.getDate() + " by " + buildMeta.getAuthor());
         Bukkit.getPluginManager().registerEvents(this, this);
-        loadCommands();
+
+        buildMeta = new BuildProperties();
+
+        commandLoader = new CommandLoader(AdminChatCommand.class);
+        commandLoader.loadCommands();
         FLog.info("Loaded commands");
+
         loadListeners();
         FLog.info("Loaded listeners");
         groupCosmetics = new GroupCosmetics();
@@ -125,46 +131,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         chatFilter = new ChatFilter();
     }
 
-    public void loadCommands()
-    {
-        registerCommand("adminchat", new AdminChatCommand());
-        registerCommand("ban", new BanCommand());
-        registerCommand("banip", new BanIPCommand());
-        registerCommand("banlist", new BanListCommand());
-        registerCommand("clearchat", new ClearChatCommand());
-        registerCommand("commandspy", new CommandSpyCommand());
-        registerCommand("crash", new CrashCommand());
-        registerCommand("cry", new CryCommand());
-        registerCommand("doom", new DoomCommand());
-        registerCommand("hug", new HugCommand());
-        registerCommand("kick", new KickCommand());
-        registerCommand("kiss", new KissCommand());
-        registerCommand("koolsmpcore", new KoolSMPCoreCommand());
-        registerCommand("mute", new MuteCommand());
-        registerCommand("orbit", new OrbitCommand());
-        registerCommand("pat", new PatCommand());
-        registerCommand("poke", new PokeCommand());
-        registerCommand("rawsay", new RawSayCommand());
-        registerCommand("report", new ReportCommand());
-        registerCommand("reports", new ReportsCommand());
-        registerCommand("satisfyall", new SatisfyAllCommand());
-        registerCommand("say", new SayCommand());
-        registerCommand("ship", new ShipCommand());
-        registerCommand("slap", new SlapCommand());
-        registerCommand("smite", new SmiteCommand());
-        registerCommand("spectate", new SpectateCommand());
-        registerCommand("unban", new UnbanCommand());
-        registerCommand("warn", new WarnCommand());
-    }
-
-    private void registerCommand(String name, TabExecutor executor)
-    {
-        final PluginCommand cmd = Objects.requireNonNull(getCommand(name));
-
-        cmd.setExecutor(executor);
-        cmd.setTabCompleter(executor);
-    }
-
     public boolean isVanished(Player player)
     {
         Plugin essentials = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
@@ -202,7 +168,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         if (message.contains("@"))
         {
             Arrays.stream(message.split(" ")).filter(word -> word.startsWith("@")).filter(word ->
-                    !word.equalsIgnoreCase("@everyone") || player.hasPermission("kf.admin"))
+                    !word.equalsIgnoreCase("@everyone") || player.hasPermission("kfc.ping_everyone"))
                     .map(ping -> ping.replaceAll("@", "")).map(Bukkit::getPlayer)
                     .filter(Objects::nonNull).distinct().forEach(target -> target.playSound(target.getLocation(),
                             Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F));

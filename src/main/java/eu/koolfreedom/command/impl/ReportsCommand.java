@@ -2,6 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import com.google.common.collect.Lists;
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.reporting.Report;
@@ -19,6 +20,8 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 import java.util.List;
 
+@CommandParameters(name = "reports", description = "Manage player reports.",
+		usage = "/reports <list | unresolved | <summary> <id> | purge <player> | <close | handle | reopen> <id> <reason>>")
 public class ReportsCommand extends KoolCommand
 {
 	@Override
@@ -200,7 +203,7 @@ public class ReportsCommand extends KoolCommand
 			}
 			case "purge" ->
 			{
-				if (!sender.hasPermission("kf.exec"))
+				if (!sender.hasPermission("kfc.command.reports.purge"))
 				{
 					msg(sender, "<red>You don't have permission to purge reports.");
 					return true;
@@ -275,7 +278,7 @@ public class ReportsCommand extends KoolCommand
 					return args[0].equalsIgnoreCase("reopen") ? reportManager.getClosedReportIDs()
 							: reportManager.getReportIds(dontShowSummary);
 				}
-				else if (args[0].equalsIgnoreCase("purge") && sender.hasPermission("kf.exec"))
+				else if (args[0].equalsIgnoreCase("purge") && sender.hasPermission("kfc.command.reports.purge"))
 				{
 					return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
 				}

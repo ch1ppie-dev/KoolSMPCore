@@ -19,7 +19,7 @@ public class BuildProperties extends Properties
 	{
 		super();
 
-		try (InputStream in = KoolSMPCore.getInstance().getResource("build.properties"))
+		try (InputStream in = KoolSMPCore.class.getClassLoader().getResourceAsStream("build.properties"))
 		{
 			load(in);
 		}

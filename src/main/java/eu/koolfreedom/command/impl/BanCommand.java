@@ -2,6 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
@@ -16,6 +17,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@CommandParameters(name = "ban", description = "Ban someone from the server.", usage = "/<command> <player> [reason]",
+        aliases = "gtfo")
 public class BanCommand extends KoolCommand
 {
     @Override

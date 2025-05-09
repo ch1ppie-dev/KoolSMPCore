@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FUtil;
@@ -9,6 +10,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@CommandParameters(name = "say", description = "Broadcast an official-looking message to the server.",
+        usage = "/<command> <message>", aliases = "broadcast")
 public class SayCommand extends KoolCommand
 {
     @Override

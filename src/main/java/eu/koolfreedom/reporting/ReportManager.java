@@ -127,13 +127,13 @@ public class ReportManager implements Listener
 		event.getReport().setId(id);
 
 		// Broadcast the report to admins
-		FUtil.broadcast("kf.admin", ConfigEntry.FORMATS_REPORT.getString(),
+		FUtil.broadcast("kfc.command.reports", ConfigEntry.FORMATS_REPORT.getString(),
 				Placeholder.parsed("reporter", event.getReporter().getName()),
 				Placeholder.parsed("player", event.getReported().getName() != null ? event.getReported().getName() : event.getReported().getUniqueId().toString()),
 				Placeholder.unparsed("reason", event.getReason()));
 
 		// Send a ping noise to all online admins
-		Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("kf.admin"))
+		Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("kfc.command.reports"))
 				.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 2.0F));
 
 		// Save to our database
@@ -172,7 +172,7 @@ public class ReportManager implements Listener
 	{
 		final Player player = event.getPlayer();
 
-		if (player.hasPermission("kf.admin"))
+		if (player.hasPermission("kfc.command.reports"))
 		{
 			long unresolved = reportMap.values().stream().filter(report -> !report.isResolved()).count();
 

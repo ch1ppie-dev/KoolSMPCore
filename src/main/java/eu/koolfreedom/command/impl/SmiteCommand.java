@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
@@ -13,6 +14,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@CommandParameters(name = "smite", description = "\"Kindly\" correct a misbehaving player.",
+        usage = "/<command> <player> [reason]", aliases = {"bitchslap"})
 public class SmiteCommand extends KoolCommand
 {
     @Override

@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@CommandParameters(name = "report", description = "Report a misbehaving player to staff.",
+        aliases = {"holyshitfuckinghelp"}, usage = "/<command> <player> <reason>")
 public class ReportCommand extends KoolCommand
 {
     @Override

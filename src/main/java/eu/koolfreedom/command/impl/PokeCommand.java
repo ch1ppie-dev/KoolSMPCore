@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
+@CommandParameters(name = "poke", description = "Poke someone.", usage = "/<command> <player>")
 public class PokeCommand extends KoolCommand
 {
     @Override
