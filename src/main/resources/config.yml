@@ -60,11 +60,13 @@ chat-filter:
         - "(?i)tran{2,}y"
         - "(?i)tro{2,}n"
 
-# Admin Chat Format
+# Formats
 formats:
   admin_chat: "<dark_gray>[<aqua>AC</aqua>] <blue><name></blue> [<rank>] <gold><message>"
   commandspy: "<gray><hover:show_text:'<translate:chat.copy.click>'><click:copy_to_clipboard:<name>><name></click></hover>: <click:suggest_command:'<raw_command>'><command>"
   report: "<dark_gray>[<red>REPORTS</red>] <gold><reporter></gold> <red>has reported <gold><player></gold> for <gold><reason></gold>."
+  report_summary: "<gradient:dark_gray:gray>████</gradient> Report Summary - <id> <gradient:gray:dark_gray>████</gradient><newline><dark_gray><b>|</b><newline><b>|</b>   <gray>Reported: <white><reported></white></gray><newline><b>|</b>   <gray>By: <white><reporter></white></gray><newline><b>|</b>   <gray>Reason: <white><reason></white></gray><newline><b>|</b>   <gray>Date: <white><date:'yyyy-MM-dd \\'at\\' h:mm:ss a'></white></gray><newline><b>|</b>   <gray>Resolved: <resolved:'<green>Yes':'<red>No'></gray><newline><b>|</b>"
+  report_quick_summary: "<b><dark_gray>|</dark_gray></b> <white><id><white> <gray>| <white><reporter_display></white> reported <white><reported_display></white>"
   say: "<light_purple>[Server:<name>] <message>"
 
 discord:

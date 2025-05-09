@@ -80,6 +80,10 @@ commands:
   report:
     description: Report a suspicious user
     usage: /report <player> <reason>
+  reports:
+    description: Manage player reports
+    usage: /reports <<summary | resolve> <id> | recent | unresolved>
+    permission: kf.admin
   satisfyall:
     description: Feed and heal everyone online
     usage: /<command>
@@ -120,4 +124,4 @@ permissions:
     default: op
 libraries:
   - org.apache.commons:commons-lang3:3.17.0
-  - net.dv8tion:JDA:5.0.0-beta.21
+  - net.dv8tion:JDA:5.5.1

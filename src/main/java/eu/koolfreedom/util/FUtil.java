@@ -65,6 +65,14 @@ public class FUtil // the f stands for fuck
         return RANDOM.nextInt(min, max);
     }
 
+    public static String randomString(int length)
+    {
+        return RANDOM.ints(48, 122)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(length)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+    }
+
     public static void adminChat(CommandSender sender, String message)
     {
         Component formattedMessage = miniMessage(ConfigEntry.FORMATS_ADMIN_CHAT.getString(),

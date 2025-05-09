@@ -6,6 +6,7 @@ import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
+import eu.koolfreedom.reporting.ReportManager;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Getter;
@@ -34,6 +35,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public BanManager banManager;
     public MuteManager muteManager;
     public RecordKeeper recordKeeper;
+    public ReportManager reportManager;
+    public Discord discord;
 
     public LoginListener loginListener;
     public ServerListener serverListener;
@@ -88,7 +91,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
             announcerRunnable();
         }
 
-        Discord.init();
+        discord = new Discord();
         getLuckPermsAPI();
     }
 
@@ -97,12 +100,9 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     {
         FLog.info("KoolSMPCore has been disabled");
 
-        if (Discord.getJDA() != null)
-        {
-            Discord.getJDA().shutdownNow();
-        }
-
+        discord.shutdown();
         banManager.save();
+        reportManager.save();
     }
 
     public void loadBansConfig()
@@ -115,6 +115,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public void loadListeners()
     {
         muteManager = new MuteManager();
+        reportManager = new ReportManager();
         serverListener = new ServerListener(this);
         exploitListener = new ExploitListener(this);
         loginListener = new LoginListener();
@@ -142,6 +143,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         registerCommand("poke", new PokeCommand());
         registerCommand("rawsay", new RawSayCommand());
         registerCommand("report", new ReportCommand());
+        registerCommand("reports", new ReportsCommand());
         registerCommand("satisfyall", new SatisfyAllCommand());
         registerCommand("say", new SayCommand());
         registerCommand("ship", new ShipCommand());

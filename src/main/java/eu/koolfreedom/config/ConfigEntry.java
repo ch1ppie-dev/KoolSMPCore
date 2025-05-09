@@ -34,6 +34,8 @@ public enum ConfigEntry
     FORMATS_ADMIN_CHAT(String.class, "formats.admin_chat"),
     FORMATS_COMMANDSPY(String.class, "formats.commandspy"),
     FORMATS_REPORT(String.class, "formats.report"),
+    FORMATS_REPORT_SUMMARY(String.class, "formats.report_summary"),
+    FORMATS_REPORT_QUICK_SUMMARY(String.class, "formats.report_quick_summary"),
     FORMATS_SAY(String.class, "formats.say"),
     GROUPS(ConfigurationSection.class, "groups"),
     UNBANNABLE_USERNAMES(List.class, "unbannable_usernames");
