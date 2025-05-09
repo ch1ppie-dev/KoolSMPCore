@@ -65,14 +65,31 @@ formats:
   admin_chat: "<dark_gray>[<aqua>AC</aqua>] <blue><name></blue> [<rank>] <gold><message>"
   commandspy: "<gray><hover:show_text:'<translate:chat.copy.click>'><click:copy_to_clipboard:<name>><name></click></hover>: <click:suggest_command:'<raw_command>'><command>"
   report: "<dark_gray>[<red>REPORTS</red>] <gold><reporter></gold> <red>has reported <gold><player></gold> for <gold><reason></gold>."
-  report_summary: "<gradient:dark_gray:gray>████</gradient> Report Summary - <id> <gradient:gray:dark_gray>████</gradient><newline><dark_gray><b>|</b><newline><b>|</b>   <gray>Reported: <white><reported></white></gray><newline><b>|</b>   <gray>By: <white><reporter></white></gray><newline><b>|</b>   <gray>Reason: <white><reason></white></gray><newline><b>|</b>   <gray>Date: <white><date:'yyyy-MM-dd \\'at\\' h:mm:ss a'></white></gray><newline><b>|</b>   <gray>Resolved: <resolved:'<green>Yes':'<red>No'></gray><newline><b>|</b>"
-  report_quick_summary: "<b><dark_gray>|</dark_gray></b> <white><id><white> <gray>| <white><reporter_display></white> reported <white><reported_display></white>"
+  report_summary: "<gradient:dark_gray:gray>████</gradient> Report Summary - <id> <gradient:gray:dark_gray>████</gradient><newline><dark_gray><b>|</b><newline><b>|</b>   <gray>Reported: <white><reported></white></gray><newline><b>|</b>   <gray>By: <white><reporter></white></gray><newline><b>|</b>   <gray>Reason: <white><reason></white></gray><newline><b>|</b>   <gray>Date: <white><date:'yyyy-MM-dd \\'at\\' h:mm:ss a'></white></gray><newline><b>|</b>   <gray>Status: <white><status></white></gray><newline><b>|</b>   <gray>Staff Note: <white><staff_note></white></gray><newline><b>|</b>"
+  report_quick_summary: "<b><dark_gray>|</dark_gray></b> <hover:show_text:'<full_summary>'><click:run_command:'/reports summary <id>'><white><date:'HH:mm:ss'></white> <gray>| <white><reporter></white> reported <white><reported></white></click></hover>"
+  report_empty_quick_summary: "<b><dark_gray>|</dark_gray></b> "
   say: "<light_purple>[Server:<name>] <message>"
 
+# Discord integration
 discord:
+  # The token for the Discord bot
   bot_token: ""
+
+  # The ID of the server you want to be part of
   server_id: ""
-  report_channel_id: ""
+
+  # All things reporting
+  reports:
+    # The ID of the channel where reports will be routed to
+    channel_id: ""
+
+    # List of role IDs that can perform certain tasks to reports
+    roles:
+      purge: []
+      resolve: []
+      close: []
+      reopen: []
+
 
 # Groups that show up in places like admin chat
 groups:

@@ -11,6 +11,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -131,6 +132,10 @@ public class ReportManager implements Listener
 				Placeholder.parsed("player", event.getReported().getName() != null ? event.getReported().getName() : event.getReported().getUniqueId().toString()),
 				Placeholder.unparsed("reason", event.getReason()));
 
+		// Send a ping noise to all online admins
+		Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("kf.admin"))
+				.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 2.0F));
+
 		// Save to our database
 		CompletableFuture.runAsync(this::save);
 	}
@@ -173,7 +178,7 @@ public class ReportManager implements Listener
 
 			if (unresolved > 0)
 			{
-				player.sendRichMessage("<yellow>⚠ <gray>|</gray> There are <gold><amount></gold> unresolved report(s) requiring your attention. Use <gold>/reports info</gold> for more information.",
+				player.sendRichMessage("<yellow>⚠ <gray>|</gray> There are <gold><amount></gold> unresolved report(s) requiring your attention. Use <click:run_command:'/reports unresolved'><gold><u>/reports unresolved</u></gold></click> for more information.",
 						Placeholder.unparsed("amount", String.valueOf(unresolved)));
 			}
 		}

@@ -157,7 +157,8 @@ public class Report
 						handlers.stream().map(handler -> Component.text(handler).color(NamedTextColor.WHITE)).toList())),
 				Placeholder.component("status", status.label()),
 				Placeholder.unparsed("staff_note", lastNote != null ? lastNote : "(none)"),
-				Formatter.booleanChoice("resolved", isResolved()));
+				Formatter.booleanChoice("resolved", isResolved()),
+				Placeholder.parsed("full_summary", ConfigEntry.FORMATS_REPORT_SUMMARY.getString()));
 	}
 
 	public Component fullSummary()

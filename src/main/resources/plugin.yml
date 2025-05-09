@@ -82,7 +82,7 @@ commands:
     usage: /report <player> <reason>
   reports:
     description: Manage player reports
-    usage: /reports <<summary | resolve> <id> | recent | unresolved>
+    usage: /reports <list | unresolved | <summary> <id> | purge <player> | <close | handle | reopen> <id> <reason>>
     permission: kf.admin
   satisfyall:
     description: Feed and heal everyone online

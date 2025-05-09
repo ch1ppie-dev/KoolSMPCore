@@ -10,10 +10,7 @@ import eu.koolfreedom.reporting.Report;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -76,23 +73,26 @@ public class Discord extends ListenerAdapter implements Listener
         }
     }
 
+    public boolean isEnabled()
+    {
+        return jda != null;
+    }
+
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event)
     {
-        FLog.warning("Hi there, would you like to sign my petition?");
-
         if (event.getChannelId() == null
-                || !event.getChannelId().equalsIgnoreCase(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString())
-                || event.getGuild() == null || !event.getGuild().getId().equalsIgnoreCase(ConfigEntry.DISCORD_SERVER_ID.getString()))
+                || !event.getChannelId().equalsIgnoreCase(ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString())
+                || event.getGuild() == null || !event.getGuild().getId().equalsIgnoreCase(ConfigEntry.DISCORD_SERVER_ID.getString())
+                || event.getMember() == null)
         {
-            FLog.warning("channel is null, guild is null, channel is not report channel, or server is not the guild we were expecting");
             return;
         }
 
         final Message message = event.getMessage();
         final Button button = event.getButton();
-        final User user = event.getUser();
-        final Component userDisplay = Component.text(user.getAsMention());
+        final Member member = event.getMember();
+        final Component userDisplay = Component.text(member.getAsMention());
         final Optional<Report> optionalReport = KoolSMPCore.getInstance().reportManager.getReports(true).stream().filter(report ->
                 report.getAdditionalData().getString("discordMessageId", "-1").equalsIgnoreCase(message.getId())).findAny();
 
@@ -100,66 +100,92 @@ public class Discord extends ListenerAdapter implements Listener
         {
             switch (button.getId().toLowerCase())
             {
-                case "handled" -> optionalReport.ifPresentOrElse(report ->
+                case "handled" ->
                 {
-                    FLog.warning("Resolve picked");
-                    if (report.isResolved())
+                    if (!isAuthorized(member, ConfigEntry.DISCORD_REPORTS_ROLES_THAT_CAN_RESOLVE.getStringList()))
                     {
-                        event.reply("This report has already been resolved.").setEphemeral(true).queue();
+                        event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
                     }
 
-                    report.updateAsync(userDisplay, user.getName(), user.getId(), Report.ReportStatus.RESOLVED, "Handled");
-                    event.reply("Report " + report.getId() + " has been re-handled.").setEphemeral(true).queue();
-                }, () -> message.editMessage(MessageEditData.fromCreateData(new MessageCreateBuilder()
-                        .addContent("Unlinked report resolved by " + user.getAsMention())
-                        .addEmbeds(message.getEmbeds())
-                        .build())).queue());
-                case "invalid" -> optionalReport.ifPresentOrElse(report ->
-                {
-                    FLog.warning("Invalid picked");
-                    if (report.isResolved())
+                    optionalReport.ifPresentOrElse(report ->
                     {
-                        FLog.warning("No way you freaking pinko");
-                        event.reply("This report has already been resolved.").setEphemeral(true).queue();
+                        if (report.isResolved())
+                        {
+                            event.reply("This report has already been resolved.").setEphemeral(true).queue();
+                            return;
+                        }
+
+                        report.updateAsync(userDisplay, member.getUser().getName(), member.getUser().getId(), Report.ReportStatus.RESOLVED, "Handled");
+                        event.reply("Report " + report.getId() + " has been re-handled.").setEphemeral(true).queue();
+                    }, () -> message.editMessage(MessageEditData.fromCreateData(new MessageCreateBuilder()
+                            .addContent("Unlinked report resolved by " + member.getAsMention())
+                            .addEmbeds(message.getEmbeds())
+                            .build())).queue());
+                }
+                case "invalid" ->
+                {
+                    if (!isAuthorized(member, ConfigEntry.DISCORD_REPORTS_ROLES_THAT_CAN_CLOSE.getStringList()))
+                    {
+                        event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
                     }
 
-                    FLog.warning("Okay, I guess that sounds good");
-                    report.updateAsync(userDisplay, user.getName(), user.getId(), Report.ReportStatus.CLOSED, "Invalid");
-                    event.reply("Report " + report.getId() + " has been closed.").setEphemeral(true).queue();
-                }, () ->
-                {
-                    message.delete().queue();
-                    event.reply("This report didn't even have a message ID associated to it somehow, so we deleted it.").setEphemeral(true).queue();
-                });
-                case "purge" -> optionalReport.ifPresentOrElse(report ->
-                {
-                    FLog.warning("Purge picked");
-                    KoolSMPCore.getInstance().reportManager.deleteReportsByUuidAsync(userDisplay, user.getName(), user.getId(), report.getReporter());
-                    event.reply("Reports are now being deleted as we speak.").setEphemeral(true).queue();
-                }, () ->
-                {
-                    message.delete().queue();
-                    event.reply("This report didn't even have a message ID associated to it somehow, so we couldn't delete every report this user filed.").setEphemeral(true).queue();
-                });
-                case "reopen" -> optionalReport.ifPresentOrElse(report ->
-                {
-                    FLog.warning("Reopen picked");
-                    if (!report.isResolved())
+                    optionalReport.ifPresentOrElse(report ->
                     {
-                        event.reply("This report is already open.").setEphemeral(true).queue();
+                        if (report.isResolved())
+                        {
+                            event.reply("This report has already been resolved.").setEphemeral(true).queue();
+                            return;
+                        }
+
+                        report.updateAsync(userDisplay, member.getUser().getName(), member.getUser().getId(), Report.ReportStatus.CLOSED, "Invalid");
+                        event.reply("Report " + report.getId() + " has been closed.").setEphemeral(true).queue();
+                    }, () ->
+                    {
+                        message.delete().queue();
+                        event.reply("This report didn't even have a message ID associated to it somehow, so we deleted it.").setEphemeral(true).queue();
+                    });
+                }
+                case "purge" ->
+                {
+                    if (!isAuthorized(member, ConfigEntry.DISCORD_REPORTS_ROLES_THAT_CAN_PURGE.getStringList()))
+                    {
+                        event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
                     }
 
-                    report.updateAsync(userDisplay, user.getName(), user.getId(), Report.ReportStatus.REOPENED, "Reopened for further investigation");
-                    event.reply("Report " + report.getId() + " has been re-opened.").setEphemeral(true).queue();
-                }, () -> event.reply("This report doesn't have a message ID associated to it, so we can't re-open it.").setEphemeral(true).queue());
+                    optionalReport.ifPresentOrElse(report ->
+                    {
+                        KoolSMPCore.getInstance().reportManager.deleteReportsByUuidAsync(userDisplay, member.getUser().getName(), member.getUser().getId(), report.getReporter());
+                        event.reply("Reports are now being deleted as we speak.").setEphemeral(true).queue();
+                    }, () ->
+                    {
+                        message.delete().queue();
+                        event.reply("This report didn't even have a message ID associated to it somehow, so we couldn't delete every report this user filed.").setEphemeral(true).queue();
+                    });
+                }
+                case "reopen" ->
+                {
+                    if (!isAuthorized(member, ConfigEntry.DISCORD_REPORTS_ROLES_THAT_CAN_REOPEN.getStringList()))
+                    {
+                        event.reply("You don't have permission to do that.").setEphemeral(true).queue();
+                        return;
+                    }
+
+                    optionalReport.ifPresentOrElse(report ->
+                    {
+                        if (!report.isResolved())
+                        {
+                            event.reply("This report is already open.").setEphemeral(true).queue();
+                            return;
+                        }
+
+                        report.updateAsync(userDisplay, member.getUser().getName(), member.getUser().getId(), Report.ReportStatus.REOPENED, "Reopened for further investigation");
+                        event.reply("Report " + report.getId() + " has been re-opened.").setEphemeral(true).queue();
+                    }, () -> event.reply("This report doesn't have a message ID associated to it, so we can't re-open it.").setEphemeral(true).queue());
+                }
             }
-        }
-        else
-        {
-            FLog.warning("What the fuck?");
         }
     }
 
@@ -167,12 +193,16 @@ public class Discord extends ListenerAdapter implements Listener
     private void onReport(PlayerReportEvent event)
     {
         final Report report = event.getReport();
+        if (ConfigEntry.DISCORD_SERVER_ID.getString().isBlank() || ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
+        {
+            return;
+        }
 
         Guild guild = jda.getGuildById(ConfigEntry.DISCORD_SERVER_ID.getString());
 
         if (guild != null)
         {
-            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
+            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString());
 
             if (channel != null)
             {
@@ -198,6 +228,10 @@ public class Discord extends ListenerAdapter implements Listener
     private void onReportUpdated(PlayerReportUpdateEvent event)
     {
         final Report report = event.getReport();
+        if (ConfigEntry.DISCORD_SERVER_ID.getString().isBlank() || ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
+        {
+            return;
+        }
 
         if (!report.getAdditionalData().isString("discordMessageId"))
         {
@@ -208,7 +242,7 @@ public class Discord extends ListenerAdapter implements Listener
 
         if (guild != null)
         {
-            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
+            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString());
 
             if (channel != null)
             {
@@ -234,11 +268,16 @@ public class Discord extends ListenerAdapter implements Listener
     @EventHandler
     private void onReportDeleted(PlayerReportDeleteEvent event)
     {
+        if (ConfigEntry.DISCORD_SERVER_ID.getString().isBlank() || ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
+        {
+            return;
+        }
+
         Guild guild = jda.getGuildById(ConfigEntry.DISCORD_SERVER_ID.getString());
 
         if (guild != null)
         {
-            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORT_CHANNEL_ID.getString());
+            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString());
 
             if (channel != null)
             {
@@ -277,5 +316,10 @@ public class Discord extends ListenerAdapter implements Listener
         }
 
         return embed.build();
+    }
+
+    private boolean isAuthorized(Member member, List<String> roleIds)
+    {
+        return member.getRoles().stream().anyMatch(role -> roleIds.contains(role.getId()));
     }
 }
