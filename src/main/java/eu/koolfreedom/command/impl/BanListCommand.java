@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.BanManager;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
@@ -17,7 +16,7 @@ public class BanListCommand extends KoolCommand
 	@Override
 	public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
 	{
-		BanManager banManager = KoolSMPCore.getInstance().banManager;
+		BanManager banManager = plugin.banManager;
 
 		if (args.length == 0 || !sender.hasPermission("kfc.command.banlist.reload"))
 		{

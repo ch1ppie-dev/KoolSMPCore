@@ -1,7 +1,6 @@
 package eu.koolfreedom.command.impl;
 
 import com.google.common.net.InetAddresses;
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.command.CommandParameters;
@@ -43,7 +42,7 @@ public class BanIPCommand extends KoolCommand
                 .reason(args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null)
                 .build();
 
-        boolean success = KoolSMPCore.getInstance().banManager.addBan(ban);
+        boolean success = plugin.banManager.addBan(ban);
 
         if (!success)
         {
@@ -52,7 +51,7 @@ public class BanIPCommand extends KoolCommand
         }
 
         FUtil.staffAction(sender, "Banned an IP address");
-        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.fromBan(ban));
+        plugin.recordKeeper.recordPunishment(Punishment.fromBan(ban));
 
         // Now for the fun part...
         Bukkit.getOnlinePlayers().stream().filter(player -> FUtil.getIp(player).equalsIgnoreCase(ip)).forEach(player ->

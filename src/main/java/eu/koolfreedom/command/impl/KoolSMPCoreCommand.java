@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.MainConfig;
@@ -24,7 +23,7 @@ public class KoolSMPCoreCommand extends KoolCommand
     {
         if (args.length == 0 || !sender.hasPermission("kfc.command.koolsmpcore.reload"))
         {
-            BuildProperties build = KoolSMPCore.getInstance().buildMeta;
+            BuildProperties build = plugin.buildMeta;
             msg(sender, "<white><b>KoolSMPCore - The Core of KoolFreedom SMP.");
             msg(sender, "<gray>Version <white><version>.<build>", Placeholder.unparsed("version", build.getVersion()),
                     Placeholder.unparsed("build", build.getNumber()));
@@ -39,8 +38,8 @@ public class KoolSMPCoreCommand extends KoolCommand
             try
             {
                 MainConfig.load();
-                KoolSMPCore.getInstance().groupCosmetics.loadGroups();
-                KoolSMPCore.getInstance().chatFilter.load();
+                plugin.groupCosmetics.loadGroups();
+                plugin.chatFilter.load();
                 msg(sender, "<green>The configuration file has been reloaded.");
             }
             catch (Exception ex)

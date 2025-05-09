@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.ConfigEntry;
@@ -22,11 +21,11 @@ import java.util.Objects;
 @CommandParameters(name = "commandspy", description = "Spy on other people's commands", aliases = {"cmdspy", "cspy"})
 public class CommandSpyCommand extends KoolCommand implements Listener
 {
-    private final NamespacedKey commandSpyKey = new NamespacedKey(KoolSMPCore.getInstance(), "commandspy");
+    private final NamespacedKey commandSpyKey = new NamespacedKey(plugin, "commandspy");
 
     public CommandSpyCommand()
     {
-        Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @Override

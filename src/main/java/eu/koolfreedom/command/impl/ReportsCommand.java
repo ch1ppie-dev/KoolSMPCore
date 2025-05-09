@@ -1,7 +1,6 @@
 package eu.koolfreedom.command.impl;
 
 import com.google.common.collect.Lists;
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.ConfigEntry;
@@ -32,7 +31,7 @@ public class ReportsCommand extends KoolCommand
 			return false;
 		}
 
-		final ReportManager reportManager = KoolSMPCore.getInstance().reportManager;
+		final ReportManager reportManager = plugin.reportManager;
 
 		switch (args[0].toLowerCase())
 		{
@@ -225,7 +224,7 @@ public class ReportsCommand extends KoolCommand
 
 				msg(sender, "<green>All reports filed by this user have been purged.");
 
-				if (KoolSMPCore.getInstance().discord.isEnabled() && !ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
+				if (plugin.discord.isEnabled() && !ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
 				{
 					msg(sender, "<yellow>Please keep in mind that depending on the number of reports, it may take a while for reports to be removed from Discord.");
 				}
@@ -244,7 +243,7 @@ public class ReportsCommand extends KoolCommand
 	{
 		final List<String> acceptableModes = List.of("summary", "close", "handle", "reopen", "list", "unresolved", "purge");
 
-		final ReportManager reportManager = KoolSMPCore.getInstance().reportManager;
+		final ReportManager reportManager = plugin.reportManager;
 
 		// Show the available modes
 		if (args.length == 1)

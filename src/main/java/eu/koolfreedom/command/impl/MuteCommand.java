@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.listener.MuteManager;
@@ -20,7 +19,7 @@ public class MuteCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
-        MuteManager mum = KoolSMPCore.getInstance().muteManager;
+        MuteManager mum = plugin.muteManager;
         if (args.length == 0)
         {
             msg(sender, "<gray><amount> player(s) are currently muted.",
@@ -53,7 +52,7 @@ public class MuteCommand extends KoolCommand
         if (mum.isMuted(target))
         {
             FUtil.staffAction(sender, "Muted <player>", Placeholder.unparsed("player", target.getName()));
-            KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.builder()
+            plugin.recordKeeper.recordPunishment(Punishment.builder()
                     .uuid(target.getUniqueId())
                     .name(target.getName())
                     .ip(FUtil.getIp(target))

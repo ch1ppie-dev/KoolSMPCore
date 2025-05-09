@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
@@ -37,7 +36,7 @@ public class BanCommand extends KoolCommand
         }
 
         final Ban ban = Ban.fromPlayer(target, sender.getName(), args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null, BanType.BAN);
-        boolean success = KoolSMPCore.getInstance().banManager.addBan(ban);
+        boolean success = plugin.banManager.addBan(ban);
 
         if (!success && !target.isOnline())
         {
@@ -46,7 +45,7 @@ public class BanCommand extends KoolCommand
         }
 
         FUtil.staffAction(sender, "Banned <player>", Placeholder.unparsed("player", target.getName() != null ? target.getName() : args[0]));
-        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.fromBan(ban));
+        plugin.recordKeeper.recordPunishment(Punishment.fromBan(ban));
 
         if (target instanceof Player online)
         {

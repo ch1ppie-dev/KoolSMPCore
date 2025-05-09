@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
@@ -23,7 +22,7 @@ public class UnbanCommand extends KoolCommand
             return false;
         }
 
-        Ban ban = KoolSMPCore.getInstance().banManager.removeBan(args[0]);
+        Ban ban = plugin.banManager.removeBan(args[0]);
 
         if (ban == null)
         {

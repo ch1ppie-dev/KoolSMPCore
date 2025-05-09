@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
@@ -17,7 +16,7 @@ public class ClearChatCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
-        Bukkit.getScheduler().runTaskAsynchronously(KoolSMPCore.getInstance(), () ->
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
         {
             // Messages are not unique between players with this implementation, mainly for better optimization, but it
             //  still works pretty effectively

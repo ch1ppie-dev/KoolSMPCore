@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
@@ -27,7 +26,7 @@ public class OrbitCommand extends KoolCommand implements Listener
     public OrbitCommand()
     {
         super();
-        Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @Override

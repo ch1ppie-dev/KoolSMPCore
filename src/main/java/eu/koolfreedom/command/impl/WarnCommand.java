@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
@@ -41,7 +40,7 @@ public class WarnCommand extends KoolCommand
         String reason = String.join(" ", ArrayUtils.remove(args, 0));
 
         // Record it to logs
-        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.builder()
+        plugin.recordKeeper.recordPunishment(Punishment.builder()
                 .uuid(target.getUniqueId())
                 .name(target.getName())
                 .ip(FUtil.getIp(target))

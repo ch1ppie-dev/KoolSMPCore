@@ -53,8 +53,9 @@ public class DoomCommand extends KoolCommand
     {
         // Get the technical side of things out of the way first, we want this user banned first and foremost
         final Ban ban = Ban.fromPlayer(target, sender.getName(), reason != null ? reason : "You've met with a terrible fate, haven't you?", BanType.BAN);
-        KoolSMPCore.getInstance().banManager.addBan(ban);
-        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.fromBan(ban));
+        final KoolSMPCore plugin = KoolSMPCore.getInstance();
+        plugin.banManager.addBan(ban);
+        plugin.recordKeeper.recordPunishment(Punishment.fromBan(ban));
 
         // Strip them of their data in LuckPerms
         if (KoolSMPCore.getLuckPermsAPI() != null)
@@ -96,7 +97,7 @@ public class DoomCommand extends KoolCommand
                 target.getWorld().strikeLightning(target.getLocation());
                 target.getWorld().createExplosion(target.getLocation(), 0F, false);
             }
-        }.runTaskLater(KoolSMPCore.getInstance(), 20L);
+        }.runTaskLater(plugin, 20L);
 
         for (int i = 1; i < 4; i++)
         {
@@ -108,7 +109,7 @@ public class DoomCommand extends KoolCommand
                     target.getWorld().strikeLightning(target.getLocation());
                     target.getWorld().createExplosion(target.getLocation(), 0F, false);
                 }
-            }.runTaskLater(KoolSMPCore.getInstance(), 30 * i);
+            }.runTaskLater(plugin, 30 * i);
         }
 
         new BukkitRunnable()
@@ -127,6 +128,6 @@ public class DoomCommand extends KoolCommand
                 FUtil.staffAction(sender, "Banned <player> with excessive violence",
                         Placeholder.unparsed("player", target.getName()));
             }
-        }.runTaskLater(KoolSMPCore.getInstance(), 135L);
+        }.runTaskLater(plugin, 135L);
     }
 }

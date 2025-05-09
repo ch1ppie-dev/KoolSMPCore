@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
@@ -44,7 +43,7 @@ public class SmiteCommand extends KoolCommand
             broadcast(" <red>Reason: <yellow><reason>", Placeholder.unparsed("reason", reason));
         }
 
-        KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.builder()
+        plugin.recordKeeper.recordPunishment(Punishment.builder()
                 .uuid(target.getUniqueId())
                 .name(target.getName())
                 .ip(FUtil.getIp(target))
