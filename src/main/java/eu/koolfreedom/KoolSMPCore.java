@@ -7,9 +7,11 @@ import eu.koolfreedom.discord.Discord;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
+import eu.koolfreedom.util.BuildProperties;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Getter;
+import lombok.NonNull;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
@@ -30,7 +32,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     @Getter
     private static KoolSMPCore instance;
     private static LuckPerms luckPermsAPI = null;
-    public static final BuildProperties build = new BuildProperties();
+
+    public BuildProperties buildMeta = new BuildProperties();
 
     public BanManager banManager;
     public MuteManager muteManager;
@@ -68,15 +71,15 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     {
         instance = this;
 
-        build.load(instance);
+        buildMeta = new BuildProperties();
     }
 
     @Override
     public void onEnable()
     {
         FLog.info("Created by gamingto12 and 0x7694C9");
-        FLog.info("Version " + build.version);
-        FLog.info("Compiled " + build.date + " by " + build.author);
+        FLog.info("Version " + buildMeta.getVersion());
+        FLog.info("Compiled " + buildMeta.getDate() + " by " + buildMeta.getAuthor());
         Bukkit.getPluginManager().registerEvents(this, this);
         loadCommands();
         FLog.info("Loaded commands");
@@ -116,7 +119,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     {
         muteManager = new MuteManager();
         reportManager = new ReportManager();
-        serverListener = new ServerListener(this);
+        serverListener = new ServerListener();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
         loginListener = new LoginListener();
         chatFilter = new ChatFilter();
@@ -152,38 +155,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         registerCommand("spectate", new SpectateCommand());
         registerCommand("unban", new UnbanCommand());
         registerCommand("warn", new WarnCommand());
-    }
-
-    @SuppressWarnings("deprecation")
-    public static class BuildProperties
-    {
-        public String author;
-        public String version;
-        public String number;
-        public String date;
-
-        void load(KoolSMPCore plugin)
-        {
-            try
-            {
-                final Properties props;
-
-                try (InputStream in = plugin.getResource("build.properties"))
-                {
-                    props = new Properties();
-                    props.load(in);
-                }
-
-                author = props.getProperty("buildAuthor", "gamingto12");
-                version = props.getProperty("buildVersion", plugin.getDescription().getVersion());
-                number = props.getProperty("buildNumber", "1");
-                date = props.getProperty("buildDate", "unknown");
-            }
-            catch (Exception ex)
-            {
-                FLog.error("Could not load build properties! Did you compile with NetBeans/Maven?", ex);
-            }
-        }
     }
 
     private void registerCommand(String name, TabExecutor executor)

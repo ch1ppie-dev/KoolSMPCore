@@ -85,7 +85,7 @@ public class FUtil // the f stands for fuck
 
     public static String getIp(Player player)
     {
-        return player.getAddress().getAddress().getHostAddress().trim();
+        return Objects.requireNonNull(player.getAddress()).getAddress().getHostAddress().trim();
     }
 
     public static class RandomColorTag implements Modifying

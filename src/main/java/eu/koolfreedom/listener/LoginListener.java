@@ -1,19 +1,19 @@
 package eu.koolfreedom.listener;
 
+import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.KoolSMPCoreBase;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class LoginListener extends KoolSMPCoreBase implements Listener
+public class LoginListener implements Listener
 {
     public LoginListener()
     {
-        Bukkit.getServer().getPluginManager().registerEvents(this, main);
+        Bukkit.getServer().getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
     }
 
     @EventHandler
@@ -34,6 +34,6 @@ public class LoginListener extends KoolSMPCoreBase implements Listener
             player.sendPlayerListFooter(FUtil.miniMessage(footer));
         }
 
-        player.playerListName(main.groupCosmetics.getColoredName(player));
+        player.playerListName(KoolSMPCore.getInstance().groupCosmetics.getColoredName(player));
     }
 }

@@ -1,7 +1,7 @@
 package eu.koolfreedom.listener;
 
+import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.KoolSMPCoreBase;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MuteManager extends KoolSMPCoreBase implements Listener
+public class MuteManager implements Listener
 {
     private final List<UUID> muted = new ArrayList<>();
 
     public MuteManager()
     {
-        Bukkit.getPluginManager().registerEvents(this, main);
+        Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
     }
 
     public void setMuted(Player player, boolean mute)

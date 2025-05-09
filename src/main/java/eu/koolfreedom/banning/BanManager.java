@@ -3,7 +3,6 @@ package eu.koolfreedom.banning;
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.util.KoolSMPCoreBase;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,36 +14,22 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class BanManager extends KoolSMPCoreBase implements Listener
+public class BanManager implements Listener
 {
+	private static final File bansFile = new File(KoolSMPCore.getInstance().getDataFolder(), "bans.yml");
 	private final Map<Long, Ban> banMap = new HashMap<>();
-	private final File bansFile;
 
 	public BanManager()
 	{
-		this.bansFile = new File(main.getDataFolder(), "bans.yml");
-		if (!bansFile.exists())
-		{
-			try
-			{
-				Files.copy(Objects.requireNonNull(main.getResource("bans.yml")), bansFile.toPath());
-			}
-			catch (IOException ex)
-			{
-				FLog.error("Failed to copy default bans.yml file", ex);
-			}
-		}
-
 		Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
 	}
 
 	public void load()
 	{
-		final File legacyPermbansFile = new File(main.getDataFolder(), "permbans.yml");
+		final File legacyPermbansFile = new File(KoolSMPCore.getInstance().getDataFolder(), "permbans.yml");
 		if (legacyPermbansFile.exists())
 		{
 			FLog.info("Migrating legacy permanent bans file");
@@ -100,6 +85,7 @@ public class BanManager extends KoolSMPCoreBase implements Listener
 		FLog.info("Saving bans file");
 
 		final YamlConfiguration storage = new YamlConfiguration();
+		storage.setComments("", List.of("", "KoolSMPCore v3 Bans File", ""));
 		banMap.entrySet().stream().filter(entry -> !entry.getValue().isExpired()).forEach(entry ->
 				{
 					try

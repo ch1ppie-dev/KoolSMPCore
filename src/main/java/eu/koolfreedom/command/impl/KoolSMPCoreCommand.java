@@ -4,6 +4,7 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.MainConfig;
 import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.BuildProperties;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,13 +21,13 @@ public class KoolSMPCoreCommand extends KoolCommand
     {
         if (args.length == 0 || !sender.hasPermission("kf.senior"))
         {
-            KoolSMPCore.BuildProperties build = KoolSMPCore.build;
+            BuildProperties build = KoolSMPCore.getInstance().buildMeta;
             msg(sender, "<white><b>KoolSMPCore - The Core of KoolFreedom SMP.");
-            msg(sender, "<gray>Version <white><version>.<build>", Placeholder.unparsed("version", build.version),
-                    Placeholder.unparsed("build", build.number));
+            msg(sender, "<gray>Version <white><version>.<build>", Placeholder.unparsed("version", build.getVersion()),
+                    Placeholder.unparsed("build", build.getNumber()));
             msg(sender, "<gray>Compiled on <white><date></white> by <white><builder></white>.",
-                    Placeholder.unparsed("date", build.date),
-                    Placeholder.unparsed("builder", build.author));
+                    Placeholder.unparsed("date", build.getDate()),
+                    Placeholder.unparsed("builder", build.getAuthor()));
             return true;
         }
 

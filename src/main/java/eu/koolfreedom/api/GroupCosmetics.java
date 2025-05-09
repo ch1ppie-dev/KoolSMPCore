@@ -3,8 +3,8 @@ package eu.koolfreedom.api;
 import java.awt.*;
 import java.util.*;
 
+import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.util.KoolSMPCoreBase;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,7 +21,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-public class GroupCosmetics extends KoolSMPCoreBase
+public class GroupCosmetics
 {
     private final Map<String, Group> groups = new HashMap<>();
     private final Group defaultFallbackGroup = new Group("default", "Member", NamedTextColor.GRAY);
@@ -49,7 +49,7 @@ public class GroupCosmetics extends KoolSMPCoreBase
         //
         // NodeMutateEvent was the best fit since it only gets called when a node change happens, and we can figure out
         //  whether an update is necessary or not with the parameters it gives us.
-        api.getEventBus().subscribe(main, NodeMutateEvent.class, event ->
+        KoolSMPCore.getLuckPermsAPI().getEventBus().subscribe(KoolSMPCore.getInstance(), NodeMutateEvent.class, event ->
         {
             if (event.getTarget() instanceof User user)
             {
@@ -93,7 +93,8 @@ public class GroupCosmetics extends KoolSMPCoreBase
     {
         if (sender instanceof Player player)
         {
-            return getGroupByName(Objects.requireNonNull(api.getUserManager().getUser(player.getUniqueId())).getPrimaryGroup());
+            return getGroupByName(Objects.requireNonNull(KoolSMPCore.getLuckPermsAPI()
+                    .getUserManager().getUser(player.getUniqueId())).getPrimaryGroup());
         }
         else if (sender instanceof ConsoleCommandSender)
         {
