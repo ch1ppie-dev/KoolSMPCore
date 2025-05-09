@@ -12,17 +12,12 @@ import eu.koolfreedom.util.BuildProperties;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Getter;
-import lombok.NonNull;
-import net.luckperms.api.LuckPerms;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import eu.koolfreedom.command.impl.*;
 import eu.koolfreedom.listener.*;
 import com.earth2me.essentials.*;
 import org.bukkit.event.*;
-import java.io.InputStream;
 import org.bukkit.*;
 import java.util.*;
 
@@ -32,7 +27,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
 {
     @Getter
     private static KoolSMPCore instance;
-    private static LuckPerms luckPermsAPI = null;
 
     public BuildProperties buildMeta = new BuildProperties();
 
@@ -48,26 +42,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public ServerListener serverListener;
     public GroupCosmetics groupCosmetics;
     public ExploitListener exploitListener;
+    public LuckPermsListener luckPermsListener;
     public ChatFilter chatFilter;
-
-    public static LuckPerms getLuckPermsAPI()
-    {
-        if (luckPermsAPI == null)
-        {
-            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-            if (provider != null)
-            {
-                FLog.info("Successfully loaded the LuckPerms API.");
-                luckPermsAPI = provider.getProvider();
-            }
-            else
-            {
-                FLog.error("The LuckPerms API was not loaded successfully. The plugin will not function properly.");
-            }
-        }
-
-        return luckPermsAPI;
-    }
 
     @Override
     public void onLoad()
@@ -101,7 +77,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         }
 
         discord = new Discord();
-        getLuckPermsAPI();
     }
 
     @Override
@@ -127,6 +102,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         reportManager = new ReportManager();
         serverListener = new ServerListener();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
+        if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) luckPermsListener = new LuckPermsListener();
         loginListener = new LoginListener();
         chatFilter = new ChatFilter();
     }

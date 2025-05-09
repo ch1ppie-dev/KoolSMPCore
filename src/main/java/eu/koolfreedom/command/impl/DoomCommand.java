@@ -9,12 +9,15 @@ import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.luckperms.api.LuckPerms;
+import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.bukkit.*;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
 import java.util.List;
 
 @CommandParameters(name = "doom", description = "Ban someone from the server, but with extra violence.",
@@ -57,10 +60,37 @@ public class DoomCommand extends KoolCommand
         plugin.banManager.addBan(ban);
         plugin.recordKeeper.recordPunishment(Punishment.fromBan(ban));
 
-        // Strip them of their data in LuckPerms
-        if (KoolSMPCore.getLuckPermsAPI() != null)
+        // Remove their groups if present
+        if (plugin.groupCosmetics.getVaultPermissions() != null)
         {
-            LuckPerms luckPerms = KoolSMPCore.getLuckPermsAPI();
+            Permission vault = plugin.groupCosmetics.getVaultPermissions();
+            final List<String> groups = Arrays.stream(vault.getPlayerGroups(target)).toList();
+            groups.forEach(group -> {
+                try
+                {
+                    // Remove them globally if the plugin supports it
+                    if (!vault.playerRemoveGroup(null, target, group))
+                        // Remove them in that specific world if the plugin supports it but not global permissions
+                        vault.playerRemoveGroup(target, group);
+                }
+                // Just in case...
+                catch (UnsupportedOperationException ex)
+                {
+                    // See them try to get around this HAHAHAHAHAHAHAHA
+                    PermissionAttachment attachment = target.addAttachment(plugin);
+                    attachment.getPermissions().forEach((key, value) ->
+                            attachment.setPermission(key, false));
+                    target.recalculatePermissions();
+                }
+            });
+
+            // Update their tab name forcefully
+            target.playerListName(plugin.groupCosmetics.getColoredName(target));
+        }
+        // Do it with LuckPerms instead, since their API might do a better job than Vault
+        else if (plugin.luckPermsListener != null)
+        {
+            LuckPerms luckPerms = plugin.luckPermsListener.getApi();
 
             luckPerms.getUserManager().deletePlayerData(target.getUniqueId());
             luckPerms.getUserManager().modifyUser(target.getUniqueId(), user ->

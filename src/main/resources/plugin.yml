@@ -3,9 +3,10 @@ main: eu.koolfreedom.KoolSMPCore
 version: ${project.version}
 description: Core plugin for the KoolFreedom SMP
 depend:
-  - LuckPerms
+  - Vault
 softdepend:
   - ProtocolLib
+  - LuckPerms
 authors:
   - "gamingto12"
   - "0x7694C9"
