@@ -26,7 +26,6 @@ public enum ConfigEntry
     ANNOUNCER_MESSAGES(List.class, "announcer.messages"),
     DISCORD_BOT_TOKEN(String.class, "discord.bot_token"),
     DISCORD_SERVER_ID(String.class, "discord.server_id"),
-    DISCORD_STAFF_ACTION_CHANNEL_ID(String.class, "discord.staff_action_channel_id"),
     DISCORD_REPORTS_CHANNEL_ID(String.class, "discord.reports.channel_id"),
     DISCORD_REPORTS_ROLES_THAT_CAN_CLOSE(List.class, "discord.reports.roles.close"),
     DISCORD_REPORTS_ROLES_THAT_CAN_PURGE(List.class, "discord.reports.roles.purge"),
@@ -42,8 +41,7 @@ public enum ConfigEntry
     FORMATS_REPORT_QUICK_SUMMARY(String.class, "formats.report_quick_summary"),
     FORMATS_REPORT_EMPTY_QUICK_SUMMARY(String.class, "formats.report_empty_quick_summary"),
     FORMATS_SAY(String.class, "formats.say"),
-    GROUPS(ConfigurationSection.class, "groups"),
-    UNBANNABLE_USERNAMES(List.class, "unbannable_usernames");
+    GROUPS(ConfigurationSection.class, "groups");
 
     private final Class<?> type;
     private final String configName;

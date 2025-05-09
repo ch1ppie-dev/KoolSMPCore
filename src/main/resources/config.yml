@@ -129,6 +129,3 @@ groups:
     name: owner
     color: red
     displayName: <red>Owner
-
-unbannable_usernames:
-  - gamingto12
