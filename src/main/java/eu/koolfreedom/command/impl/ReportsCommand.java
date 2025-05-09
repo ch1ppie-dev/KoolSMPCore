@@ -124,6 +124,12 @@ public class ReportsCommand extends KoolCommand
 			}
 			case "reopen" ->
 			{
+				if (!sender.hasPermission("kfc.command.reports.reopen"))
+				{
+					msg(sender, "<red>You don't have permission to reopen reports.");
+					return true;
+				}
+
 				if (args.length < 2) return false;
 				final Report report = reportManager.getReport(args[1]);
 				final String reason = args.length >= 3 ? StringUtils.join(ArrayUtils.subarray(args, 2, args.length), " ") : "Pending further investigation";
@@ -150,6 +156,12 @@ public class ReportsCommand extends KoolCommand
 			}
 			case "handle" ->
 			{
+				if (!sender.hasPermission("kfc.command.reports.handle"))
+				{
+					msg(sender, "<red>You don't have permission to handle reports.");
+					return true;
+				}
+
 				if (args.length == 1) return false;
 				final Report report = reportManager.getReport(args[1]);
 				final String reason = args.length >= 3 ? StringUtils.join(ArrayUtils.subarray(args, 2, args.length), " ") : "Handled";
@@ -176,6 +188,12 @@ public class ReportsCommand extends KoolCommand
 			}
 			case "close" ->
 			{
+				if (!sender.hasPermission("kfc.command.reports.close"))
+				{
+					msg(sender, "<red>You don't have permission to close reports.");
+					return true;
+				}
+
 				if (args.length < 2) return false;
 				final Report report = reportManager.getReport(args[1]);
 				final String reason = args.length >= 3 ? StringUtils.join(ArrayUtils.subarray(args, 2, args.length), " ") : "Invalid";
@@ -224,7 +242,7 @@ public class ReportsCommand extends KoolCommand
 
 				msg(sender, "<green>All reports filed by this user have been purged.");
 
-				if (plugin.discord.isEnabled() && !ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
+				if (plugin.discord != null && plugin.discord.channelExists("reports"))
 				{
 					msg(sender, "<yellow>Please keep in mind that depending on the number of reports, it may take a while for reports to be removed from Discord.");
 				}

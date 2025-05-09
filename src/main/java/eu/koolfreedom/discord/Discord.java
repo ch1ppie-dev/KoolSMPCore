@@ -1,90 +1,71 @@
 package eu.koolfreedom.discord;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.api.GroupCosmetics;
 import eu.koolfreedom.event.PlayerReportDeleteEvent;
 import eu.koolfreedom.event.PlayerReportEvent;
 import eu.koolfreedom.event.PlayerReportUpdateEvent;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.event.PublicBroadcastEvent;
 import eu.koolfreedom.reporting.Report;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageEditData;
+import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.api.Subscribe;
+import github.scarsz.discordsrv.api.events.DiscordReadyEvent;
+import github.scarsz.discordsrv.dependencies.jda.api.EmbedBuilder;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.Member;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.Message;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.MessageEmbed;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.TextChannel;
+import github.scarsz.discordsrv.dependencies.jda.api.events.interaction.ButtonClickEvent;
+import github.scarsz.discordsrv.dependencies.jda.api.hooks.ListenerAdapter;
+import github.scarsz.discordsrv.dependencies.jda.api.interactions.components.Button;
+import github.scarsz.discordsrv.util.MessageUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Discord extends ListenerAdapter implements Listener
 {
-    private JDA jda;
+    private final GroupCosmetics.Group group = GroupCosmetics.Group.createGroup("discord", "Discord",
+            Component.text("Discord").color(TextColor.color(0x5865F2)), TextColor.color(0x5865F2));
+    private final DiscordSRV plugin;
+
+    private final GsonComponentSerializer nativeAdventureSerializer = GsonComponentSerializer.gson();
+    private final github.scarsz.discordsrv.dependencies.kyori.adventure.text.serializer.gson.GsonComponentSerializer srvAdventureSerializer = github.scarsz.discordsrv.dependencies.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson();
 
     public Discord()
     {
-        final String token = ConfigEntry.DISCORD_BOT_TOKEN.getString();
-
-        // No token could be found, so we're going to assume the user doesn't want it
-        if (token == null || token.isEmpty())
-        {
-            return;
-        }
-
-        try
-        {
-            jda = JDABuilder.createLight(token)
-                    .setEnabledIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
-                    .setDisabledIntents(GatewayIntent.GUILD_VOICE_STATES)
-                    .build()
-                    .awaitReady();
-
-            FLog.info("Discord bot initialized");
-        }
-        catch (Exception ex)
-        {
-            FLog.error("Failed to initialize Discord bot", ex);
-            return;
-        }
-
+        plugin = DiscordSRV.getPlugin();
         Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
-        jda.addEventListener(this);
+        DiscordSRV.api.subscribe(this);
     }
 
-    public void shutdown()
+    @Subscribe
+    public void onDiscordReady(DiscordReadyEvent event)
     {
-        if (jda != null)
-        {
-            jda.shutdownNow();
-        }
-    }
-
-    public boolean isEnabled()
-    {
-        return jda != null;
+        plugin.getJda().addEventListener(this);
     }
 
     @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event)
+    public void onButtonClick(ButtonClickEvent event)
     {
-        if (event.getChannelId() == null
-                || !event.getChannelId().equalsIgnoreCase(ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString())
-                || event.getGuild() == null || !event.getGuild().getId().equalsIgnoreCase(ConfigEntry.DISCORD_SERVER_ID.getString())
-                || event.getMember() == null)
+        if (channelDoesNotMatch("reports", event.getChannel().getId())
+                || event.getMember() == null
+                || event.getButton() == null)
         {
             return;
         }
@@ -96,13 +77,13 @@ public class Discord extends ListenerAdapter implements Listener
         final Optional<Report> optionalReport = KoolSMPCore.getInstance().reportManager.getReports(true).stream().filter(report ->
                 report.getAdditionalData().getString("discordMessageId", "-1").equalsIgnoreCase(message.getId())).findAny();
 
-        if (message.getAuthor() == jda.getSelfUser() && button.getId() != null)
+        if (message.getAuthor() == plugin.getJda().getSelfUser() && button.getId() != null)
         {
             switch (button.getId().toLowerCase())
             {
                 case "handled" ->
                 {
-                    if (!isAuthorized(member, ConfigEntry.DISCORD_REPORTS_ROLES_THAT_CAN_RESOLVE.getStringList()))
+                    if (!hasPermission(member, "kfc.command.reports.handle"))
                     {
                         event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
@@ -117,15 +98,13 @@ public class Discord extends ListenerAdapter implements Listener
                         }
 
                         report.updateAsync(userDisplay, member.getUser().getName(), member.getUser().getId(), Report.ReportStatus.RESOLVED, "Handled");
-                        event.reply("Report " + report.getId() + " has been re-handled.").setEphemeral(true).queue();
-                    }, () -> message.editMessage(MessageEditData.fromCreateData(new MessageCreateBuilder()
-                            .addContent("Unlinked report resolved by " + member.getAsMention())
-                            .addEmbeds(message.getEmbeds())
-                            .build())).queue());
+                        event.reply("Report " + report.getId() + " has been marked as handled.").setEphemeral(true).queue();
+                    }, () -> message.editMessage("Unlinked report resolved by " + member.getAsMention())
+                            .setEmbeds(message.getEmbeds()).queue());
                 }
                 case "invalid" ->
                 {
-                    if (!isAuthorized(member, ConfigEntry.DISCORD_REPORTS_ROLES_THAT_CAN_CLOSE.getStringList()))
+                    if (!hasPermission(member, "kfc.command.reports.close"))
                     {
                         event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
@@ -149,7 +128,7 @@ public class Discord extends ListenerAdapter implements Listener
                 }
                 case "purge" ->
                 {
-                    if (!isAuthorized(member, ConfigEntry.DISCORD_REPORTS_ROLES_THAT_CAN_PURGE.getStringList()))
+                    if (!hasPermission(member, "kfc.command.reports.purge"))
                     {
                         event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
@@ -167,7 +146,7 @@ public class Discord extends ListenerAdapter implements Listener
                 }
                 case "reopen" ->
                 {
-                    if (!isAuthorized(member, ConfigEntry.DISCORD_REPORTS_ROLES_THAT_CAN_REOPEN.getStringList()))
+                    if (!hasPermission(member, "kfc.command.reports.reopen"))
                     {
                         event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
@@ -192,99 +171,91 @@ public class Discord extends ListenerAdapter implements Listener
     @EventHandler
     private void onReport(PlayerReportEvent event)
     {
-        final Report report = event.getReport();
-        if (ConfigEntry.DISCORD_SERVER_ID.getString().isBlank() || ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
+        if (!channelExists("reports"))
         {
             return;
         }
 
-        Guild guild = jda.getGuildById(ConfigEntry.DISCORD_SERVER_ID.getString());
+        final Report report = event.getReport();
 
-        if (guild != null)
-        {
-            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString());
-
-            if (channel != null)
-            {
-                try
+        plugin.getOptionalTextChannel("reports")
+                .sendMessageEmbeds(createEmbedFromReport(report))
+                .setActionRow(createButtonsFromReport(report))
+                .queue(message ->
                 {
-                    channel.sendMessageEmbeds(createEmbedFromReport(report))
-                            .addActionRow(createButtonsFromReport(report))
-                            .queue(message ->
-                            {
-                                report.getAdditionalData().set("discordMessageId", message.getId());
-                                CompletableFuture.runAsync(() -> KoolSMPCore.getInstance().reportManager.save());
-                            });
-                }
-                catch (Exception ex)
-                {
-                    FLog.error("Failed to send report data to Discord", ex);
-                }
-            }
-        }
+                    report.getAdditionalData().set("discordMessageId", message.getId());
+                    CompletableFuture.runAsync(() -> KoolSMPCore.getInstance().reportManager.save());
+                });
     }
 
     @EventHandler
     private void onReportUpdated(PlayerReportUpdateEvent event)
     {
-        final Report report = event.getReport();
-        if (ConfigEntry.DISCORD_SERVER_ID.getString().isBlank() || ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
+        if (!channelExists("reports"))
         {
             return;
         }
+
+        final Report report = event.getReport();
+        final TextChannel channel = plugin.getOptionalTextChannel("reports");
+        AtomicBoolean createMessage = new AtomicBoolean(false);
 
         if (!report.getAdditionalData().isString("discordMessageId"))
         {
-            return;
+            createMessage.set(true);
         }
 
-        Guild guild = jda.getGuildById(ConfigEntry.DISCORD_SERVER_ID.getString());
+        channel.retrieveMessageById(Objects.requireNonNull(report.getAdditionalData().getString("discordMessageId")))
+                .queue(message ->
+                        message.editMessage("Report updated by " + (event.getStaffDisplayName() instanceof TextComponent text ? text.content() : event.getStaffName()))
+                                .setEmbeds(createEmbedFromReport(report))
+                                .setActionRow(createButtonsFromReport(report)).queue(),
+                        error -> createMessage.set(true));
 
-        if (guild != null)
+        if (createMessage.get())
         {
-            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString());
-
-            if (channel != null)
-            {
-                channel.retrieveMessageById(Objects.requireNonNull(report.getAdditionalData().getString("discordMessageId"))).queue(message ->
-						message.editMessage(MessageEditData.fromCreateData(new MessageCreateBuilder()
-								.addContent("Report updated by " + event.getStaffName())
-								.addEmbeds(createEmbedFromReport(report))
-								.addActionRow(createButtonsFromReport(report))
-								.build())).queue(),
-                        (ignored) ->
-								channel.sendMessage("Report updated by " + event.getStaffName())
-										.addEmbeds(createEmbedFromReport(report))
-										.addActionRow(createButtonsFromReport(report))
-										.queue(success ->
-                                                {
-                                                    report.getAdditionalData().set("discordMessageId", success.getId());
-                                                    CompletableFuture.runAsync(() -> KoolSMPCore.getInstance().reportManager.save());
-                                                }));
-            }
+            channel.sendMessage("Report updated by " + event.getStaffName())
+                    .setEmbeds(createEmbedFromReport(report))
+                    .setActionRow(createButtonsFromReport(report))
+                    .queue(success ->
+                    {
+                        report.getAdditionalData().set("discordMessageId", success.getId());
+                        CompletableFuture.runAsync(() -> KoolSMPCore.getInstance().reportManager.save());
+                    });
         }
     }
 
     @EventHandler
     private void onReportDeleted(PlayerReportDeleteEvent event)
     {
-        if (ConfigEntry.DISCORD_SERVER_ID.getString().isBlank() || ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString().isBlank())
+        if (!channelExists("reports"))
         {
             return;
         }
 
-        Guild guild = jda.getGuildById(ConfigEntry.DISCORD_SERVER_ID.getString());
+        final TextChannel channel = plugin.getOptionalTextChannel("reports");
+        channel.purgeMessagesById(event.getReports().stream().filter(report -> report.getAdditionalData().isString("discordMessageId"))
+                .map(report -> report.getAdditionalData().getString("discordMessageId")).toList());
+    }
 
-        if (guild != null)
+    @EventHandler
+    private void onBroadcast(PublicBroadcastEvent event)
+    {
+        final TextChannel channel = plugin.getOptionalTextChannel("broadcasts");
+        Component message = event.getMessage();
+
+        if (message.decorations().entrySet().stream().allMatch(entry -> entry.getValue().equals(TextDecoration.State.NOT_SET)
+                || entry.getValue().equals(TextDecoration.State.FALSE)))
         {
-            TextChannel channel = guild.getTextChannelById(ConfigEntry.DISCORD_REPORTS_CHANNEL_ID.getString());
-
-            if (channel != null)
-            {
-                channel.purgeMessagesById(event.getReports().stream().filter(report -> report.getAdditionalData().isString("discordMessageId"))
-                        .map(report -> report.getAdditionalData().getString("discordMessageId")).toList());
-            }
+            message = message.decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
         }
+
+        channel.sendMessage(MessageUtil.reserializeToDiscord(convert(message))).queue();
+    }
+
+    private boolean channelDoesNotMatch(String name, String channelId)
+    {
+        return !channelId.equals(plugin.getChannels().get(name));
     }
 
     private List<Button> createButtonsFromReport(Report report)
@@ -295,6 +266,16 @@ public class Discord extends ListenerAdapter implements Listener
                 List.of(Button.primary("handled", "Resolve"),
                         Button.primary("invalid", "Invalid"),
                         Button.danger("purge", "Purge"));
+    }
+
+    private github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component convert(Component component)
+    {
+        return srvAdventureSerializer.deserialize(nativeAdventureSerializer.serialize(component));
+    }
+
+    public boolean channelExists(String name)
+    {
+        return plugin.getChannels().containsKey(name);
     }
 
     private MessageEmbed createEmbedFromReport(Report report)
@@ -318,8 +299,21 @@ public class Discord extends ListenerAdapter implements Listener
         return embed.build();
     }
 
-    private boolean isAuthorized(Member member, List<String> roleIds)
+    private boolean hasPermission(Member member, String permission)
     {
-        return member.getRoles().stream().anyMatch(role -> roleIds.contains(role.getId()));
+        final UUID uuid = plugin.getAccountLinkManager().getUuid(member.getId());
+
+        if (uuid == null)
+        {
+            return false;
+        }
+
+        final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+        if (!player.isOnline() && !player.hasPlayedBefore())
+        {
+            return false;
+        }
+
+        return KoolSMPCore.getInstance().groupCosmetics.getVaultPermissions().playerHas(null, player, permission);
     }
 }

@@ -74,8 +74,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         {
             announcerRunnable();
         }
-
-        discord = new Discord();
     }
 
     @Override
@@ -83,7 +81,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     {
         FLog.info("KoolSMPCore has been disabled");
 
-        discord.shutdown();
         banManager.save();
         reportManager.save();
     }
@@ -102,6 +99,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         serverListener = new ServerListener();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
         if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) luckPermsListener = new LuckPermsListener();
+        if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) discord = new Discord();
         loginListener = new LoginListener();
         chatFilter = new ChatFilter();
     }
@@ -129,7 +127,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
                 return;
             }
 
-            FUtil.broadcast(messages.get(FUtil.randomNumber(0, messages.size())));
+            FUtil.broadcast(false, messages.get(FUtil.randomNumber(0, messages.size())));
         }, 0L, ConfigEntry.ANNOUNCER_DELAY.getInteger());
     }
 

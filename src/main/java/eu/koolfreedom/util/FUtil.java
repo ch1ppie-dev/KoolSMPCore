@@ -2,6 +2,7 @@ package eu.koolfreedom.util;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.event.PublicBroadcastEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
@@ -30,7 +31,17 @@ public class FUtil // the f stands for fuck
 
     public static void broadcast(Component component)
     {
+        broadcast(true, component);
+    }
+
+    public static void broadcast(boolean callEvent, Component component)
+    {
         Bukkit.broadcast(component);
+
+        if (callEvent)
+        {
+            new PublicBroadcastEvent(component).callEvent();
+        }
     }
 
     public static void broadcast(Component component, String permission)
@@ -40,9 +51,17 @@ public class FUtil // the f stands for fuck
 
     public static void broadcast(String message, TagResolver... placeholders)
     {
+        broadcast(true, message, placeholders);
+    }
+
+    public static void broadcast(boolean callEvent, String message, TagResolver... placeholders)
+    {
         Bukkit.broadcast(miniMessage(message, placeholders));
 
-        // TODO: Add calls to Discord broadcasts to here so that all broadcasts get sent to the Discord
+        if (callEvent)
+        {
+            new PublicBroadcastEvent(miniMessage(message, placeholders)).callEvent();
+        }
     }
 
     public static void broadcast(String permission, String message, TagResolver... placeholders)

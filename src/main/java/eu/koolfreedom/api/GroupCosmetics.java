@@ -135,6 +135,11 @@ public class GroupCosmetics
             return new Group(internalName, name, displayName, color);
         }
 
+        public static Group createGroup(String internalName, String name, Component displayName, TextColor color)
+        {
+            return new Group(internalName, name, displayName, color);
+        }
+
         private Group(String internalName, String name, TextColor textColor)
         {
             this.internalName = internalName;
