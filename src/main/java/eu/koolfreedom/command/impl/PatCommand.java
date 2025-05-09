@@ -2,6 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
+import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -21,7 +22,7 @@ public class PatCommand extends KoolCommand
             return false;
         }
 
-        Player player = Bukkit.getPlayer(args[0]);
+        Player player = FUtil.getPlayer(args[0], sender.hasPermission("kfc.command.see_vanished_players"));
         if (player == null)
         {
             msg(sender, playerNotFound);
@@ -44,7 +45,7 @@ public class PatCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {
-        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
-                .filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
+        return args.length == 1 ? FUtil.getPlayerList(sender.hasPermission("kfc.command.see_vanished_players"))
+                .stream().filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
     }
 }

@@ -28,8 +28,8 @@ public class ShipCommand extends KoolCommand
             return false;
         }
 
-        final Player player1 = Bukkit.getPlayer(args[0]);
-        final Player player2 = Bukkit.getPlayer(args[1]);
+        final Player player1 = FUtil.getPlayer(args[0], sender.hasPermission("kfc.command.see_vanished_players"));
+        final Player player2 = FUtil.getPlayer(args[1], sender.hasPermission("kfc.command.see_vanished_players"));
 
         if (player1 == null || player2 == null)
         {
@@ -71,6 +71,6 @@ public class ShipCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {
-        return args.length == 1 || args.length == 2 ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList() : List.of();
+        return args.length == 1 || args.length == 2 ? FUtil.getPlayerList(sender.hasPermission("kfc.command.see_vanished_players")) : List.of();
     }
 }
