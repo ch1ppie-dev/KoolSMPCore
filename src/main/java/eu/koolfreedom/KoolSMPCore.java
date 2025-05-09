@@ -117,7 +117,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         muteManager = new MuteManager();
         reportManager = new ReportManager();
         serverListener = new ServerListener(this);
-        exploitListener = new ExploitListener(this);
+        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
         loginListener = new LoginListener();
         chatFilter = new ChatFilter();
     }

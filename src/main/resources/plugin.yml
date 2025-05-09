@@ -2,9 +2,14 @@ name: KoolSMPCore
 main: eu.koolfreedom.KoolSMPCore
 version: ${project.version}
 description: Core plugin for the KoolFreedom SMP
-depend: [ ProtocolLib, WorldGuard, LuckPerms ]
-softdepend: [ Essentials, DiscordSRV ]
-authors: [gamingto12]
+depend:
+  - LuckPerms
+softdepend:
+  - ProtocolLib
+authors:
+  - gamingto12
+  - 0x7694C9
+  - videogamesm12
 commands:
   adminchat:
     usage: /<command> <message>
