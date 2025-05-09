@@ -28,7 +28,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     @Getter
     private static KoolSMPCore instance;
 
-    public BuildProperties buildMeta = new BuildProperties();
+    public BuildProperties buildMeta;
 
     public CommandLoader commandLoader;
 
@@ -49,17 +49,16 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public void onLoad()
     {
         instance = this;
+        buildMeta = new BuildProperties();
     }
 
     @Override
     public void onEnable()
     {
         FLog.info("Created by gamingto12 and 0x7694C9");
-        FLog.info("Version " + buildMeta.getVersion());
-        FLog.info("Compiled " + buildMeta.getDate() + " by " + buildMeta.getAuthor());
+        FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
+        FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
         Bukkit.getPluginManager().registerEvents(this, this);
-
-        buildMeta = new BuildProperties();
 
         commandLoader = new CommandLoader(AdminChatCommand.class);
         commandLoader.loadCommands();

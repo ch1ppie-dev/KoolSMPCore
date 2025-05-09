@@ -85,7 +85,6 @@ public class BanManager implements Listener
 		FLog.info("Saving bans file");
 
 		final YamlConfiguration storage = new YamlConfiguration();
-		storage.setComments("", List.of("", "KoolSMPCore v3 Bans File", ""));
 		banMap.entrySet().stream().filter(entry -> !entry.getValue().isExpired()).forEach(entry ->
 				storage.set(entry.getKey().toString(), entry.getValue().toConfigurationSection()));
 
