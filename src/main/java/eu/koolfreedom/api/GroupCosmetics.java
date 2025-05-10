@@ -44,6 +44,16 @@ public class GroupCosmetics
         return groups.getOrDefault(name, defaultFallbackGroup);
     }
 
+    public Group getGroupByNameOr(String name, Group group)
+    {
+        return groups.getOrDefault(name, group);
+    }
+
+    public boolean isGroupPresent(String name)
+    {
+        return groups.containsKey(name);
+    }
+
     public Group getSenderGroup(CommandSender sender)
     {
         if (sender instanceof Player player)

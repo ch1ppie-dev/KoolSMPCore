@@ -24,6 +24,8 @@ public enum ConfigEntry
     ANNOUNCER_ENABLED(Boolean.class, "announcer.enable"),
     ANNOUNCER_DELAY(Integer.class, "announcer.delay"),
     ANNOUNCER_MESSAGES(List.class, "announcer.messages"),
+    DISCORDSRV_GROUP_MODE_SWITCH(Integer.class, "discordsrv.group_role_mode"),
+    DISCORDSRV_USER_FORMAT(String.class, "discordsrv.user_format"),
     CHAT_FILTER_ENABLED(Boolean.class, "chat-filter.enabled"),
     CHAT_FILTER_DELAY(Integer.class, "chat-filter.delay"),
     CHAT_FILTER_CATEGORIES(ConfigurationSection.class, "chat-filter.categories"),

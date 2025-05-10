@@ -2,47 +2,55 @@ package eu.koolfreedom.discord;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.api.GroupCosmetics;
-import eu.koolfreedom.event.PlayerReportDeleteEvent;
-import eu.koolfreedom.event.PlayerReportEvent;
-import eu.koolfreedom.event.PlayerReportUpdateEvent;
-import eu.koolfreedom.event.PublicBroadcastEvent;
+import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.event.*;
 import eu.koolfreedom.reporting.Report;
+import eu.koolfreedom.util.FUtil;
 import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.api.Subscribe;
+import github.scarsz.discordsrv.api.events.DiscordGuildMessagePreProcessEvent;
 import github.scarsz.discordsrv.api.events.DiscordReadyEvent;
 import github.scarsz.discordsrv.dependencies.jda.api.EmbedBuilder;
-import github.scarsz.discordsrv.dependencies.jda.api.entities.Member;
-import github.scarsz.discordsrv.dependencies.jda.api.entities.Message;
-import github.scarsz.discordsrv.dependencies.jda.api.entities.MessageEmbed;
-import github.scarsz.discordsrv.dependencies.jda.api.entities.TextChannel;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.*;
 import github.scarsz.discordsrv.dependencies.jda.api.events.interaction.ButtonClickEvent;
 import github.scarsz.discordsrv.dependencies.jda.api.hooks.ListenerAdapter;
 import github.scarsz.discordsrv.dependencies.jda.api.interactions.components.Button;
-import github.scarsz.discordsrv.util.MessageUtil;
+import github.scarsz.discordsrv.util.*;
+import net.kyori.adventure.key.Namespaced;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@SuppressWarnings("unused")
 public class Discord extends ListenerAdapter implements Listener
 {
     private final GroupCosmetics.Group group = GroupCosmetics.Group.createGroup("discord", "Discord",
             Component.text("Discord").color(TextColor.color(0x5865F2)), TextColor.color(0x5865F2));
+
+    private final Map<String, GroupCosmetics.Group> roleMap = new HashMap<>();
+
     private final DiscordSRV plugin;
+    private final Namespaced key;
 
     private final GsonComponentSerializer nativeAdventureSerializer = GsonComponentSerializer.gson();
     private final github.scarsz.discordsrv.dependencies.kyori.adventure.text.serializer.gson.GsonComponentSerializer srvAdventureSerializer = github.scarsz.discordsrv.dependencies.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson();
@@ -50,15 +58,57 @@ public class Discord extends ListenerAdapter implements Listener
     public Discord()
     {
         plugin = DiscordSRV.getPlugin();
+        key = NamespacedKey.fromString("channel", plugin);
+
         Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
         DiscordSRV.api.subscribe(this);
     }
+
+    // -- DISCORDSRV EVENTS -- //
 
     @Subscribe
     public void onDiscordReady(DiscordReadyEvent event)
     {
         plugin.getJda().addEventListener(this);
     }
+
+    @Subscribe
+    public void onAdminChatMessageFromDiscord(DiscordGuildMessagePreProcessEvent event)
+    {
+        if (!channelExists("adminchat") || channelDoesNotMatch("adminchat", event.getChannel().getId())
+                || event.getAuthor() == plugin.getJda().getSelfUser())
+        {
+            return;
+        }
+
+        final GroupCosmetics.Group fallback = KoolSMPCore.getInstance().groupCosmetics.getGroupByNameOr("discord", group);
+
+        final Member member = event.getMember();
+        final Component message = convert(MessageUtil.reserializeToMinecraft(event.getMessage().getContentRaw()));
+        final GroupCosmetics.Group userGroup = switch (ConfigEntry.DISCORDSRV_GROUP_MODE_SWITCH.getInteger())
+        {
+            case 1 -> KoolSMPCore.getInstance().groupCosmetics.getGroupByNameOr(member.getRoles().getFirst().getName(),
+                    !member.getRoles().isEmpty() ? getGroupFromRole(member.getRoles().getFirst()) : fallback);
+            case 2 -> !member.getRoles().isEmpty() ? getGroupFromRole(member.getRoles().getFirst()) : fallback;
+            default -> fallback;
+        };
+
+        Component displayName = FUtil.miniMessage(ConfigEntry.DISCORDSRV_USER_FORMAT.getString(),
+                Placeholder.parsed("id", member.getId()),
+                Placeholder.parsed("username", member.getUser().getName()),
+                Placeholder.parsed("name", member.getUser().getEffectiveName()),
+                Placeholder.unparsed("nickname", member.getEffectiveName()),
+                Placeholder.styling("role_color", (builder) -> builder.color(TextColor.color(member.getColorRaw()))),
+                Placeholder.component("roles", member.getRoles().isEmpty() ?
+                        Component.text("(none)").color(NamedTextColor.GRAY) :
+                        Component.text(" - ").color(NamedTextColor.GRAY).append(Component.join(JoinConfiguration.separator(Component.newline()
+                                        .append(Component.text(" - ").color(NamedTextColor.GRAY))),
+                member.getRoles().stream().map(role -> Component.text(role.getName()).color(TextColor.color(role.getColorRaw()))).toList()))));
+
+        FUtil.asyncAdminChat(displayName, member.getUser().getName(), group, message, key);
+    }
+
+    // -- JDA EVENTS -- //
 
     @Override
     public void onButtonClick(ButtonClickEvent event)
@@ -168,6 +218,8 @@ public class Discord extends ListenerAdapter implements Listener
         }
     }
 
+    // -- BUKKIT EVENTS -- //
+
     @EventHandler
     private void onReport(PlayerReportEvent event)
     {
@@ -207,7 +259,7 @@ public class Discord extends ListenerAdapter implements Listener
 
         channel.retrieveMessageById(Objects.requireNonNull(report.getAdditionalData().getString("discordMessageId")))
                 .queue(message ->
-                        message.editMessage("Report updated by " + (event.getStaffDisplayName() instanceof TextComponent text ? text.content() : event.getStaffName()))
+                        message.editMessage("Report updated by " + (event.getStaffDisplayName() instanceof TextComponent text && !text.content().isBlank() ? text.content() : event.getStaffName()))
                                 .setEmbeds(createEmbedFromReport(report))
                                 .setActionRow(createButtonsFromReport(report)).queue(),
                         error -> createMessage.set(true));
@@ -253,6 +305,72 @@ public class Discord extends ListenerAdapter implements Listener
         channel.sendMessage(MessageUtil.reserializeToDiscord(convert(message))).queue();
     }
 
+    @EventHandler
+    public void onAdminChat(AdminChatEvent event)
+    {
+        // Do not call duplicate events and don't do anything if we do not have a designated adminchat channel to avoid
+        //  potential confidentiality leaks
+        if (event.getSource().equals(key) || !channelExists("adminchat"))
+        {
+            return;
+        }
+
+        final TextChannel channel = plugin.getOptionalTextChannel("adminchat");
+        final String senderName = event.getSenderName();
+        final CommandSender sender = event.getCommandSender();
+
+        boolean usingWebhooks = DiscordSRV.config().getBoolean("Experiment_WebhookChatMessageDelivery");
+
+        // Did it come from the server itself
+        if (sender instanceof Player player)
+        {
+            plugin.processChatMessage(player, convert(event.getMessage()), "adminchat", false, event);
+            return;
+        }
+
+        String displayName;
+        String webhookAvatar = plugin.getJda().getSelfUser().getAvatarUrl();
+        final String message = MessageUtil.reserializeToDiscord(convert(event.getMessage()));
+
+        // The command came from someone running the command from within console
+        if (sender instanceof PaperForwardingCommandSender srv)
+        {
+            displayName = plugin.getJda().getSelfUser().getEffectiveName();
+        }
+        // The command came from a
+        else if (sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender)
+        {
+            displayName = sender.getName();
+        }
+        else if (sender instanceof Mob mob)
+        {
+            displayName = mob.customName() instanceof TextComponent text ? text.content() : mob.getName();
+        }
+        else
+        {
+            displayName = event.getSenderDisplay() instanceof TextComponent text ? text.content() : senderName;
+        }
+
+        // TODO: Implement more... "native" support instead of this hackjob, lmao
+
+        if (DiscordSRV.config().getBoolean("Experiment_WebhookChatMessageDelivery"))
+        {
+            WebhookUtil.deliverMessage(channel, displayName, webhookAvatar, message, List.of());
+        }
+        else
+        {
+            DiscordUtil.sendMessage(channel, LangUtil.Message.CHAT_TO_DISCORD_NO_PRIMARY_GROUP.toString()
+                    .replace("%username%", DiscordUtil.escapeMarkdown(senderName))
+                    .replace("%usernamenoescapes%", senderName)
+                    .replace("%displayname%", DiscordUtil.escapeMarkdown(displayName))
+                    .replace("%displaynamenoescapes%", displayName)
+                    .replace("%message%", displayName)
+            );
+        }
+    }
+
+    // -- UTILITY/CONVERSION METHODS -- //
+
     private boolean channelDoesNotMatch(String name, String channelId)
     {
         return !channelId.equals(plugin.getChannels().get(name));
@@ -268,9 +386,33 @@ public class Discord extends ListenerAdapter implements Listener
                         Button.danger("purge", "Purge"));
     }
 
+    private GroupCosmetics.Group getGroupFromRole(Role role)
+    {
+        final String roleId = role.getId();
+
+        if (!roleMap.containsKey(roleId) || roleMap.get(roleId).getColor().value() != role.getColorRaw() ||
+                !roleMap.get(roleId).getName().equalsIgnoreCase(role.getName()))
+        {
+            roleMap.remove(roleId);
+
+            GroupCosmetics.Group roleGroup = GroupCosmetics.Group.createGroup(role.getId(), role.getName(),
+                    Component.text(role.getName()).color(TextColor.color(role.getColorRaw())),
+                    TextColor.color(role.getColorRaw()));
+
+            roleMap.put(roleId, roleGroup);
+        }
+
+        return roleMap.get(roleId);
+    }
+
     private github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component convert(Component component)
     {
         return srvAdventureSerializer.deserialize(nativeAdventureSerializer.serialize(component));
+    }
+
+    private Component convert(github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component component)
+    {
+        return nativeAdventureSerializer.deserialize(srvAdventureSerializer.serialize(component));
     }
 
     public boolean channelExists(String name)
