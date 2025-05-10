@@ -20,9 +20,11 @@ import net.kyori.adventure.key.Namespaced;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
@@ -62,6 +64,62 @@ public class Discord extends ListenerAdapter implements Listener
 
         Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
         DiscordSRV.api.subscribe(this);
+
+        // So the idea behind this was that instead of doing Discord integration ourselves (causing obscene amounts of
+        //  bloat and adding a potential risk of people finding ways to bypass our homebrew filters due to Discord being
+        //  Discord), we would just hook into other plugins that handled Discord integration for us and just use their
+        //  APIs and embedded Discord libraries for what we need.
+        //
+        // Slight problem. There's a good chance that most of what we've done here probably isn't officially supported
+        //  because in a lot of places we're straight up ignoring DiscordSRV's own ways of doing things, calling
+        //  internal functions intended for, well, internal use, and bypassing the DiscordSRV API where we see fit
+        //  because of quirks with that plugin.
+        //
+        // Known quirks:
+        //  - We have to register ourselves as three different types of event listeners: Bukkit, DiscordSRV, and JDA.
+        //    Our codebase uses the native Bukkit API to communicate important information to bridges and other plugins
+        //    while also greatly reducing the amount of direct calls for things like server broadcasts, the admin chat,
+        //    and reports. DiscordSRV, despite being a Bukkit plugin, uses their own weird ass event system. The only
+        //    reasons I could really see them doing this for is to circumvent some quirks that Bukkit's event system
+        //    has. Maybe they did it so you don't have to implement Listener to listen for DiscordSRV-specific events?
+        //    Who knows, but it's a hassle on our end since we now have to hook into it to find out when JDA is
+        //    set up and available for us to mess with and also handle messages. JDA itself has an excuse since it is
+        //    primarily intended as a library for Java-based Discord bots, not just Minecraft servers. We have to extend
+        //    its ListenerAdapter to listen for events not covered by DiscordSRV's API, like action bar interactions,
+        //    for use in our report system.
+        //
+        //  - We don't strictly respect the DiscordSRV configuration and how it handles messages. The admin chat system
+        //    uses something completely specific to us, which includes the format and how it works. If memory serves,
+        //    DiscordSRV *does* have support for channel-specific formatting. However, it only supports a limited
+        //    selection of placeholders (thus being very inflexible), would be really annoying for server owners to have
+        //    to maintain two different formats in two different configurations for two different plugins for a single
+        //    system, and it would look stupid having an admin chat format that would look different if it came from
+        //    Discord. So, we just try to replicate DiscordSRV's behavior but add our own spice to the mix where
+        //    possible, and while this *does* work, we would have to effectively replicate a lot of code like how
+        //    messages are process and have to add even more dependencies to a project like PlaceholderAPI. Oh well, at
+        //    least we have a universal format for the admin chat from Discord to Minecraft while also maintaining some
+        //    behavioral consistency with regular DiscordSRV.
+        //
+        //  - We selectively choose between using the official API and some functions clearly intended for internal use.
+        //    This one, we have no choice. DiscordSRV's API straight up lacks methods to get channels directly, which is
+        //    what we need to do to get channels like the admin chat and player reports. Furthermore, the internal
+        //    method for easily getting a channel (getOptionalTextChannel()) will return the main text channel if the
+        //    channel we are looking for isn't defined. Since we are working with information intended to be seen by
+        //    staff only, this is completely unacceptable. So, we work around that by just doing some checks beforehand
+        //    to see if the channel is registered. If it is there, then we proceed to get it since then we know we won't
+        //    leak anything. Plus, text components are a PITA. Speaking of which...
+        //
+        //  - We do a lot of back and forth conversion for text components. DiscordSRV includes its own relocated
+        //    version of Adventure, presumably for compatibility with Spigot servers which don't include Adventure, but
+        //    the downside of including a relocated version of Adventure is that while they are theoretically compatible
+        //    with Paper's versions since they are basically the fucking same version of the same objects in memory,
+        //    they simply aren't. This causes a bunch of headaches that require us to use two different Adventure
+        //    instances' GSON serializers just to convert two things which would otherwise be completely fine in a
+        //    perfect world just to use certain internal functions.
+        //
+        // The one good thing is that with some of these hacks in place, I now know a bit more about how much work I
+        //  would need to do if management over at KoolSMP decided to just shitcan DiscordSRV altogether and use an
+        //  in-house system built with JDA.
     }
 
     // -- DISCORDSRV EVENTS -- //
@@ -93,7 +151,41 @@ public class Discord extends ListenerAdapter implements Listener
             default -> fallback;
         };
 
-        Component displayName = FUtil.miniMessage(ConfigEntry.DISCORDSRV_USER_FORMAT.getString(),
+        // Message reply
+        Component reply = Component.empty();
+        if (event.getMessage().getReferencedMessage() != null)
+        {
+            final Message replyMessage = event.getMessage().getReferencedMessage();
+            final Component replyComponent = convert(MessageUtil.reserializeToMinecraft(replyMessage.getContentRaw()));
+            final Member replyMember = replyMessage.getMember();
+
+            reply = FUtil.miniMessage(ConfigEntry.DISCORDSRV_REPLYING_TO_FORMAT.getString(),
+                    Placeholder.parsed("message_id", replyMessage.getId()),
+                    Placeholder.parsed("user_id", replyMessage.getAuthor().getId()),
+                    Placeholder.parsed("username", replyMessage.getAuthor().getName()),
+                    Placeholder.parsed("name", replyMessage.getAuthor().getEffectiveName()),
+                    Placeholder.unparsed("nickname", replyMember != null ? replyMember.getEffectiveName() :
+                            replyMessage.getAuthor().getEffectiveName()),
+                    replyMember != null ?
+                            Placeholder.styling("role_color", (builder) -> builder.color(TextColor.color(replyMember.getColorRaw()))) :
+                            Placeholder.component("role_color", Component.empty()),
+                    Formatter.booleanChoice("if_has_attachments", !replyMessage.getAttachments().isEmpty()),
+                    Placeholder.component("attachments", Component.join(JoinConfiguration.newlines(),
+                            replyMessage.getAttachments().stream().map(attachment -> Component.text(attachment.getUrl())).toList())),
+                    Placeholder.component("message", replyComponent),
+                    Formatter.date("date_created", replyMessage.getTimeCreated()),
+                    Formatter.booleanChoice("if_edited", replyMessage.getTimeEdited() != null),
+                    replyMessage.getTimeEdited() != null ?
+                            Formatter.date("date_edited", replyMessage.getTimeEdited()) :
+                            Placeholder.component("date_edited", Component.empty()),
+                    Placeholder.component("roles", member.getRoles().isEmpty() ?
+                            Component.text("(none)").color(NamedTextColor.GRAY) :
+                            Component.text(" - ").color(NamedTextColor.GRAY).append(Component.join(JoinConfiguration.separator(Component.newline()
+                                            .append(Component.text(" - ").color(NamedTextColor.GRAY))),
+                                    member.getRoles().stream().map(role -> Component.text(role.getName()).color(TextColor.color(role.getColorRaw()))).toList()))));
+        }
+
+        final Component displayName = FUtil.miniMessage(ConfigEntry.DISCORDSRV_USER_FORMAT.getString(),
                 Placeholder.parsed("id", member.getId()),
                 Placeholder.parsed("username", member.getUser().getName()),
                 Placeholder.parsed("name", member.getUser().getEffectiveName()),
@@ -103,9 +195,16 @@ public class Discord extends ListenerAdapter implements Listener
                         Component.text("(none)").color(NamedTextColor.GRAY) :
                         Component.text(" - ").color(NamedTextColor.GRAY).append(Component.join(JoinConfiguration.separator(Component.newline()
                                         .append(Component.text(" - ").color(NamedTextColor.GRAY))),
-                member.getRoles().stream().map(role -> Component.text(role.getName()).color(TextColor.color(role.getColorRaw()))).toList()))));
+                member.getRoles().stream().map(role -> Component.text(role.getName()).color(TextColor.color(role.getColorRaw()))).toList()))),
+                Placeholder.component("reply", reply));
 
-        FUtil.asyncAdminChat(displayName, member.getUser().getName(), group, message, key);
+        // Call separate events for attachments to emulate DiscordSRV behavior
+        event.getMessage().getAttachments().forEach(attachment ->
+                FUtil.asyncAdminChat(displayName, member.getUser().getName(), userGroup,
+						Component.text(attachment.getUrl()).clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL,
+								attachment.getUrl())), key));
+
+        FUtil.asyncAdminChat(displayName, member.getUser().getName(), userGroup, message, key);
     }
 
     // -- JDA EVENTS -- //
@@ -133,7 +232,7 @@ public class Discord extends ListenerAdapter implements Listener
             {
                 case "handled" ->
                 {
-                    if (!hasPermission(member, "kfc.command.reports.handle"))
+                    if (lacksPermission(member, "kfc.command.reports.handle"))
                     {
                         event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
@@ -154,7 +253,7 @@ public class Discord extends ListenerAdapter implements Listener
                 }
                 case "invalid" ->
                 {
-                    if (!hasPermission(member, "kfc.command.reports.close"))
+                    if (lacksPermission(member, "kfc.command.reports.close"))
                     {
                         event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
@@ -178,7 +277,7 @@ public class Discord extends ListenerAdapter implements Listener
                 }
                 case "purge" ->
                 {
-                    if (!hasPermission(member, "kfc.command.reports.purge"))
+                    if (lacksPermission(member, "kfc.command.reports.purge"))
                     {
                         event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
@@ -196,7 +295,7 @@ public class Discord extends ListenerAdapter implements Listener
                 }
                 case "reopen" ->
                 {
-                    if (!hasPermission(member, "kfc.command.reports.reopen"))
+                    if (lacksPermission(member, "kfc.command.reports.reopen"))
                     {
                         event.reply("You don't have permission to do that.").setEphemeral(true).queue();
                         return;
@@ -441,21 +540,21 @@ public class Discord extends ListenerAdapter implements Listener
         return embed.build();
     }
 
-    private boolean hasPermission(Member member, String permission)
+    private boolean lacksPermission(Member member, String permission)
     {
         final UUID uuid = plugin.getAccountLinkManager().getUuid(member.getId());
 
         if (uuid == null)
         {
-            return false;
+            return true;
         }
 
         final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         if (!player.isOnline() && !player.hasPlayedBefore())
         {
-            return false;
+            return true;
         }
 
-        return KoolSMPCore.getInstance().groupCosmetics.getVaultPermissions().playerHas(null, player, permission);
+        return !KoolSMPCore.getInstance().groupCosmetics.getVaultPermissions().playerHas(null, player, permission);
     }
 }

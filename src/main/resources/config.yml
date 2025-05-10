@@ -88,7 +88,33 @@ discordsrv:
   #   - name:         The user's Discord name. Can be inserted into other elements like hoverable elements.
   #   - nickname:     The user's nickname in the server. Can be inserted into other elements like hoverable elements.
   #   - username:     The user's Discord username. Can be inserted into other elements like hoverable elements.
-  user_format: "<click:suggest_command:'/ac <@<id>> '><hover:show_text:'<b><name></b><newline><gray>@<username></gray><newline><newline>Roles:<newline><roles><newline><newline>Click to Reply'><role_color><nickname></role_color></click>"
+  #   - reply:        If a reply is present, show the processed format noted below.
+  user_format: "<click:suggest_command:'/ac <@<id>> '><hover:show_text:'<b><name></b><newline><gray>@<username></gray><newline><newline>Roles:<newline><roles><newline><newline>Click to Reply'><role_color><nickname></role_color></click><reply>"
+
+  # How replies are handled in admin chat messages from DiscordSRV
+  # While DiscordSRV has its own options for tweaking message formats like this, KoolSMPCore does not use them as we use
+  #   our own system for admin chats, and it would be a mess to have to maintain two different formats in two different
+  #   plugin configurations.
+  # Available placeholders:
+  #   - display_name:       The author's display name on Discord. If they do not have a name on their account, it simply
+  #                         reverts to their Discord username.
+  #   - role_color:         The color of the top role the author is in. If none are present, it will be white.
+  #   - roles:              The author's roles, neatly collected together.
+  #   - if_has_attachments: Component to be used to determine what should show up if the message has attachments.
+  #                         Boolean choice.
+  #   - attachments:        The message's attachments, neatly collected together. Can be inserted into other elements
+  #                         like hoverable elements.
+  #   - message_id:         The message's Discord ID. Can be inserted into other elements like hoverable elements.
+  #   - date_created:       The message's timestamp. Formatted date string.
+  #   - if_edited:          Component to be used to determine what should show up if the message was edited. Boolean
+  #                         choice.
+  #   - date_edited:        The message's timestamp. Formatted date string if present, empty if otherwise.
+  #   - user_id:            The author's Discord ID. Can be inserted into other elements like hoverable elements.
+  #   - name:               The author's Discord name. Can be inserted into other elements like hoverable elements.
+  #   - nickname:           The author's nickname in the server. Can be inserted into other elements like hoverable
+  #                         elements.
+  #   - username:           The author's Discord username. Can be inserted into other elements like hoverable elements.
+  replying_to_format: " <gray><hover:show_text:'<white><role_color><nickname></role_color></white> <dark_gray>•</dark_gray> <gray><date_created:\"yyyy-MM-dd HH:mm:ss\"></gray><newline><white><message><if_has_attachments:\"<newline><newline>Attachments:<newline><attachments>\":\"\">'>(replying to <role_color><nickname></role_color>)</hover></gray>"
 
 
 # Groups that show up in places like admin chat
