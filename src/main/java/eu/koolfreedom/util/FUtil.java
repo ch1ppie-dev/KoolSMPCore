@@ -14,6 +14,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Modifying;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,6 +26,7 @@ public class FUtil // the f stands for fuck
 {
     private static final Random RANDOM = new Random();
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
 
     public static void staffAction(CommandSender sender, String message, TagResolver... placeholders)
     {
@@ -75,6 +77,11 @@ public class FUtil // the f stands for fuck
     public static Component miniMessage(String message, TagResolver... placeholders)
     {
         return MINI_MESSAGE.deserialize(message, placeholders);
+    }
+
+    public static String plainText(Component input)
+    {
+        return PLAIN_TEXT.serialize(input);
     }
 
     public static int randomNumber()

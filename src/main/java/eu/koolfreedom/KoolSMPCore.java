@@ -4,7 +4,9 @@ import eu.koolfreedom.api.GroupCosmetics;
 import eu.koolfreedom.banning.BanManager;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.discord.Discord;
+import eu.koolfreedom.discord.DiscordSRVIntegration;
+import eu.koolfreedom.discord.DiscordIntegration;
+import eu.koolfreedom.discord.EssentialsXDiscordIntegration;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
@@ -36,7 +38,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public MuteManager muteManager;
     public RecordKeeper recordKeeper;
     public ReportManager reportManager;
-    public Discord discord;
 
     public LoginListener loginListener;
     public ServerListener serverListener;
@@ -44,6 +45,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public ExploitListener exploitListener;
     public LuckPermsListener luckPermsListener;
     public ChatFilter chatFilter;
+
+    public DiscordIntegration<?> discord;
 
     @Override
     public void onLoad()
@@ -74,6 +77,9 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         {
             announcerRunnable();
         }
+
+        FLog.info("Extras loaded");
+        loadExtras();
     }
 
     @Override
@@ -99,9 +105,33 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         serverListener = new ServerListener();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
         if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) luckPermsListener = new LuckPermsListener();
-        if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) discord = new Discord();
         loginListener = new LoginListener();
         chatFilter = new ChatFilter();
+    }
+
+    public void loadExtras()
+    {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+
+        if (pluginManager.isPluginEnabled("DiscordSRV"))
+        {
+            FLog.info("Using DiscordSRV bridge.");
+            discord = new DiscordSRVIntegration().register();
+        }
+        else if (pluginManager.isPluginEnabled("EssentialsDiscord") && pluginManager.isPluginEnabled("EssentialsDiscordLink"))
+        {
+            FLog.info("Using EssentialsXDiscord bridge.");
+            discord = new EssentialsXDiscordIntegration().register();
+        }
+        else
+        {
+            discord = Bukkit.getServicesManager().load(DiscordIntegration.class);
+
+            if (discord != null)
+            {
+                FLog.info("Using third party Discord integrator {}", discord.getClass().getName());
+            }
+        }
     }
 
     public boolean isVanished(Player player)

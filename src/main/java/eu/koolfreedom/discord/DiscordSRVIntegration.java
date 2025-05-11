@@ -36,28 +36,25 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unused")
-public class Discord extends ListenerAdapter implements Listener
+public class DiscordSRVIntegration extends ListenerAdapter implements DiscordIntegration<DiscordSRV>
 {
-    private final GroupCosmetics.Group group = GroupCosmetics.Group.createGroup("discord", "Discord",
-            Component.text("Discord").color(TextColor.color(0x5865F2)), TextColor.color(0x5865F2));
-
-    private final Map<String, GroupCosmetics.Group> roleMap = new HashMap<>();
-
     private final DiscordSRV plugin;
     private final Namespaced key;
 
     private final GsonComponentSerializer nativeAdventureSerializer = GsonComponentSerializer.gson();
     private final github.scarsz.discordsrv.dependencies.kyori.adventure.text.serializer.gson.GsonComponentSerializer srvAdventureSerializer = github.scarsz.discordsrv.dependencies.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson();
 
-    public Discord()
+    public DiscordSRVIntegration()
     {
         plugin = DiscordSRV.getPlugin();
         key = NamespacedKey.fromString("channel", plugin);
@@ -122,6 +119,19 @@ public class Discord extends ListenerAdapter implements Listener
         //  in-house system built with JDA.
     }
 
+
+    @Override
+    public DiscordSRV getDiscord()
+    {
+        return plugin;
+    }
+
+    @Override
+    public boolean channelExists(String name)
+    {
+        return plugin.getChannels().containsKey(name);
+    }
+
     // -- DISCORDSRV EVENTS -- //
 
     @Subscribe
@@ -134,16 +144,16 @@ public class Discord extends ListenerAdapter implements Listener
     public void onAdminChatMessageFromDiscord(DiscordGuildMessagePreProcessEvent event)
     {
         if (!channelExists("adminchat") || channelDoesNotMatch("adminchat", event.getChannel().getId())
-                || event.getAuthor() == plugin.getJda().getSelfUser())
+                || event.getAuthor() != plugin.getJda().getSelfUser())
         {
             return;
         }
 
-        final GroupCosmetics.Group fallback = KoolSMPCore.getInstance().groupCosmetics.getGroupByNameOr("discord", group);
+        final GroupCosmetics.Group fallback = KoolSMPCore.getInstance().groupCosmetics.getGroupByNameOr("discord", discordGroup);
 
         final Member member = event.getMember();
         final Component message = convert(MessageUtil.reserializeToMinecraft(event.getMessage().getContentRaw()));
-        final GroupCosmetics.Group userGroup = switch (ConfigEntry.DISCORDSRV_GROUP_MODE_SWITCH.getInteger())
+        final GroupCosmetics.Group userGroup = switch (ConfigEntry.DISCORD_GROUP_MODE_SWITCH.getInteger())
         {
             case 1 -> KoolSMPCore.getInstance().groupCosmetics.getGroupByNameOr(member.getRoles().getFirst().getName(),
                     !member.getRoles().isEmpty() ? getGroupFromRole(member.getRoles().getFirst()) : fallback);
@@ -159,7 +169,7 @@ public class Discord extends ListenerAdapter implements Listener
             final Component replyComponent = convert(MessageUtil.reserializeToMinecraft(replyMessage.getContentRaw()));
             final Member replyMember = replyMessage.getMember();
 
-            reply = FUtil.miniMessage(ConfigEntry.DISCORDSRV_REPLYING_TO_FORMAT.getString(),
+            reply = FUtil.miniMessage(ConfigEntry.DISCORD_REPLYING_TO_FORMAT.getString(),
                     Placeholder.parsed("message_id", replyMessage.getId()),
                     Placeholder.parsed("user_id", replyMessage.getAuthor().getId()),
                     Placeholder.parsed("username", replyMessage.getAuthor().getName()),
@@ -185,7 +195,7 @@ public class Discord extends ListenerAdapter implements Listener
                                     member.getRoles().stream().map(role -> Component.text(role.getName()).color(TextColor.color(role.getColorRaw()))).toList()))));
         }
 
-        final Component displayName = FUtil.miniMessage(ConfigEntry.DISCORDSRV_USER_FORMAT.getString(),
+        final Component displayName = FUtil.miniMessage(ConfigEntry.DISCORD_USER_FORMAT.getString(),
                 Placeholder.parsed("id", member.getId()),
                 Placeholder.parsed("username", member.getUser().getName()),
                 Placeholder.parsed("name", member.getUser().getEffectiveName()),
@@ -514,11 +524,6 @@ public class Discord extends ListenerAdapter implements Listener
         return nativeAdventureSerializer.deserialize(srvAdventureSerializer.serialize(component));
     }
 
-    public boolean channelExists(String name)
-    {
-        return plugin.getChannels().containsKey(name);
-    }
-
     private MessageEmbed createEmbedFromReport(Report report)
     {
         final OfflinePlayer reporter = Bukkit.getOfflinePlayer(report.getReporter());
@@ -530,7 +535,7 @@ public class Discord extends ListenerAdapter implements Listener
                 .setColor(report.getStatus().getAwtColor())
                 .setDescription(reason)
                 .setFooter("ID " + report.getId() + " • Reported by " + reporter.getName(), "https://minotar.net/helm/" + reporter.getName() + ".png")
-                .setTimestamp(ZonedDateTime.now());
+                .setTimestamp(ZonedDateTime.of(LocalDateTime.ofEpochSecond(report.getTimestamp(), 0, ZoneId.systemDefault().getRules().getOffset(Instant.now())), ZoneId.systemDefault()).toOffsetDateTime());
 
         if (report.getLastNote() != null)
         {
@@ -542,7 +547,7 @@ public class Discord extends ListenerAdapter implements Listener
 
     private boolean lacksPermission(Member member, String permission)
     {
-        final UUID uuid = plugin.getAccountLinkManager().getUuid(member.getId());
+        final UUID uuid = getDiscord().getAccountLinkManager().getUuid(member.getId());
 
         if (uuid == null)
         {
