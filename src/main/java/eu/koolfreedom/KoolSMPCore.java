@@ -4,7 +4,9 @@ import eu.koolfreedom.api.GroupCosmetics;
 import eu.koolfreedom.banning.BanManager;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.discord.Discord;
+import eu.koolfreedom.discord.DiscordSRVIntegration;
+import eu.koolfreedom.discord.DiscordIntegration;
+import eu.koolfreedom.discord.EssentialsXDiscordIntegration;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
@@ -36,7 +38,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public MuteManager muteManager;
     public RecordKeeper recordKeeper;
     public ReportManager reportManager;
-    public Discord discord;
 
     public LoginListener loginListener;
     public ServerListener serverListener;
@@ -44,6 +45,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     public ExploitListener exploitListener;
     public LuckPermsListener luckPermsListener;
     public ChatFilter chatFilter;
+
+    public DiscordIntegration<?> discord;
 
     @Override
     public void onLoad()
@@ -75,7 +78,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
             announcerRunnable();
         }
 
-        discord = new Discord();
+        FLog.info("Extras loaded");
+        loadExtras();
     }
 
     @Override
@@ -83,7 +87,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
     {
         FLog.info("KoolSMPCore has been disabled");
 
-        discord.shutdown();
         banManager.save();
         reportManager.save();
     }
@@ -104,6 +107,31 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) luckPermsListener = new LuckPermsListener();
         loginListener = new LoginListener();
         chatFilter = new ChatFilter();
+    }
+
+    public void loadExtras()
+    {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+
+        if (pluginManager.isPluginEnabled("DiscordSRV"))
+        {
+            FLog.info("Using DiscordSRV bridge.");
+            discord = new DiscordSRVIntegration().register();
+        }
+        else if (pluginManager.isPluginEnabled("EssentialsDiscord") && pluginManager.isPluginEnabled("EssentialsDiscordLink"))
+        {
+            FLog.info("Using EssentialsXDiscord bridge.");
+            discord = new EssentialsXDiscordIntegration().register();
+        }
+        else
+        {
+            discord = Bukkit.getServicesManager().load(DiscordIntegration.class);
+
+            if (discord != null)
+            {
+                FLog.info("Using third party Discord integrator {}", discord.getClass().getName());
+            }
+        }
     }
 
     public boolean isVanished(Player player)
@@ -129,7 +157,7 @@ public class KoolSMPCore extends JavaPlugin implements Listener
                 return;
             }
 
-            FUtil.broadcast(messages.get(FUtil.randomNumber(0, messages.size())));
+            FUtil.broadcast(false, messages.get(FUtil.randomNumber(0, messages.size())));
         }, 0L, ConfigEntry.ANNOUNCER_DELAY.getInteger());
     }
 

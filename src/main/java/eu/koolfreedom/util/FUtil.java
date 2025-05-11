@@ -1,7 +1,11 @@
 package eu.koolfreedom.util;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.api.GroupCosmetics;
 import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.event.AdminChatEvent;
+import eu.koolfreedom.event.PublicBroadcastEvent;
+import net.kyori.adventure.key.Namespaced;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
@@ -10,6 +14,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Modifying;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,6 +26,7 @@ public class FUtil // the f stands for fuck
 {
     private static final Random RANDOM = new Random();
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
 
     public static void staffAction(CommandSender sender, String message, TagResolver... placeholders)
     {
@@ -30,7 +36,17 @@ public class FUtil // the f stands for fuck
 
     public static void broadcast(Component component)
     {
+        broadcast(true, component);
+    }
+
+    public static void broadcast(boolean callEvent, Component component)
+    {
         Bukkit.broadcast(component);
+
+        if (callEvent)
+        {
+            new PublicBroadcastEvent(component).callEvent();
+        }
     }
 
     public static void broadcast(Component component, String permission)
@@ -40,9 +56,17 @@ public class FUtil // the f stands for fuck
 
     public static void broadcast(String message, TagResolver... placeholders)
     {
+        broadcast(true, message, placeholders);
+    }
+
+    public static void broadcast(boolean callEvent, String message, TagResolver... placeholders)
+    {
         Bukkit.broadcast(miniMessage(message, placeholders));
 
-        // TODO: Add calls to Discord broadcasts to here so that all broadcasts get sent to the Discord
+        if (callEvent)
+        {
+            new PublicBroadcastEvent(miniMessage(message, placeholders)).callEvent();
+        }
     }
 
     public static void broadcast(String permission, String message, TagResolver... placeholders)
@@ -53,6 +77,11 @@ public class FUtil // the f stands for fuck
     public static Component miniMessage(String message, TagResolver... placeholders)
     {
         return MINI_MESSAGE.deserialize(message, placeholders);
+    }
+
+    public static String plainText(Component input)
+    {
+        return PLAIN_TEXT.serialize(input);
     }
 
     public static int randomNumber()
@@ -73,14 +102,39 @@ public class FUtil // the f stands for fuck
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
     }
 
-    public static void adminChat(CommandSender sender, String message)
+    public static void asyncAdminChat(Component displayName, String senderName, GroupCosmetics.Group group, Component message, Namespaced caller)
+    {
+        adminChat(true, null, displayName, senderName, group, message, caller);
+    }
+
+    public static void asyncAdminChat(CommandSender sender, GroupCosmetics.Group group, Component message, Namespaced caller)
+    {
+        adminChat(true, sender, sender instanceof Player player ? player.displayName() : Component.text(sender.getName()), sender.getName(), group, message, caller);
+    }
+
+    public static void adminChat(CommandSender sender, GroupCosmetics.Group group, Component message, Namespaced caller)
+    {
+        adminChat(false, sender, sender instanceof Player player ? player.displayName() :
+                Component.text(sender.getName()), sender.getName(), group, message, caller);
+    }
+
+    public static void adminChat(Component displayName, String senderName, GroupCosmetics.Group group, Component message, Namespaced caller)
+    {
+        adminChat(false, null, displayName, senderName, group, message, caller);
+    }
+
+    private static void adminChat(boolean async, CommandSender sender, Component displayName, String senderName,
+                                  GroupCosmetics.Group group, Component message, Namespaced caller)
     {
         Component formattedMessage = miniMessage(ConfigEntry.FORMATS_ADMIN_CHAT.getString(),
-                Placeholder.unparsed("name", sender.getName()),
-                Placeholder.component("rank", KoolSMPCore.getInstance().groupCosmetics.getSenderGroup(sender).getDisplayName()),
-                Placeholder.unparsed("message", message));
+                Placeholder.unparsed("name", sender != null ? sender.getName() : senderName),
+                Placeholder.component("display_name", displayName),
+                Placeholder.component("rank", group.getDisplayName()),
+                Placeholder.styling("rank_color", rank -> rank.color(group.getColor())),
+                Placeholder.component("message", message));
 
         broadcast(formattedMessage, "kfc.command.adminchat");
+        new AdminChatEvent(async, sender, displayName, senderName, group, message, caller).callEvent();
     }
 
     public static String getIp(Player player)

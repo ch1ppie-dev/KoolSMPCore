@@ -44,6 +44,16 @@ public class GroupCosmetics
         return groups.getOrDefault(name, defaultFallbackGroup);
     }
 
+    public Group getGroupByNameOr(String name, Group group)
+    {
+        return groups.getOrDefault(name, group);
+    }
+
+    public boolean isGroupPresent(String name)
+    {
+        return groups.containsKey(name);
+    }
+
     public Group getSenderGroup(CommandSender sender)
     {
         if (sender instanceof Player player)
@@ -132,6 +142,11 @@ public class GroupCosmetics
 
             Component displayName = section.getRichMessage("displayName", Component.text(name).color(color));
 
+            return new Group(internalName, name, displayName, color);
+        }
+
+        public static Group createGroup(String internalName, String name, Component displayName, TextColor color)
+        {
             return new Group(internalName, name, displayName, color);
         }
 

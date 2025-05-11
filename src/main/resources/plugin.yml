@@ -7,6 +7,9 @@ depend:
 softdepend:
   - ProtocolLib
   - LuckPerms
+  - EssentialsDiscord
+  - EssentialsDiscordLink
+  - DiscordSRV
 authors:
   - "gamingto12"
   - "0x7694C9"
@@ -68,4 +71,3 @@ permissions:
       - kfc.command.reports.purge
 libraries:
   - org.javassist:javassist:3.29.1-GA
-  - net.dv8tion:JDA:5.5.1
