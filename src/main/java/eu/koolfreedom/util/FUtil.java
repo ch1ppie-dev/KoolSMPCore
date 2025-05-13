@@ -14,6 +14,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Modifying;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -25,7 +26,10 @@ import java.util.*;
 public class FUtil // the f stands for fuck
 {
     private static final Random RANDOM = new Random();
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().tags(TagResolver.builder()
+            .resolver(StandardTags.defaults())
+            .resolver(TagResolver.resolver("randomize", RandomColorTag.INSTANCE))
+            .build()).build();
     private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
 
     public static void staffAction(CommandSender sender, String message, TagResolver... placeholders)
@@ -156,7 +160,7 @@ public class FUtil // the f stands for fuck
 
     public static class RandomColorTag implements Modifying
     {
-        public static final RandomColorTag INSTANCE = new RandomColorTag();
+        private static final RandomColorTag INSTANCE = new RandomColorTag();
 
         @Override
         public Component apply(@NotNull Component current, int depth)
@@ -164,7 +168,7 @@ public class FUtil // the f stands for fuck
             if (current instanceof TextComponent textComponent)
             {
                 return Component.join(JoinConfiguration.spaces(), Arrays.stream(textComponent.content().split(" "))
-                        .map(text -> Component.text(text).color(TextColor.color(randomNumber(0, 255),
+                        .map(text -> Component.text(text).colorIfAbsent(TextColor.color(randomNumber(0, 255),
                                 randomNumber(0, 255), randomNumber(0, 255)))).toList());
             }
 

@@ -1,5 +1,5 @@
 #
-# KoolSMPCore v3.0 Configuration File
+# KoolSMPCore v${project.version} Configuration File
 #
 
 server:
