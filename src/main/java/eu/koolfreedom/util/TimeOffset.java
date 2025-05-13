@@ -1,6 +1,5 @@
 package eu.koolfreedom.util;
 
-import eu.koolfreedom.log.FLog;
 import lombok.Getter;
 
 import java.util.Arrays;

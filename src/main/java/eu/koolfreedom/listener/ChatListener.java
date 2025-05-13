@@ -5,7 +5,7 @@ import eu.koolfreedom.banning.Ban;
 import eu.koolfreedom.command.impl.DoomCommand;
 import eu.koolfreedom.command.impl.SmiteCommand;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
 import eu.koolfreedom.util.TimeOffset;

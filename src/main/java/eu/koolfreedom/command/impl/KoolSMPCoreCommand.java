@@ -3,7 +3,7 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.MainConfig;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.util.BuildProperties;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;

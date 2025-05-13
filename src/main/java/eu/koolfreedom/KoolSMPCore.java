@@ -11,7 +11,7 @@ import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.bridge.discord.DiscordSRVIntegration;
 import eu.koolfreedom.bridge.DiscordIntegration;
 import eu.koolfreedom.bridge.discord.EssentialsXDiscordIntegration;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
 import eu.koolfreedom.util.BuildProperties;
@@ -42,8 +42,7 @@ public class KoolSMPCore extends JavaPlugin
     private RecordKeeper recordKeeper;
     private ReportManager reportManager;
 
-    private LoginListener loginListener;
-    private ServerListener serverListener;
+    private CosmeticManager cosmeticManager;
     private ExploitListener exploitListener;
     private ChatListener chatListener;
 
@@ -113,9 +112,8 @@ public class KoolSMPCore extends JavaPlugin
     {
         muteManager = new MuteManager();
         reportManager = new ReportManager();
-        serverListener = new ServerListener();
+        cosmeticManager = new CosmeticManager();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
-        loginListener = new LoginListener();
         chatListener = new ChatListener();
     }
 

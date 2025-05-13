@@ -1,7 +1,7 @@
 package eu.koolfreedom.punishment;
 
 import eu.koolfreedom.banning.Ban;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.configuration.ConfigurationSection;

@@ -5,7 +5,7 @@ import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.event.PlayerReportDeleteEvent;
 import eu.koolfreedom.event.PlayerReportEvent;
 import eu.koolfreedom.event.PlayerReportUpdateEvent;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;

@@ -1,7 +1,7 @@
 package eu.koolfreedom.banning;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

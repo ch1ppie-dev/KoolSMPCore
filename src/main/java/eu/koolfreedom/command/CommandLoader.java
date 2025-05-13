@@ -1,6 +1,6 @@
 package eu.koolfreedom.command;
 
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;

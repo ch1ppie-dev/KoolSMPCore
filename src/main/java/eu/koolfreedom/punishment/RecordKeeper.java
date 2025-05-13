@@ -1,7 +1,7 @@
 package eu.koolfreedom.punishment;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;

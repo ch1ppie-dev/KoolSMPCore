@@ -1,7 +1,7 @@
 package eu.koolfreedom.bridge;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.node.NodeAddEvent;

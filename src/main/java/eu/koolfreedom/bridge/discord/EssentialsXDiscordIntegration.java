@@ -8,7 +8,7 @@ import eu.koolfreedom.bridge.GroupManagement;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.bridge.DiscordIntegration;
 import eu.koolfreedom.event.*;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.reporting.Report;
 import eu.koolfreedom.util.FUtil;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package eu.koolfreedom.config;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.util.FLog;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
