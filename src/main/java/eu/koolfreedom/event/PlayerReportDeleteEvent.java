@@ -22,7 +22,8 @@ public class PlayerReportDeleteEvent extends Event
 	private final String staffId;
 	private final List<Report> reports;
 
-	public PlayerReportDeleteEvent(boolean async, Component staffDisplayName, String staffName, String staffId, List<Report> reports)
+	public PlayerReportDeleteEvent(boolean async, Component staffDisplayName, String staffName, String staffId,
+								   List<Report> reports)
 	{
 		super(async);
 		this.staffDisplayName = staffDisplayName;

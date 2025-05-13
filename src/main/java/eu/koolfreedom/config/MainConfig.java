@@ -15,19 +15,18 @@ public class MainConfig
 {
     public static final File CONFIG_FILE = new File(KoolSMPCore.getInstance().getDataFolder(), "config.yml");
     private static final EnumMap<ConfigEntry, Object> ENTRY_MAP;
-    private static final Deefawlts DEFAULTS;
 
     static
     {
         ENTRY_MAP = new EnumMap<>(ConfigEntry.class);
 
-        Deefawlts tempDefaults = null;
+        Defaults tempDefaults;
         try
         {
             try
             {
                 InputStream defaultConfig = getDefaultConfig();
-                tempDefaults = new Deefawlts(defaultConfig);
+                tempDefaults = new Defaults(defaultConfig);
                 for (ConfigEntry entry : ConfigEntry.values())
                 {
                     ENTRY_MAP.put(entry, tempDefaults.get(entry.getConfigName()));
@@ -39,7 +38,7 @@ public class MainConfig
                 FLog.error("Failed to load default configuration", ex);
             }
 
-            copyDefaultConfig(CONFIG_FILE);
+            copyDefaultConfig();
 
             load();
         }
@@ -47,13 +46,6 @@ public class MainConfig
         {
             FLog.error("Failed to load configuration", ex);
         }
-
-        DEFAULTS = tempDefaults;
-    }
-
-    private MainConfig()
-    {
-        throw new AssertionError();
     }
 
     public static void load()
@@ -275,19 +267,19 @@ public class MainConfig
         ENTRY_MAP.put(entry, value);
     }
 
-    private static void copyDefaultConfig(File targetFile)
+    private static void copyDefaultConfig()
     {
-        if (targetFile.exists())
+        if (MainConfig.CONFIG_FILE.exists())
         {
             return;
         }
 
-        FLog.info("Installing default configuration file template: {}", targetFile.getPath());
+        FLog.info("Installing default configuration file template: {}", MainConfig.CONFIG_FILE.getPath());
 
         try
         {
             InputStream defaultConfig = getDefaultConfig();
-            Files.copy(defaultConfig, targetFile.toPath());
+            Files.copy(defaultConfig, MainConfig.CONFIG_FILE.toPath());
             defaultConfig.close();
         }
         catch (IOException ex)
@@ -301,27 +293,13 @@ public class MainConfig
         return KoolSMPCore.getInstance().getResource("config.yml");
     }
 
-    public static Deefawlts getDefaults()
+    public static class Defaults
     {
-        return DEFAULTS;
-    }
+        private final YamlConfiguration defaults;
 
-    public static class Deefawlts
-    {
-        private YamlConfiguration defaults = null;
-
-        private Deefawlts(InputStream defaultConfig)
+        private Defaults(InputStream defaultConfig)
         {
-            defaults = new YamlConfiguration();
-
-            try (final InputStreamReader isr = new InputStreamReader(defaultConfig))
-            {
-                defaults.load(isr);
-            }
-            catch (IOException | InvalidConfigurationException ex)
-            {
-                FLog.error("An error occurred while attempting to read the defaults", ex);
-            }
+            defaults = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultConfig));
 		}
 
         public Object get(String path)

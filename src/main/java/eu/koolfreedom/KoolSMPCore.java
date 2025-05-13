@@ -23,8 +23,6 @@ import eu.koolfreedom.listener.*;
 import org.bukkit.*;
 import java.util.*;
 
-import org.bukkit.entity.*;
-
 @Getter
 public class KoolSMPCore extends JavaPlugin
 {
@@ -64,9 +62,14 @@ public class KoolSMPCore extends JavaPlugin
         FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
         FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
 
-        commandLoader = new CommandLoader(AdminChatCommand.class);
-        commandLoader.loadCommands();
-        FLog.info("Loaded commands");
+        commandLoader = new CommandLoader();
+        commandLoader.loadCommands(List.of(AdminChatCommand.class, BanCommand.class, BanIPCommand.class,
+                ClearChatCommand.class, CommandSpyCommand.class, CrashCommand.class, CryCommand.class,
+                DoomCommand.class, HugCommand.class, KickCommand.class, KissCommand.class, KoolSMPCoreCommand.class,
+                MuteCommand.class, OrbitCommand.class, PatCommand.class, PokeCommand.class, RawSayCommand.class,
+                ReportCommand.class, ReportsCommand.class, SatisfyAllCommand.class, SayCommand.class, ShipCommand.class,
+                SlapCommand.class, SmiteCommand.class, SpectateCommand.class, UnbanCommand.class));
+        FLog.info("Loaded {} commands", commandLoader.getKoolCommands().size());
 
         loadListeners();
         FLog.info("Loaded listeners");
@@ -152,11 +155,6 @@ public class KoolSMPCore extends JavaPlugin
         {
             luckPermsBridge = new LuckPermsBridge();
         }
-    }
-
-    public boolean isVanished(Player player)
-    {
-        return vanishBridge != null && vanishBridge.isVanished(player);
     }
 
     private void announcerRunnable()

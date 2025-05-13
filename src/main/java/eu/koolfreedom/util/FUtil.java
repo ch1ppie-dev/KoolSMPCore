@@ -149,13 +149,16 @@ public class FUtil // the f stands for fuck
     public static List<String> getPlayerList(boolean includeVanish)
     {
         return Bukkit.getOnlinePlayers().stream().filter(player ->
-                !KoolSMPCore.getInstance().isVanished(player) || includeVanish).map(Player::getName).toList();
+                KoolSMPCore.getInstance().getVanishBridge() != null &&
+                        KoolSMPCore.getInstance().getVanishBridge().isVanished(player) || includeVanish)
+                .map(Player::getName).toList();
     }
 
     public static Player getPlayer(String name, boolean seeVanished)
     {
         Player player = Bukkit.getPlayer(name);
-        return seeVanished || !KoolSMPCore.getInstance().isVanished(player) ? player : null;
+        return seeVanished || KoolSMPCore.getInstance().getVanishBridge() != null
+                && KoolSMPCore.getInstance().getVanishBridge().isVanished(player) ? player : null;
     }
 
     public static class RandomColorTag implements Modifying

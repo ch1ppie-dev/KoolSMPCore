@@ -23,7 +23,9 @@ public class PlayerReportUpdateEvent extends Event
 	private final String newNote;
 	private final Report report;
 
-	public PlayerReportUpdateEvent(boolean async, Component staffDisplayName, String staffName, String staffId, Report.ReportStatus oldStatus, Report.ReportStatus newStatus, String newNote, Report report)
+	public PlayerReportUpdateEvent(boolean async, Component staffDisplayName, String staffName, String staffId,
+								   Report.ReportStatus oldStatus, Report.ReportStatus newStatus, String newNote,
+								   Report report)
 	{
 		super(async);
 		this.staffDisplayName = staffDisplayName;

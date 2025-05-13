@@ -69,5 +69,3 @@ permissions:
       - kf.senior
       - kfc.command.crash
       - kfc.command.reports.purge
-libraries:
-  - org.javassist:javassist:3.29.1-GA

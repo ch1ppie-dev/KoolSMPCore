@@ -4,11 +4,8 @@ import eu.koolfreedom.log.FLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -17,16 +14,9 @@ public class CommandLoader
 {
 	private final List<KoolCommand> koolCommands = new ArrayList<>();
 
-	private final String path;
-
-	public CommandLoader(Class<? extends KoolCommand> sacrifice)
+	public void loadCommands(List<Class<? extends KoolCommand>> commands)
 	{
-		this.path = sacrifice.getPackage().getName();
-	}
-
-	public void loadCommands()
-	{
-		new Reflections(path).getSubTypesOf(KoolCommand.class).forEach(commandClass ->
+		commands.forEach(commandClass ->
 		{
 			try
 			{
