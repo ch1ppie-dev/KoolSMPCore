@@ -5,6 +5,7 @@ import eu.koolfreedom.banning.BanManager;
 import eu.koolfreedom.bridge.LuckPermsBridge;
 import eu.koolfreedom.bridge.VanishIntegration;
 import eu.koolfreedom.bridge.vanish.EssentialsVanishIntegration;
+import eu.koolfreedom.bridge.vanish.SuperVanishIntegration;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.bridge.discord.DiscordSRVIntegration;
@@ -150,7 +151,7 @@ public class KoolSMPCore extends JavaPlugin
         }
         else if (pluginManager.isPluginEnabled("SuperVanish"))
         {
-            vanishBridge = new EssentialsVanishIntegration();
+            vanishBridge = new SuperVanishIntegration();
         }
 
         // LuckPerms
