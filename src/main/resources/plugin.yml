@@ -58,7 +58,7 @@ permissions:
     description: Permission group offering some additional administrative capabilities, plus the ability to doom people.
     default: op
     children:
-      - kf.admin
+      - kfc.admin
       - kfc.command.banlist.reload
       - kfc.command.koolsmpcore.reload
       - kfc.command.doom
@@ -66,6 +66,6 @@ permissions:
     description: Permission group offering pretty much everything the plugin has to offer, plus some fun commands
     default: op
     children:
-      - kf.senior
+      - kfc.senior
       - kfc.command.crash
       - kfc.command.reports.purge

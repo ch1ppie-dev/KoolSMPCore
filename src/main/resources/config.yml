@@ -1,6 +1,16 @@
 #
 # KoolSMPCore v${project.version} Configuration File
 #
+# All formats offered in this configuration use a system called MiniMessage for formatting. MiniMessage is a relatively
+#   new formatting system offered by the developers of Paper and Adventure similar in syntax to the HTML and XML formats
+#   that offers a much greater degree of control and flexibility than the legacy chat color codes ever could, including
+#   non-decorative components like hoverable and clickable text components.
+#
+# If you want to change any of these, the MiniMessage developers have a website that allows you to preview your changes
+#   available at https://webui.advntr.dev/. Some of the custom placeholders this plugin has don't work on the website,
+#   but will still work fine when applied to the server.
+#
+# To apply any changes, save them and reload the configuration with /koolsmpcore reload.
 
 server:
   motd: '<randomize>KoolFreedom SMP (Native 1.21.1)'
@@ -40,7 +50,7 @@ chat-filter:
   #                           - nothing
   #                           - smite
   #
-  #   - cancel:             Whether ot allow the message to be broadcast to the public. If set to true, the message will
+  #   - cancel:             Whether to allow the message to be broadcast to the public. If set to true, the message will
   #                           be discarded, but the action will still occur.
   #
   #   - reason:             The reason or message to give in regard to the action. Doesn't do anything if action is set

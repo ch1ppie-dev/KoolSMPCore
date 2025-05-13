@@ -88,8 +88,8 @@ public class KoolSMPCore extends JavaPlugin
         // Set up announcer
         resetAnnouncer();
 
-        FLog.info("Bridges built");
         loadBridges();
+        FLog.info("Bridges built");
     }
 
     @Override
