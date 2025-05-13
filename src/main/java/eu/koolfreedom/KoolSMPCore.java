@@ -21,6 +21,9 @@ import org.bukkit.plugin.*;
 import eu.koolfreedom.command.impl.*;
 import eu.koolfreedom.listener.*;
 import org.bukkit.*;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
 import java.util.*;
 
 @Getter
@@ -47,6 +50,8 @@ public class KoolSMPCore extends JavaPlugin
     private LuckPermsBridge luckPermsBridge;
     private DiscordIntegration<?> discordBridge;
     private VanishIntegration<?> vanishBridge;
+
+    private BukkitTask announcer = null;
 
     @Override
     public void onLoad()
@@ -80,10 +85,8 @@ public class KoolSMPCore extends JavaPlugin
         loadBansConfig();
         FLog.info("Loaded configurations");
 
-        if (ConfigEntry.ANNOUNCER_ENABLED.getBoolean())
-        {
-            announcerRunnable();
-        }
+        // Set up announcer
+        resetAnnouncer();
 
         FLog.info("Bridges built");
         loadBridges();
@@ -157,19 +160,31 @@ public class KoolSMPCore extends JavaPlugin
         }
     }
 
-    private void announcerRunnable()
+    public void resetAnnouncer()
     {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () ->
+        if (announcer != null)
         {
-            List<String> messages = ConfigEntry.ANNOUNCER_MESSAGES.getStringList();
+            announcer.cancel();
+        }
 
-            // Messages aren't configured, so we're not going to bother
-            if (messages.isEmpty())
+        if (ConfigEntry.ANNOUNCER_ENABLED.getBoolean())
+        {
+            announcer = new BukkitRunnable()
             {
-                return;
-            }
+                @Override
+                public void run()
+                {
+                    List<String> messages = ConfigEntry.ANNOUNCER_MESSAGES.getStringList();
 
-            FUtil.broadcast(false, messages.get(FUtil.randomNumber(0, messages.size())));
-        }, 0L, ConfigEntry.ANNOUNCER_DELAY.getInteger());
+                    // Messages aren't configured, so we're not going to bother
+                    if (messages.isEmpty())
+                    {
+                        return;
+                    }
+
+                    FUtil.broadcast(false, messages.get(FUtil.randomNumber(0, messages.size())));
+                }
+            }.runTaskTimer(this, 0, Math.max(1, ConfigEntry.ANNOUNCER_DELAY.getInteger()));
+        }
     }
 }

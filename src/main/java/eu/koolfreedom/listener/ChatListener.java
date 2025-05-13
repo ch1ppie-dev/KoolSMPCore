@@ -2,12 +2,13 @@ package eu.koolfreedom.listener;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
-import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.command.impl.DoomCommand;
+import eu.koolfreedom.command.impl.SmiteCommand;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
+import eu.koolfreedom.util.TimeOffset;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Getter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -102,9 +103,17 @@ public class ChatListener implements Listener
 								break;
 							}
 						}
+						case SMITE:
+						{
+							if (player.isOnline())
+							{
+								SmiteCommand.zap(player, Bukkit.getConsoleSender(), filter.getReason());
+								break;
+							}
+						}
 						case BAN:
 						{
-							Ban ban = Ban.fromPlayer(player, Bukkit.getConsoleSender().getName(), filter.getReason(), BanType.BAN);
+							Ban ban = Ban.fromPlayer(player, Bukkit.getConsoleSender().getName(), filter.getReason(), TimeOffset.getOffset("1d"));
 							KoolSMPCore.getInstance().getBanManager().addBan(ban);
 							KoolSMPCore.getInstance().getRecordKeeper().recordPunishment(Punishment.fromBan(ban));
 							player.kick(ban.getKickMessage(), PlayerKickEvent.Cause.BANNED);
@@ -140,7 +149,7 @@ public class ChatListener implements Listener
 							// Do nothing
 						}
 					}
-				}, ConfigEntry.CHAT_FILTER_DELAY.getInteger());
+				}, filter.getDelay());
 			});
 		}
 	}
@@ -170,15 +179,17 @@ public class ChatListener implements Listener
 		private final FilterAction action;
 		private final boolean cancel;
 		private final String reason;
+		private final int delay;
 		private final List<Pattern> filters;
 
-		private FilterEntry(String name, String bypassPermission, FilterAction action, boolean cancel, String reason, List<Pattern> filters)
+		private FilterEntry(String name, String bypassPermission, FilterAction action, boolean cancel, String reason, int delay, List<Pattern> filters)
 		{
 			this.name = name;
 			this.bypassPermission = bypassPermission;
 			this.action = action;
 			this.cancel = cancel;
 			this.reason = reason;
+			this.delay = delay;
 			this.filters = filters;
 		}
 
@@ -200,8 +211,9 @@ public class ChatListener implements Listener
 					return null;
 				}
 			}).filter(Objects::nonNull).toList();
+			final int delay = section.getInt("delay", 0);
 
-			return new FilterEntry(name, bypassPermission, action, cancel, reason, filters);
+			return new FilterEntry(name, bypassPermission, action, cancel, reason, delay, filters);
 		}
 
 		public boolean isApplicable(OfflinePlayer player, String message)
@@ -216,7 +228,8 @@ public class ChatListener implements Listener
 			DOOM,
 			LOG,
 			MUTE,
-			NOTHING;
+			NOTHING,
+			SMITE;
 
 			public static FilterAction getByName(String name)
 			{

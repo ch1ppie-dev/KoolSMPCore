@@ -28,7 +28,6 @@ public enum ConfigEntry
     DISCORD_USER_FORMAT(String.class, "discord.user_format"),
     DISCORD_REPLYING_TO_FORMAT(String.class, "discord.replying_to_format"),
     CHAT_FILTER_ENABLED(Boolean.class, "chat-filter.enabled"),
-    CHAT_FILTER_DELAY(Integer.class, "chat-filter.delay"),
     CHAT_FILTER_CATEGORIES(ConfigurationSection.class, "chat-filter.categories"),
     FORMATS_ADMIN_CHAT(String.class, "formats.admin_chat"),
     FORMATS_COMMANDSPY(String.class, "formats.commandspy"),

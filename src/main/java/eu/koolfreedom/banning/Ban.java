@@ -66,7 +66,7 @@ public class Ban
 		return builder.build();
 	}
 
-	public static Ban fromPlayer(OfflinePlayer player, String by, String reason, BanType type)
+	public static Ban fromPlayer(OfflinePlayer player, String by, String reason, long duration)
 	{
 		BanBuilder builder = builder();
 		builder.name(player.getName());
@@ -80,7 +80,7 @@ public class Ban
 		builder.by(by);
 		builder.reason(reason);
 		builder.id(System.currentTimeMillis());
-		builder.expires(System.currentTimeMillis() + type.getLength());
+		builder.expires(duration != Long.MAX_VALUE ? System.currentTimeMillis() + duration : Long.MAX_VALUE);
 
 		return builder.build();
 	}

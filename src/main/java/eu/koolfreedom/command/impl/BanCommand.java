@@ -5,7 +5,7 @@ import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
-import eu.koolfreedom.banning.BanType;
+import eu.koolfreedom.util.TimeOffset;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
@@ -35,7 +35,7 @@ public class BanCommand extends KoolCommand
             return true;
         }
 
-        final Ban ban = Ban.fromPlayer(target, sender.getName(), args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null, BanType.BAN);
+        final Ban ban = Ban.fromPlayer(target, sender.getName(), args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null, TimeOffset.getOffset("1d"));
         boolean success = plugin.getBanManager().addBan(ban);
 
         if (!success && !target.isOnline())

@@ -2,7 +2,6 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.banning.Ban;
-import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
@@ -55,7 +54,7 @@ public class DoomCommand extends KoolCommand
     public static void eviscerate(Player target, CommandSender sender, String reason)
     {
         // Get the technical side of things out of the way first, we want this user banned first and foremost
-        final Ban ban = Ban.fromPlayer(target, sender.getName(), reason != null ? reason : "You've met with a terrible fate, haven't you?", BanType.BAN);
+        final Ban ban = Ban.fromPlayer(target, sender.getName(), reason != null ? reason : "You've met with a terrible fate, haven't you?", Long.MAX_VALUE);
         final KoolSMPCore plugin = KoolSMPCore.getInstance();
         plugin.getBanManager().addBan(ban);
         plugin.getRecordKeeper().recordPunishment(Punishment.fromBan(ban));

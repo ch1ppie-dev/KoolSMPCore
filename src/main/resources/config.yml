@@ -27,31 +27,48 @@ chat-filter:
   # Toggles the filter
   enabled: true
 
-  # Delay in ticks before the action takes place
-  delay: 50
-
-  # Categories of filters
+  # Filters are split up into different categories that you can define.
+  # A typical entry will have these options:
+  #   - bypassPermission:   The permission node required to bypass the filter.
+  #
+  #   - action:             The action to take if the filter gets tripped.
+  #                         Currently available options are:
+  #                           - ban
+  #                           - doom
+  #                           - log
+  #                           - mute
+  #                           - nothing
+  #                           - smite
+  #
+  #   - cancel:             Whether ot allow the message to be broadcast to the public. If set to true, the message will
+  #                           be discarded, but the action will still occur.
+  #
+  #   - reason:             The reason or message to give in regard to the action. Doesn't do anything if action is set
+  #                           to "mute" as mutes currently do not support reasons.
+  #
+  #   - delay:              Delay in ticks before the action takes place. Defaults to 0 (instant response).
+  #
+  #   - filters:            A list of regex patterns that a message will be checked against. If any of them match, the
+  #                           filter is triggered and the action is scheduled to take place.
+  #
+  # An example entry has been provided below
   categories:
     # Example entry
-    example:
-      # The permission node required to bypass this filter
+    misinformation:
       bypassPermission: kfc.bypass_filter.example
-      # The action to take. Currently available options: ban, doom, log, mute, nothing
-      action: log
-      # Whether to cancel the chat event
-      cancel: false
-      # The message/reason to give in regard to the action. This doesn't do anything if the action is set to "mute"
-      reason: "{} is spitting facts right now: '{}'"
-      # A list of regex patterns
+      action: smite
+      cancel: true
+      reason: Spreading lies
+      delay: 0
       filters:
-        - "gamingto12 is smelly"
-        - "video(gamesm12)? is not a bunny"
+        - "(?i)v(ideo(gamesm(ash)?12| ?man)?|gs12)? is( a)? (bun+y|bnu+y)"
 
     # Generic hate speech filter which dooms players who say naughty phrases
     hate-speech:
       action: doom
       cancel: true
       reason: Hate Speech
+      delay: 50
       filters:
         - "(?i)n[i1]+g+(a|e+r)"
         - "(?i)f[a4]g+([o0]t)?"

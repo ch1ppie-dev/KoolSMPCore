@@ -40,6 +40,7 @@ public class KoolSMPCoreCommand extends KoolCommand
                 MainConfig.load();
                 plugin.getGroupManager().loadGroups();
                 plugin.getChatListener().loadFilters();
+                plugin.resetAnnouncer();
                 msg(sender, "<green>The configuration file has been reloaded.");
             }
             catch (Exception ex)

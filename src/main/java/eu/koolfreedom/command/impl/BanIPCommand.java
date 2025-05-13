@@ -2,11 +2,11 @@ package eu.koolfreedom.command.impl;
 
 import com.google.common.net.InetAddresses;
 import eu.koolfreedom.banning.Ban;
-import eu.koolfreedom.banning.BanType;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
 import eu.koolfreedom.util.FUtil;
+import eu.koolfreedom.util.TimeOffset;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -37,7 +37,7 @@ public class BanIPCommand extends KoolCommand
         final String ip = args[0].toLowerCase();
         final Ban ban = Ban.builder().by(sender.getName())
                 .id(System.currentTimeMillis())
-                .expires(System.currentTimeMillis() + BanType.BAN.getLength())
+                .expires(System.currentTimeMillis() + TimeOffset.getOffset("1d"))
                 .ips(new ArrayList<>(List.of(ip)))
                 .reason(args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null)
                 .build();

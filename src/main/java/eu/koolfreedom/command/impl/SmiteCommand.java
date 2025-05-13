@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.punishment.Punishment;
@@ -33,20 +34,36 @@ public class SmiteCommand extends KoolCommand
         }
 
 
-        broadcast("<red><player> has been a naughty, naughty child.",
-                Placeholder.unparsed("player", target.getName()));
-        broadcast(" <red>Smitten by: <yellow><sender>", Placeholder.unparsed("sender", sender.getName()));
+        String reason = args.length >= 2 ? String.join(" ", ArrayUtils.remove(args, 0)) : null;
 
-        if (args.length >= 2)
+        zap(target, sender, reason);
+        return true;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList() : List.of();
+    }
+
+    public static void zap(Player target, CommandSender sender, String reason)
+    {
+        FUtil.broadcast("<red><player> has been a naughty, naughty child.",
+                Placeholder.unparsed("player", target.getName()));
+        FUtil.broadcast(" <red>Smitten by: <yellow><sender>", Placeholder.unparsed("sender", sender.getName()));
+
+        if (reason != null)
         {
-            String reason = String.join(" ", ArrayUtils.remove(args, 0));
-            broadcast(" <red>Reason: <yellow><reason>", Placeholder.unparsed("reason", reason));
+
+            FUtil.broadcast(" <red>Reason: <yellow><reason>", Placeholder.unparsed("reason", reason));
         }
 
-        plugin.getRecordKeeper().recordPunishment(Punishment.builder()
+        KoolSMPCore.getInstance().getRecordKeeper().recordPunishment(Punishment.builder()
                 .uuid(target.getUniqueId())
                 .name(target.getName())
                 .ip(FUtil.getIp(target))
+                .by(sender.getName())
+                .reason(reason)
                 .type("SMITE")
                 .build());
 
@@ -56,13 +73,6 @@ public class SmiteCommand extends KoolCommand
             target.getWorld().strikeLightningEffect(target.getLocation());
         }
         target.setHealth(0);
-        return true;
-    }
-
-    @Override
-    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
-    {
-        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList() : List.of();
     }
 }
 
