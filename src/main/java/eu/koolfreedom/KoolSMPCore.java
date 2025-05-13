@@ -1,52 +1,54 @@
 package eu.koolfreedom;
 
-import eu.koolfreedom.api.GroupCosmetics;
+import eu.koolfreedom.bridge.GroupManagement;
 import eu.koolfreedom.banning.BanManager;
+import eu.koolfreedom.bridge.LuckPermsBridge;
+import eu.koolfreedom.bridge.VanishIntegration;
+import eu.koolfreedom.bridge.vanish.EssentialsVanishIntegration;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.config.ConfigEntry;
-import eu.koolfreedom.discord.DiscordSRVIntegration;
-import eu.koolfreedom.discord.DiscordIntegration;
-import eu.koolfreedom.discord.EssentialsXDiscordIntegration;
+import eu.koolfreedom.bridge.discord.DiscordSRVIntegration;
+import eu.koolfreedom.bridge.DiscordIntegration;
+import eu.koolfreedom.bridge.discord.EssentialsXDiscordIntegration;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
 import eu.koolfreedom.util.BuildProperties;
 import eu.koolfreedom.util.FUtil;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Getter;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import eu.koolfreedom.command.impl.*;
 import eu.koolfreedom.listener.*;
-import com.earth2me.essentials.*;
-import org.bukkit.event.*;
 import org.bukkit.*;
 import java.util.*;
 
 import org.bukkit.entity.*;
 
-public class KoolSMPCore extends JavaPlugin implements Listener
+@Getter
+public class KoolSMPCore extends JavaPlugin
 {
     @Getter
     private static KoolSMPCore instance;
 
-    public BuildProperties buildMeta;
+    private BuildProperties buildMeta;
 
-    public CommandLoader commandLoader;
+    private CommandLoader commandLoader;
 
-    public BanManager banManager;
-    public MuteManager muteManager;
-    public RecordKeeper recordKeeper;
-    public ReportManager reportManager;
+    private BanManager banManager;
+    private MuteManager muteManager;
+    private RecordKeeper recordKeeper;
+    private ReportManager reportManager;
 
-    public LoginListener loginListener;
-    public ServerListener serverListener;
-    public GroupCosmetics groupCosmetics;
-    public ExploitListener exploitListener;
-    public LuckPermsListener luckPermsListener;
-    public ChatFilter chatFilter;
+    private LoginListener loginListener;
+    private ServerListener serverListener;
+    private ExploitListener exploitListener;
+    private ChatListener chatListener;
 
-    public DiscordIntegration<?> discord;
+    private GroupManagement groupManager;
+    private LuckPermsBridge luckPermsBridge;
+    private DiscordIntegration<?> discordBridge;
+    private VanishIntegration<?> vanishBridge;
 
     @Override
     public void onLoad()
@@ -61,7 +63,6 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         FLog.info("Created by gamingto12 and 0x7694C9");
         FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
         FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
-        Bukkit.getPluginManager().registerEvents(this, this);
 
         commandLoader = new CommandLoader(AdminChatCommand.class);
         commandLoader.loadCommands();
@@ -69,7 +70,10 @@ public class KoolSMPCore extends JavaPlugin implements Listener
 
         loadListeners();
         FLog.info("Loaded listeners");
-        groupCosmetics = new GroupCosmetics();
+
+        groupManager = new GroupManagement();
+        FLog.info("Loaded group manager");
+
         loadBansConfig();
         FLog.info("Loaded configurations");
 
@@ -78,8 +82,8 @@ public class KoolSMPCore extends JavaPlugin implements Listener
             announcerRunnable();
         }
 
-        FLog.info("Extras loaded");
-        loadExtras();
+        FLog.info("Bridges built");
+        loadBridges();
     }
 
     @Override
@@ -104,45 +108,55 @@ public class KoolSMPCore extends JavaPlugin implements Listener
         reportManager = new ReportManager();
         serverListener = new ServerListener();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
-        if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) luckPermsListener = new LuckPermsListener();
         loginListener = new LoginListener();
-        chatFilter = new ChatFilter();
+        chatListener = new ChatListener();
     }
 
-    public void loadExtras()
+    public void loadBridges()
     {
         PluginManager pluginManager = Bukkit.getPluginManager();
 
+        // Discord
         if (pluginManager.isPluginEnabled("DiscordSRV"))
         {
             FLog.info("Using DiscordSRV bridge.");
-            discord = new DiscordSRVIntegration().register();
+            discordBridge = new DiscordSRVIntegration().register();
         }
         else if (pluginManager.isPluginEnabled("EssentialsDiscord") && pluginManager.isPluginEnabled("EssentialsDiscordLink"))
         {
             FLog.info("Using EssentialsXDiscord bridge.");
-            discord = new EssentialsXDiscordIntegration().register();
+            discordBridge = new EssentialsXDiscordIntegration().register();
         }
         else
         {
-            discord = Bukkit.getServicesManager().load(DiscordIntegration.class);
+            discordBridge = Bukkit.getServicesManager().load(DiscordIntegration.class);
 
-            if (discord != null)
+            if (discordBridge != null)
             {
-                FLog.info("Using third party Discord integrator {}", discord.getClass().getName());
+                FLog.info("Using external Discord integrator {}", discordBridge.getClass().getName());
             }
+        }
+
+        // Vanish plugins
+        if (pluginManager.isPluginEnabled("Essentials"))
+        {
+            vanishBridge = new EssentialsVanishIntegration();
+        }
+        else if (pluginManager.isPluginEnabled("SuperVanish"))
+        {
+            vanishBridge = new EssentialsVanishIntegration();
+        }
+
+        // LuckPerms
+        if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms"))
+        {
+            luckPermsBridge = new LuckPermsBridge();
         }
     }
 
     public boolean isVanished(Player player)
     {
-        Plugin essentials = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
-
-        if (essentials == null) {
-            return false;
-        }
-
-        return essentials.isEnabled() && ((Essentials) essentials).getUser(player).isVanished();
+        return vanishBridge != null && vanishBridge.isVanished(player);
     }
 
     private void announcerRunnable()
@@ -159,22 +173,5 @@ public class KoolSMPCore extends JavaPlugin implements Listener
 
             FUtil.broadcast(false, messages.get(FUtil.randomNumber(0, messages.size())));
         }, 0L, ConfigEntry.ANNOUNCER_DELAY.getInteger());
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    private void onChat(AsyncChatEvent event)
-    {
-        final Player player = event.getPlayer();
-        final String message = event.signedMessage().message();
-
-        // In-game pinging
-        if (message.contains("@"))
-        {
-            Arrays.stream(message.split(" ")).filter(word -> word.startsWith("@")).filter(word ->
-                    !word.equalsIgnoreCase("@everyone") || player.hasPermission("kfc.ping_everyone"))
-                    .map(ping -> ping.replaceAll("@", "")).map(Bukkit::getPlayer)
-                    .filter(Objects::nonNull).distinct().forEach(target -> target.playSound(target.getLocation(),
-                            Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F));
-        }
     }
 }

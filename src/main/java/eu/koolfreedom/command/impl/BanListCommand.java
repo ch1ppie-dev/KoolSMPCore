@@ -16,7 +16,7 @@ public class BanListCommand extends KoolCommand
 	@Override
 	public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
 	{
-		BanManager banManager = plugin.banManager;
+		BanManager banManager = plugin.getBanManager();
 
 		if (args.length == 0 || !sender.hasPermission("kfc.command.banlist.reload"))
 		{

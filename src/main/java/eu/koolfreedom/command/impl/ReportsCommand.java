@@ -31,7 +31,7 @@ public class ReportsCommand extends KoolCommand
 			return false;
 		}
 
-		final ReportManager reportManager = plugin.reportManager;
+		final ReportManager reportManager = plugin.getReportManager();
 
 		switch (args[0].toLowerCase())
 		{
@@ -242,7 +242,7 @@ public class ReportsCommand extends KoolCommand
 
 				msg(sender, "<green>All reports filed by this user have been purged.");
 
-				if (plugin.discord != null && plugin.discord.channelExists("reports"))
+				if (plugin.getDiscordBridge() != null && plugin.getDiscordBridge().channelExists("reports"))
 				{
 					msg(sender, "<yellow>Please keep in mind that depending on the number of reports, it may take a while for reports to be removed from Discord.");
 				}
@@ -261,7 +261,7 @@ public class ReportsCommand extends KoolCommand
 	{
 		final List<String> acceptableModes = List.of("summary", "close", "handle", "reopen", "list", "unresolved", "purge");
 
-		final ReportManager reportManager = plugin.reportManager;
+		final ReportManager reportManager = plugin.getReportManager();
 
 		// Show the available modes
 		if (args.length == 1)

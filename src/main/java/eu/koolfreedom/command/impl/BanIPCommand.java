@@ -42,7 +42,7 @@ public class BanIPCommand extends KoolCommand
                 .reason(args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null)
                 .build();
 
-        boolean success = plugin.banManager.addBan(ban);
+        boolean success = plugin.getBanManager().addBan(ban);
 
         if (!success)
         {
@@ -51,7 +51,7 @@ public class BanIPCommand extends KoolCommand
         }
 
         FUtil.staffAction(sender, "Banned an IP address");
-        plugin.recordKeeper.recordPunishment(Punishment.fromBan(ban));
+        plugin.getRecordKeeper().recordPunishment(Punishment.fromBan(ban));
 
         // Now for the fun part...
         Bukkit.getOnlinePlayers().stream().filter(player -> FUtil.getIp(player).equalsIgnoreCase(ip)).forEach(player ->

@@ -1,4 +1,4 @@
-package eu.koolfreedom.listener;
+package eu.koolfreedom.bridge;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.log.FLog;
@@ -15,13 +15,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 @Getter
-public class LuckPermsListener
+public class LuckPermsBridge
 {
 	private final LuckPerms api;
 
 	// EVenTsUBScRipTIon<NOdemutateeVENt> uSED wIthOuT 'TRY'-WiTh-REsouRCES sTateMent
 	@SuppressWarnings("resource")
-	public LuckPermsListener()
+	public LuckPermsBridge()
 	{
 		RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (provider != null)
@@ -70,7 +70,7 @@ public class LuckPermsListener
 
 					if (player != null)
 					{
-						player.playerListName(KoolSMPCore.getInstance().groupCosmetics.getColoredName(player));
+						player.playerListName(KoolSMPCore.getInstance().getGroupManager().getColoredName(player));
 					}
 				}
 			}

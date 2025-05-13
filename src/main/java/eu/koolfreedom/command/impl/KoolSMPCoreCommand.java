@@ -23,7 +23,7 @@ public class KoolSMPCoreCommand extends KoolCommand
     {
         if (args.length == 0 || !sender.hasPermission("kfc.command.koolsmpcore.reload"))
         {
-            BuildProperties build = plugin.buildMeta;
+            BuildProperties build = plugin.getBuildMeta();
             msg(sender, "<white><b>KoolSMPCore - The Core of KoolFreedom SMP.");
             msg(sender, "<gray>Version <white><version>.<build>", Placeholder.unparsed("version", build.getVersion()),
                     Placeholder.unparsed("build", build.getNumber()));
@@ -38,8 +38,8 @@ public class KoolSMPCoreCommand extends KoolCommand
             try
             {
                 MainConfig.load();
-                plugin.groupCosmetics.loadGroups();
-                plugin.chatFilter.load();
+                plugin.getGroupManager().loadGroups();
+                plugin.getChatListener().loadFilters();
                 msg(sender, "<green>The configuration file has been reloaded.");
             }
             catch (Exception ex)

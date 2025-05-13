@@ -24,7 +24,7 @@ public class AdminChatCommand extends KoolCommand
             return false;
         }
 
-        FUtil.adminChat(sender, plugin.groupCosmetics.getSenderGroup(sender), Component.text(StringUtils.join(args, " ")), key);
+        FUtil.adminChat(sender, plugin.getGroupManager().getSenderGroup(sender), Component.text(StringUtils.join(args, " ")), key);
         return true;
     }
 }

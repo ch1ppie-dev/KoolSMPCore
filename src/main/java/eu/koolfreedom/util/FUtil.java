@@ -1,7 +1,7 @@
 package eu.koolfreedom.util;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.api.GroupCosmetics;
+import eu.koolfreedom.bridge.GroupManagement;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.event.AdminChatEvent;
 import eu.koolfreedom.event.PublicBroadcastEvent;
@@ -102,29 +102,29 @@ public class FUtil // the f stands for fuck
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
     }
 
-    public static void asyncAdminChat(Component displayName, String senderName, GroupCosmetics.Group group, Component message, Namespaced caller)
+    public static void asyncAdminChat(Component displayName, String senderName, GroupManagement.Group group, Component message, Namespaced caller)
     {
         adminChat(true, null, displayName, senderName, group, message, caller);
     }
 
-    public static void asyncAdminChat(CommandSender sender, GroupCosmetics.Group group, Component message, Namespaced caller)
+    public static void asyncAdminChat(CommandSender sender, GroupManagement.Group group, Component message, Namespaced caller)
     {
         adminChat(true, sender, sender instanceof Player player ? player.displayName() : Component.text(sender.getName()), sender.getName(), group, message, caller);
     }
 
-    public static void adminChat(CommandSender sender, GroupCosmetics.Group group, Component message, Namespaced caller)
+    public static void adminChat(CommandSender sender, GroupManagement.Group group, Component message, Namespaced caller)
     {
         adminChat(false, sender, sender instanceof Player player ? player.displayName() :
                 Component.text(sender.getName()), sender.getName(), group, message, caller);
     }
 
-    public static void adminChat(Component displayName, String senderName, GroupCosmetics.Group group, Component message, Namespaced caller)
+    public static void adminChat(Component displayName, String senderName, GroupManagement.Group group, Component message, Namespaced caller)
     {
         adminChat(false, null, displayName, senderName, group, message, caller);
     }
 
     private static void adminChat(boolean async, CommandSender sender, Component displayName, String senderName,
-                                  GroupCosmetics.Group group, Component message, Namespaced caller)
+                                  GroupManagement.Group group, Component message, Namespaced caller)
     {
         Component formattedMessage = miniMessage(ConfigEntry.FORMATS_ADMIN_CHAT.getString(),
                 Placeholder.unparsed("name", sender != null ? sender.getName() : senderName),

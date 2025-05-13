@@ -22,7 +22,7 @@ public class UnbanCommand extends KoolCommand
             return false;
         }
 
-        Ban ban = plugin.banManager.removeBan(args[0]);
+        Ban ban = plugin.getBanManager().removeBan(args[0]);
 
         if (ban == null)
         {

@@ -1,7 +1,6 @@
-package eu.koolfreedom.discord;
+package eu.koolfreedom.bridge;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.api.GroupCosmetics;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
@@ -12,9 +11,9 @@ import java.util.Map;
 
 public interface DiscordIntegration<T> extends Listener
 {
-	GroupCosmetics.Group discordGroup = GroupCosmetics.Group.createGroup("discord", "Discord",
+	GroupManagement.Group discordGroup = GroupManagement.Group.createGroup("discord", "Discord",
 			Component.text("Discord").color(TextColor.color(0x5865F2)), TextColor.color(0x5865F2));
-	Map<String, GroupCosmetics.Group> roleMap = new HashMap<>();
+	Map<String, GroupManagement.Group> roleMap = new HashMap<>();
 
 	T getDiscord();
 

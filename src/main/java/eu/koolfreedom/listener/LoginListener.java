@@ -34,6 +34,6 @@ public class LoginListener implements Listener
             player.sendPlayerListFooter(FUtil.miniMessage(footer));
         }
 
-        player.playerListName(KoolSMPCore.getInstance().groupCosmetics.getColoredName(player));
+        player.playerListName(KoolSMPCore.getInstance().getGroupManager().getColoredName(player));
     }
 }

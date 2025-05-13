@@ -40,7 +40,7 @@ public class WarnCommand extends KoolCommand
         String reason = String.join(" ", ArrayUtils.remove(args, 0));
 
         // Record it to logs
-        plugin.recordKeeper.recordPunishment(Punishment.builder()
+        plugin.getRecordKeeper().recordPunishment(Punishment.builder()
                 .uuid(target.getUniqueId())
                 .name(target.getName())
                 .ip(FUtil.getIp(target))

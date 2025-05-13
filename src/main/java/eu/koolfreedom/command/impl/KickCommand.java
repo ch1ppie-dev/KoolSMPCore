@@ -35,7 +35,7 @@ public class KickCommand extends KoolCommand
 
         String reason = args.length >= 2 ? String.join(" ", ArrayUtils.remove(args, 0)) : null;
 
-        plugin.recordKeeper.recordPunishment(Punishment.builder()
+        plugin.getRecordKeeper().recordPunishment(Punishment.builder()
                 .uuid(target.getUniqueId())
                 .name(target.getName())
                 .ip(FUtil.getIp(target))

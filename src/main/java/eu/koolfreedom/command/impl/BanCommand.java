@@ -36,7 +36,7 @@ public class BanCommand extends KoolCommand
         }
 
         final Ban ban = Ban.fromPlayer(target, sender.getName(), args.length > 1 ? String.join(" ", ArrayUtils.remove(args, 0)) : null, BanType.BAN);
-        boolean success = plugin.banManager.addBan(ban);
+        boolean success = plugin.getBanManager().addBan(ban);
 
         if (!success && !target.isOnline())
         {
@@ -45,7 +45,7 @@ public class BanCommand extends KoolCommand
         }
 
         FUtil.staffAction(sender, "Banned <player>", Placeholder.unparsed("player", target.getName() != null ? target.getName() : args[0]));
-        plugin.recordKeeper.recordPunishment(Punishment.fromBan(ban));
+        plugin.getRecordKeeper().recordPunishment(Punishment.fromBan(ban));
 
         if (target instanceof Player online)
         {

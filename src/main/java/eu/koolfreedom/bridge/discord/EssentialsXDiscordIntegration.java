@@ -1,11 +1,12 @@
-package eu.koolfreedom.discord;
+package eu.koolfreedom.bridge.discord;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.config.EssentialsConfiguration;
 import com.earth2me.essentials.utils.FormatUtil;
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.api.GroupCosmetics;
+import eu.koolfreedom.bridge.GroupManagement;
 import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.bridge.DiscordIntegration;
 import eu.koolfreedom.event.*;
 import eu.koolfreedom.log.FLog;
 import eu.koolfreedom.reporting.Report;
@@ -104,7 +105,7 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 			final Button button = event.getButton();
 			final Member member = event.getMember();
 			final Component userDisplay = Component.text(member.getAsMention());
-			final Optional<Report> optionalReport = KoolSMPCore.getInstance().reportManager.getReports(true).stream().filter(report ->
+			final Optional<Report> optionalReport = KoolSMPCore.getInstance().getReportManager().getReports(true).stream().filter(report ->
 					report.getAdditionalData().getString("discordMessageId", "-1").equalsIgnoreCase(message.getId())).findAny();
 
 			if (message.getAuthor() == parent.getDiscord().getJda().getSelfUser() && button.getId() != null)
@@ -166,7 +167,7 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 
 						optionalReport.ifPresentOrElse(report ->
 						{
-							KoolSMPCore.getInstance().reportManager.deleteReportsByUuidAsync(userDisplay, member.getUser().getName(), member.getUser().getId(), report.getReporter());
+							KoolSMPCore.getInstance().getReportManager().deleteReportsByUuidAsync(userDisplay, member.getUser().getName(), member.getUser().getId(), report.getReporter());
 							event.reply("Reports are now being deleted as we speak.").setEphemeral(true).queue();
 						}, () ->
 						{
@@ -214,7 +215,7 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 					.queue(message ->
 					{
 						report.getAdditionalData().set("discordMessageId", message.getId());
-						CompletableFuture.runAsync(() -> KoolSMPCore.getInstance().reportManager.save());
+						CompletableFuture.runAsync(() -> KoolSMPCore.getInstance().getReportManager().save());
 					});
 		}
 
@@ -250,7 +251,7 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 						.queue(success ->
 						{
 							report.getAdditionalData().set("discordMessageId", success.getId());
-							CompletableFuture.runAsync(() -> KoolSMPCore.getInstance().reportManager.save());
+							CompletableFuture.runAsync(() -> KoolSMPCore.getInstance().getReportManager().save());
 						});
 			}
 		}
@@ -469,13 +470,13 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 				return;
 			}
 
-			final GroupCosmetics.Group fallback = KoolSMPCore.getInstance().groupCosmetics.getGroupByNameOr("discord", discordGroup);
+			final GroupManagement.Group fallback = KoolSMPCore.getInstance().getGroupManager().getGroupByNameOr("discord", discordGroup);
 
 			final Member member = event.getMember();
 			final Component message = Component.text(event.getMessage().getContentDisplay());
-			final GroupCosmetics.Group userGroup = switch (ConfigEntry.DISCORD_GROUP_MODE_SWITCH.getInteger())
+			final GroupManagement.Group userGroup = switch (ConfigEntry.DISCORD_GROUP_MODE_SWITCH.getInteger())
 			{
-				case 1 -> KoolSMPCore.getInstance().groupCosmetics.getGroupByNameOr(member.getRoles().getFirst().getName(),
+				case 1 -> KoolSMPCore.getInstance().getGroupManager().getGroupByNameOr(member.getRoles().getFirst().getName(),
 						!member.getRoles().isEmpty() ? getGroupFromRole(member.getRoles().getFirst()) : fallback);
 				case 2 -> !member.getRoles().isEmpty() ? getGroupFromRole(member.getRoles().getFirst()) : fallback;
 				default -> fallback;
@@ -537,7 +538,7 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 			FUtil.asyncAdminChat(displayName, member.getUser().getName(), userGroup, message, parent.key);
 		}
 
-		private GroupCosmetics.Group getGroupFromRole(Role role)
+		private GroupManagement.Group getGroupFromRole(Role role)
 		{
 			final String roleId = role.getId();
 
@@ -546,7 +547,7 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 			{
 				roleMap.remove(roleId);
 
-				GroupCosmetics.Group roleGroup = GroupCosmetics.Group.createGroup(role.getId(), role.getName(),
+				GroupManagement.Group roleGroup = GroupManagement.Group.createGroup(role.getId(), role.getName(),
 						Component.text(role.getName()).color(TextColor.color(role.getColorRaw())),
 						TextColor.color(role.getColorRaw()));
 
@@ -607,7 +608,7 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 			return true;
 		}
 
-		return !KoolSMPCore.getInstance().groupCosmetics.getVaultPermissions().playerHas(null, player, permission);
+		return !KoolSMPCore.getInstance().getGroupManager().getVaultPermissions().playerHas(null, player, permission);
 	}
 
 	private boolean channelDoesNotMatch(String name, String channelId)

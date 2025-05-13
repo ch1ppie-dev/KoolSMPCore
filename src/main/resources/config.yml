@@ -131,8 +131,14 @@ discord:
   #   - username:           The author's Discord username. Can be inserted into other elements like hoverable elements.
   replying_to_format: " <gray><hover:show_text:'<white><role_color><nickname></role_color></white> <dark_gray>•</dark_gray> <gray><date_created:\"yyyy-MM-dd HH:mm:ss\"></gray><newline><white><message><if_has_attachments:\"<newline><newline>Attachments:<newline><attachments>\":\"\">'>(replying to <role_color><nickname></role_color>)</hover></gray>"
 
-
-# Groups that show up in places like admin chat
+# KoolSMPCore does not have a permission system of its own. User groups are determined by the name of the primary group
+#   a particular user is in, as reported by the permission plugin you have installed. Entries here must have the same
+#   name as the group it's supposed to be for. If no group could be found or no groups are defined, the plugin will use
+#   built-in groups where applicable (such as Discord).
+# A typical entry will have these options available for you:
+#   - name:         The name of the group the entry is for.
+#   - color:        The color you want to give the group. This can be the name of a color or a hex color.
+#   - displayName:  How you want the group's name to show up in places like the admin chat, formatted in MiniMessage.
 groups:
   default:
     name: default

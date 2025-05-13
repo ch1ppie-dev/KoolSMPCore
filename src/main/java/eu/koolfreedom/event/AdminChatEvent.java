@@ -1,6 +1,6 @@
 package eu.koolfreedom.event;
 
-import eu.koolfreedom.api.GroupCosmetics;
+import eu.koolfreedom.bridge.GroupManagement;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.key.Namespaced;
@@ -20,12 +20,12 @@ public class AdminChatEvent extends Event
 	private final CommandSender commandSender;
 	private final Component senderDisplay;
 	private final String senderName;
-	private final GroupCosmetics.Group senderGroup;
+	private final GroupManagement.Group senderGroup;
 	private final Component message;
 	private final Namespaced source;
 
 	public AdminChatEvent(boolean async, CommandSender commandSender, Component senderDisplay, String senderName,
-						  GroupCosmetics.Group senderGroup, Component message, Namespaced source)
+						  GroupManagement.Group senderGroup, Component message, Namespaced source)
 	{
 		super(async);
 		this.commandSender = commandSender;

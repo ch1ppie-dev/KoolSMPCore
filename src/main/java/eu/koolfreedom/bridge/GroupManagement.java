@@ -1,4 +1,4 @@
-package eu.koolfreedom.api;
+package eu.koolfreedom.bridge;
 
 import java.awt.*;
 import java.util.*;
@@ -16,7 +16,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class GroupCosmetics
+public class GroupManagement
 {
     private final Map<String, Group> groups = new HashMap<>();
     private final Group defaultFallbackGroup = new Group("default", "Member", NamedTextColor.GRAY);
@@ -25,7 +25,7 @@ public class GroupCosmetics
     private Permission permission = null;
     private boolean checked = false;
 
-    public GroupCosmetics()
+    public GroupManagement()
     {
         loadGroups();
     }

@@ -14,6 +14,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,17 +27,17 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-public class ChatFilter implements Listener
+public class ChatListener implements Listener
 {
 	private final Set<FilterEntry> filters = new HashSet<>();
 
-	public ChatFilter()
+	public ChatListener()
 	{
 		Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
-		load();
+		loadFilters();
 	}
 
-	public void load()
+	public void loadFilters()
 	{
 		if (!filters.isEmpty())
 		{
@@ -104,8 +105,8 @@ public class ChatFilter implements Listener
 						case BAN:
 						{
 							Ban ban = Ban.fromPlayer(player, Bukkit.getConsoleSender().getName(), filter.getReason(), BanType.BAN);
-							KoolSMPCore.getInstance().banManager.addBan(ban);
-							KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.fromBan(ban));
+							KoolSMPCore.getInstance().getBanManager().addBan(ban);
+							KoolSMPCore.getInstance().getRecordKeeper().recordPunishment(Punishment.fromBan(ban));
 							player.kick(ban.getKickMessage(), PlayerKickEvent.Cause.BANNED);
 							Bukkit.getOnlinePlayers().stream().filter(suspect -> FUtil.getIp(player).equalsIgnoreCase(FUtil.getIp(player))).forEach(suspect ->
 									player.kick(ban.getKickMessage()));
@@ -118,14 +119,14 @@ public class ChatFilter implements Listener
 						}
 						case MUTE:
 						{
-							MuteManager muteManager = KoolSMPCore.getInstance().muteManager;
+							MuteManager muteManager = KoolSMPCore.getInstance().getMuteManager();
 
 							if (!muteManager.isMuted(player))
 							{
 								muteManager.setMuted(player, true);
 								FUtil.staffAction(Bukkit.getConsoleSender(), "Muted <player>",
 										Placeholder.unparsed("player", player.getName()));
-								KoolSMPCore.getInstance().recordKeeper.recordPunishment(Punishment.builder()
+								KoolSMPCore.getInstance().getRecordKeeper().recordPunishment(Punishment.builder()
 										.uuid(player.getUniqueId())
 										.name(player.getName())
 										.ip(player.isOnline() ? FUtil.getIp(player) : null)
@@ -141,6 +142,23 @@ public class ChatFilter implements Listener
 					}
 				}, ConfigEntry.CHAT_FILTER_DELAY.getInteger());
 			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	private void allowPinging(AsyncChatEvent event)
+	{
+		final Player player = event.getPlayer();
+		final String message = event.signedMessage().message();
+
+		// In-game pinging
+		if (message.contains("@"))
+		{
+			Arrays.stream(message.split(" ")).filter(word -> word.startsWith("@")).filter(word ->
+							!word.equalsIgnoreCase("@everyone") || player.hasPermission("kfc.ping_everyone"))
+					.map(ping -> ping.replaceAll("@", "")).map(Bukkit::getPlayer)
+					.filter(Objects::nonNull).distinct().forEach(target -> target.playSound(target.getLocation(),
+							Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F));
 		}
 	}
 

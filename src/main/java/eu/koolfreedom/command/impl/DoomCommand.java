@@ -57,13 +57,13 @@ public class DoomCommand extends KoolCommand
         // Get the technical side of things out of the way first, we want this user banned first and foremost
         final Ban ban = Ban.fromPlayer(target, sender.getName(), reason != null ? reason : "You've met with a terrible fate, haven't you?", BanType.BAN);
         final KoolSMPCore plugin = KoolSMPCore.getInstance();
-        plugin.banManager.addBan(ban);
-        plugin.recordKeeper.recordPunishment(Punishment.fromBan(ban));
+        plugin.getBanManager().addBan(ban);
+        plugin.getRecordKeeper().recordPunishment(Punishment.fromBan(ban));
 
         // Remove their groups if present
-        if (plugin.groupCosmetics.getVaultPermissions() != null)
+        if (plugin.getGroupManager().getVaultPermissions() != null)
         {
-            Permission vault = plugin.groupCosmetics.getVaultPermissions();
+            Permission vault = plugin.getGroupManager().getVaultPermissions();
             final List<String> groups = Arrays.stream(vault.getPlayerGroups(target)).toList();
             groups.forEach(group -> {
                 try
@@ -85,12 +85,12 @@ public class DoomCommand extends KoolCommand
             });
 
             // Update their tab name forcefully
-            target.playerListName(plugin.groupCosmetics.getColoredName(target));
+            target.playerListName(plugin.getGroupManager().getColoredName(target));
         }
         // Do it with LuckPerms instead, since their API might do a better job than Vault
-        else if (plugin.luckPermsListener != null)
+        else if (plugin.getLuckPermsBridge() != null)
         {
-            LuckPerms luckPerms = plugin.luckPermsListener.getApi();
+            LuckPerms luckPerms = plugin.getLuckPermsBridge().getApi();
 
             luckPerms.getUserManager().deletePlayerData(target.getUniqueId());
             luckPerms.getUserManager().modifyUser(target.getUniqueId(), user ->

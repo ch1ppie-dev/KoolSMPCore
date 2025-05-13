@@ -19,7 +19,7 @@ public class MuteCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
-        MuteManager mum = plugin.muteManager;
+        MuteManager mum = plugin.getMuteManager();
         if (args.length == 0)
         {
             msg(sender, "<gray><amount> player(s) are currently muted.",
@@ -52,7 +52,7 @@ public class MuteCommand extends KoolCommand
         if (mum.isMuted(target))
         {
             FUtil.staffAction(sender, "Muted <player>", Placeholder.unparsed("player", target.getName()));
-            plugin.recordKeeper.recordPunishment(Punishment.builder()
+            plugin.getRecordKeeper().recordPunishment(Punishment.builder()
                     .uuid(target.getUniqueId())
                     .name(target.getName())
                     .ip(FUtil.getIp(target))

@@ -43,7 +43,7 @@ public class SmiteCommand extends KoolCommand
             broadcast(" <red>Reason: <yellow><reason>", Placeholder.unparsed("reason", reason));
         }
 
-        plugin.recordKeeper.recordPunishment(Punishment.builder()
+        plugin.getRecordKeeper().recordPunishment(Punishment.builder()
                 .uuid(target.getUniqueId())
                 .name(target.getName())
                 .ip(FUtil.getIp(target))
