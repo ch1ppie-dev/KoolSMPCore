@@ -238,7 +238,7 @@ public class EssentialsXDiscordIntegration implements DiscordIntegration<JDADisc
 
 			channel.retrieveMessageById(Objects.requireNonNull(report.getAdditionalData().getString("discordMessageId")))
 					.queue(message ->
-									message.editMessage("Report updated by " + (event.getStaffDisplayName() instanceof TextComponent text && !text.content().isBlank() ? text.content() : event.getStaffName()))
+									message.editMessage("Report updated by " + FUtil.plainText(event.getStaffDisplayName()))
 											.setEmbeds(createEmbedFromReport(report))
 											.setActionRow(createButtonsFromReport(report)).queue(),
 							error -> createMessage.set(true));

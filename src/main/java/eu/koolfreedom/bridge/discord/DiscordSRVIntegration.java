@@ -369,7 +369,7 @@ public class DiscordSRVIntegration extends ListenerAdapter implements DiscordInt
 
         channel.retrieveMessageById(Objects.requireNonNull(report.getAdditionalData().getString("discordMessageId")))
                 .queue(message ->
-                        message.editMessage("Report updated by " + (event.getStaffDisplayName() instanceof TextComponent text && !text.content().isBlank() ? text.content() : event.getStaffName()))
+                                message.editMessage("Report updated by " + FUtil.plainText(event.getStaffDisplayName()))
                                 .setEmbeds(createEmbedFromReport(report))
                                 .setActionRow(createButtonsFromReport(report)).queue(),
                         error -> createMessage.set(true));
@@ -426,8 +426,8 @@ public class DiscordSRVIntegration extends ListenerAdapter implements DiscordInt
         }
 
         final TextChannel channel = plugin.getOptionalTextChannel("adminchat");
-        final String senderName = event.getSenderName();
         final CommandSender sender = event.getCommandSender();
+        final String senderName = event.getSenderName() != null ? event.getSenderName() : Objects.requireNonNull(sender).getName();
 
         boolean usingWebhooks = DiscordSRV.config().getBoolean("Experiment_WebhookChatMessageDelivery");
 
@@ -454,11 +454,11 @@ public class DiscordSRVIntegration extends ListenerAdapter implements DiscordInt
         }
         else if (sender instanceof Mob mob)
         {
-            displayName = mob.customName() instanceof TextComponent text ? text.content() : mob.getName();
+            displayName = FUtil.plainText(mob.customName());
         }
         else
         {
-            displayName = event.getSenderDisplay() instanceof TextComponent text ? text.content() : senderName;
+            displayName = FUtil.plainText(event.getSenderDisplay());
         }
 
         // TODO: Implement more... "native" support instead of this hackjob, lmao

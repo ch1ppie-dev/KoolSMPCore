@@ -1,6 +1,7 @@
 package eu.koolfreedom.event;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.Event;
@@ -14,7 +15,7 @@ public class PublicBroadcastEvent extends Event
 	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 
-	private final Component message;
+	private final @NonNull Component message;
 
 	@Override
 	public @NotNull HandlerList getHandlers()

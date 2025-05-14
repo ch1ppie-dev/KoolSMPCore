@@ -1,12 +1,3 @@
-/*
-/
-/ Idea for the creation of this file comes from TotalFreedomMod and adjacent projects
-/
-/ We meant for this to be a 1:1 creation minus a few things,
-/  but we wanted ot be as accurate as possible so that it functions the same way.
-/
-*/
-
 package eu.koolfreedom.config;
 
 import lombok.Getter;

@@ -2,30 +2,31 @@ package eu.koolfreedom.event;
 
 import eu.koolfreedom.reporting.Report;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
-@RequiredArgsConstructor
 public class PlayerReportUpdateEvent extends Event
 {
 	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 
-	private final Component staffDisplayName;
-	private final String staffName;
-	private final String staffId;
-	private final Report.ReportStatus oldStatus;
-	private final Report.ReportStatus newStatus;
-	private final String newNote;
-	private final Report report;
+	private final @NonNull Component staffDisplayName;
+	private final @NonNull String staffName;
+	private final @NonNull String staffId;
+	private final @NonNull Report.ReportStatus oldStatus;
+	private final @NonNull Report.ReportStatus newStatus;
+	private final @Nullable String newNote;
+	private final @NonNull Report report;
 
-	public PlayerReportUpdateEvent(boolean async, Component staffDisplayName, String staffName, String staffId,
-								   Report.ReportStatus oldStatus, Report.ReportStatus newStatus, String newNote,
-								   Report report)
+	public PlayerReportUpdateEvent(boolean async, @NonNull Component staffDisplayName, @NonNull String staffName,
+								   @NonNull String staffId, @NonNull Report.ReportStatus oldStatus,
+								   @NonNull Report.ReportStatus newStatus, @Nullable String newNote,
+								   @NonNull Report report)
 	{
 		super(async);
 		this.staffDisplayName = staffDisplayName;

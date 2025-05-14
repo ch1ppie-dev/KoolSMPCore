@@ -82,7 +82,7 @@ public class ReportManager implements Listener
 
 	public void deleteReportsByUuid(Component displayName, String staffName, String staffId, UUID uuid)
 	{
-		new PlayerReportDeleteEvent(displayName, staffName, staffId, deleteReportsBy(uuid)).callEvent();
+		new PlayerReportDeleteEvent(false, displayName, staffName, staffId, deleteReportsBy(uuid)).callEvent();
 	}
 
 	private List<Report> deleteReportsBy(UUID uuid)
