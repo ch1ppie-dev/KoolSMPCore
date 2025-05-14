@@ -20,7 +20,6 @@ import github.scarsz.discordsrv.util.*;
 import net.kyori.adventure.key.Namespaced;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -59,9 +58,6 @@ public class DiscordSRVIntegration extends ListenerAdapter implements DiscordInt
     {
         plugin = DiscordSRV.getPlugin();
         key = NamespacedKey.fromString("channel", plugin);
-
-        Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
-        DiscordSRV.api.subscribe(this);
 
         // So the idea behind this was that instead of doing Discord integration ourselves (causing obscene amounts of
         //  bloat and adding a potential risk of people finding ways to bypass our homebrew filters due to Discord being
@@ -125,6 +121,14 @@ public class DiscordSRVIntegration extends ListenerAdapter implements DiscordInt
     public DiscordSRV getDiscord()
     {
         return plugin;
+    }
+
+    @Override
+    public DiscordIntegration<DiscordSRV> register()
+    {
+        Bukkit.getPluginManager().registerEvents(this, KoolSMPCore.getInstance());
+        DiscordSRV.api.subscribe(this);
+        return this;
     }
 
     @Override

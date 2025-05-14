@@ -69,7 +69,7 @@ public class FUtil // the f stands for fuck
 
         if (callEvent)
         {
-            new PublicBroadcastEvent(component).callEvent();
+            new PublicBroadcastEvent(!Bukkit.isPrimaryThread(), component).callEvent();
         }
     }
 
@@ -109,7 +109,7 @@ public class FUtil // the f stands for fuck
 
         if (callEvent)
         {
-            new PublicBroadcastEvent(miniMessage(message, placeholders)).callEvent();
+            new PublicBroadcastEvent(!Bukkit.isPrimaryThread(), miniMessage(message, placeholders)).callEvent();
         }
     }
 
