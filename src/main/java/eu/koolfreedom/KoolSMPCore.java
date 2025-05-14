@@ -68,12 +68,13 @@ public class KoolSMPCore extends JavaPlugin
         FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
 
         commandLoader = new CommandLoader();
-        commandLoader.loadCommands(List.of(AdminChatCommand.class, BanCommand.class, BanIPCommand.class, BanListCommand.class,
-                ClearChatCommand.class, CommandSpyCommand.class, CrashCommand.class, CryCommand.class,
-                DoomCommand.class, HugCommand.class, KickCommand.class, KissCommand.class, KoolSMPCoreCommand.class,
-                MuteCommand.class, OrbitCommand.class, PatCommand.class, PokeCommand.class, RawSayCommand.class,
-                ReportCommand.class, ReportsCommand.class, SatisfyAllCommand.class, SayCommand.class, ShipCommand.class,
-                SlapCommand.class, SmiteCommand.class, SpectateCommand.class, UnbanCommand.class));
+        commandLoader.loadCommands(List.of(AdminChatCommand.class, BanCommand.class, BanIPCommand.class,
+                BanListCommand.class, ClearChatCommand.class, CommandSpyCommand.class, CrashCommand.class,
+                CryCommand.class, DoomCommand.class, HugCommand.class, KickCommand.class, KissCommand.class,
+                KoolSMPCoreCommand.class, MuteCommand.class, OrbitCommand.class, PatCommand.class, PokeCommand.class,
+                RawSayCommand.class, ReportCommand.class, ReportsCommand.class, SatisfyAllCommand.class,
+                SayCommand.class, ShipCommand.class, SlapCommand.class, SmiteCommand.class, SpectateCommand.class,
+                UnbanCommand.class));
         FLog.info("Loaded {} commands", commandLoader.getKoolCommands().size());
 
         loadListeners();
