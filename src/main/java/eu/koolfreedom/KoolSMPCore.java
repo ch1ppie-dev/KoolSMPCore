@@ -74,7 +74,7 @@ public class KoolSMPCore extends JavaPlugin
                 KoolSMPCoreCommand.class, MuteCommand.class, OrbitCommand.class, PatCommand.class, PokeCommand.class,
                 RawSayCommand.class, ReportCommand.class, ReportsCommand.class, SatisfyAllCommand.class,
                 SayCommand.class, ShipCommand.class, SlapCommand.class, SmiteCommand.class, SpectateCommand.class,
-                UnbanCommand.class));
+                UnbanCommand.class, WarnCommand.class));
         FLog.info("Loaded {} commands", commandLoader.getKoolCommands().size());
 
         loadListeners();
