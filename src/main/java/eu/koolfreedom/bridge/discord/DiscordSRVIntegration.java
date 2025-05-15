@@ -149,7 +149,7 @@ public class DiscordSRVIntegration extends ListenerAdapter implements DiscordInt
     public void onAdminChatMessageFromDiscord(DiscordGuildMessagePreProcessEvent event)
     {
         if (!channelExists("adminchat") || channelDoesNotMatch("adminchat", event.getChannel().getId())
-                || event.getAuthor() != plugin.getJda().getSelfUser())
+                || event.getAuthor() == plugin.getJda().getSelfUser())
         {
             return;
         }

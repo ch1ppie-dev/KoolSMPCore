@@ -23,15 +23,13 @@ public class MainConfig
         Defaults tempDefaults;
         try
         {
-            try
+            try (InputStream defaultConfig = getDefaultConfig())
             {
-                InputStream defaultConfig = getDefaultConfig();
                 tempDefaults = new Defaults(defaultConfig);
                 for (ConfigEntry entry : ConfigEntry.values())
                 {
                     ENTRY_MAP.put(entry, tempDefaults.get(entry.getConfigName()));
                 }
-                defaultConfig.close();
             }
             catch (IOException ex)
             {
@@ -53,6 +51,11 @@ public class MainConfig
         try
         {
             YamlConfiguration config = new YamlConfiguration();
+
+            if (!CONFIG_FILE.exists())
+            {
+                copyDefaultConfig();
+            }
 
             config.load(CONFIG_FILE);
 
