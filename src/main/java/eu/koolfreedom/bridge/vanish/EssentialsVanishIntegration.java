@@ -18,6 +18,6 @@ public class EssentialsVanishIntegration implements VanishIntegration<Essentials
 	@Override
 	public boolean isVanished(Player player)
 	{
-		return plugin.getUser(player).isVanished();
+		return plugin.getUser(player) != null && plugin.getUser(player).isVanished();
 	}
 }
