@@ -1,31 +1,205 @@
 #
-# KoolSMPCore v3.0 Configuration File
+# KoolSMPCore v${project.version} Configuration File
 #
+# All formats offered in this configuration use a system called MiniMessage for formatting. MiniMessage is a relatively
+#   new formatting system offered by the developers of Paper and Adventure similar in syntax to the HTML and XML formats
+#   that offers a much greater degree of control and flexibility than the legacy chat color codes ever could, including
+#   non-decorative components like hoverable and clickable text components.
+#
+# If you want to change any of these, the MiniMessage developers have a website that allows you to preview your changes
+#   available at https://webui.advntr.dev/. Some of the custom placeholders this plugin has don't work on the website,
+#   but will still work fine when applied to the server.
+#
+# To apply any changes, save them and reload the configuration with /koolsmpcore reload.
 
 server:
-  motd: KoolFreedom SMP (Native 1.21.1)
-  tablist_header: ' \n  &dWelcome to &6KoolFreedom SMP&d!  \n '
-  tablist_footer: ' \n  &dJoin our &5/discord \n  '
+  motd: '<randomize>KoolFreedom SMP (Native 1.21.1)'
+  tablist_header: ' <newline>  <light_purple>Welcome to <gold>KoolFreedom SMP</gold>!  <newline> '
+  tablist_footer: ' <newline>  <light_purple>Join our <dark_purple>/discord</dark_purple> <newline>  '
   website_or_forum: 'Put your own forum/website here.'
 
-# Toggles the announcer
-enable-announcer: true
+# All things related to the announcer
+announcer:
+  # Toggles the announcer
+  enable: true
 
-# Time between each announcement
-announcer-time: 2400
+  # Time in ticks between each announcement
+  delay: 2400
 
-# Announcements
-messages:
-  discord:
-    - "&c[&6KoolFreedom&c] Remember to join our Discord with &6'/discord'&c."
-  report:
-    - "&c[&6KoolFreedom&c] Got a rule breaker on the server? use &6'/report' &cto submit a report."
-  owner:
-    - "&c[&6KoolFreedom&c] &6gamingto12&c is the Owner of KoolFreedom."
+  # Announcer's messages, formatted in MiniMessage
+  messages:
+    - "<red>[<gold>KoolFreedom</gold>] Remember to join our Discord with <gold><click:suggest_command:/discord>'/discord'</click></gold>."
+    - "<red>[<gold>KoolFreedom</gold>] Dealing with a rule-breaker? Use <gold><click:suggest_command:/report>'/report'</click></gold> to submit a report."
+    - "<red>[<gold>KoolFreedom</gold>] <gold>gamingto12</gold> is the owner of KoolFreedom."
 
+# Chat filter
+chat-filter:
+  # Toggles the filter
+  enabled: true
+
+  # Filters are split up into different categories that you can define.
+  # A typical entry will have these options:
+  #   - bypassPermission:   The permission node required to bypass the filter.
+  #
+  #   - action:             The action to take if the filter gets tripped.
+  #                         Currently available options are:
+  #                           - ban
+  #                           - doom
+  #                           - log
+  #                           - mute
+  #                           - nothing
+  #                           - smite
+  #
+  #   - cancel:             Whether to allow the message to be broadcast to the public. If set to true, the message will
+  #                           be discarded, but the action will still occur.
+  #
+  #   - reason:             The reason or message to give in regard to the action. Doesn't do anything if action is set
+  #                           to "mute" as mutes currently do not support reasons.
+  #
+  #   - delay:              Delay in ticks before the action takes place. Defaults to 0 (instant response).
+  #
+  #   - filters:            A list of regex patterns that a message will be checked against. If any of them match, the
+  #                           filter is triggered and the action is scheduled to take place.
+  #
+  # An example entry has been provided below
+  categories:
+    # Example entry
+    misinformation:
+      bypassPermission: kfc.bypass_filter.example
+      action: smite
+      cancel: true
+      reason: Spreading lies
+      delay: 0
+      filters:
+        - "(?i)v(ideo(gamesm(ash)?12| ?man)?|gs12)? is( a)? (bun+y|bnu+y)"
+
+    # Generic hate speech filter which dooms players who say naughty phrases
+    hate-speech:
+      action: doom
+      cancel: true
+      reason: Hate Speech
+      delay: 50
+      filters:
+        - "(?i)n[i1]+g+(a|e+r)"
+        - "(?i)f[a4]g+([o0]t)?"
+        - "(?i)heil hitler"
+        - "(?i)seig heil"
+        - "(?i)tran{2,}y"
+        - "(?i)tro{2,}n"
+
+# Formats
+formats:
+  admin_chat: "<dark_gray>[<aqua>AC</aqua>] <blue><name></blue> [<rank>] <gold><message>"
+  commandspy: "<gray><hover:show_text:'<translate:chat.copy.click>'><click:copy_to_clipboard:<name>><name></click></hover>: <click:suggest_command:'<raw_command>'><command>"
+  report: "<dark_gray>[<red>REPORTS</red>] <gold><reporter></gold> <red>has reported <gold><player></gold> for <gold><reason></gold>."
+  report_summary: "<gradient:dark_gray:gray>████</gradient> Report Summary - <id> <gradient:gray:dark_gray>████</gradient><newline><dark_gray><b>|</b><newline><b>|</b>   <gray>Reported: <white><reported></white></gray><newline><b>|</b>   <gray>By: <white><reporter></white></gray><newline><b>|</b>   <gray>Reason: <white><reason></white></gray><newline><b>|</b>   <gray>Date: <white><date:'yyyy-MM-dd \\'at\\' h:mm:ss a'></white></gray><newline><b>|</b>   <gray>Status: <white><status></white></gray><newline><b>|</b>   <gray>Staff Note: <white><staff_note></white></gray><newline><b>|</b>"
+  report_quick_summary: "<b><dark_gray>|</dark_gray></b> <hover:show_text:'<full_summary>'><click:run_command:'/reports summary <id>'><white><date:'HH:mm:ss'></white> <gray>| <white><reporter></white> reported <white><reported></white></click></hover>"
+  report_empty_quick_summary: "<b><dark_gray>|</dark_gray></b> "
+  say: "<light_purple>[Server:<name>] <message>"
+
+# KoolSMPCore allows you to integrate into various different Discord chat plugins through an in-built system. The two
+#   plugins that are currently supported are DiscordSRV and EssentialsXDiscord (though only if EssentialsXDiscordLink is
+#   installed with it).
+#
+# The steps for how to get it fully operational differ between the two plugins:
+#
+#   - DiscordSRV:         Add entries for "adminchat" and "report" to the Channels section of DiscordSRV's config, then
+#                         reload the plugin with /discord reload. The plugin will automatically start forwarding admin
+#                         chat messages and reports to their respective channels.
+#
+#   - EssentialsXDiscord: Add entries for "adminchat" and "report" in the channels and message-types sections of
+#                         EssentialsXDiscord's configuration. With message-types, just give a value matching the entry
+#                         name. Once saved, restart the server for the changes to take effect. The plugin will start
+#                         forwarding admin chat messages to their respective channels.
+#
+# This section allows you to fine-tune some of the smaller behavioral details like
 discord:
-  bot_token: ""
-  report_channel_id: ""
+  # How we handle groups in places like the Admin Chat
+  # 0 - Use a blanket [Discord] group
+  # 1 - Use groups defined below based on the role names and using ones generated by the bridge using role details as needed
+  # 2 - Ignore the group configuration below and just generate groups as we need them based on the role details
+  group_role_mode: 0
 
-unbannable_usernames:
-  - gamingto12
+  # How users are handled in admin chat messages from DiscordSRV
+  # Available placeholders:
+  #   - display_name: The user's display name on Discord. If they do not have a name on their account, it simply reverts
+  #                   to their regular Discord name.
+  #   - role_color:   The color of the top role the user is in. If none are present, it will be white.
+  #   - roles:        The user's roles, neatly collected together.
+  #   - id:           The user's Discord ID. Can be inserted into other elements like hoverable elements.
+  #   - name:         The user's Discord name. Can be inserted into other elements like hoverable elements.
+  #   - nickname:     The user's nickname in the server. Can be inserted into other elements like hoverable elements.
+  #   - username:     The user's Discord username. Can be inserted into other elements like hoverable elements.
+  #   - reply:        If a reply is present, show the processed format noted below.
+  user_format: "<click:suggest_command:'/ac <@<id>> '><hover:show_text:'<b><name></b><newline><gray>@<username></gray><newline><newline>Roles:<newline><roles><newline><newline>Click to Reply'><role_color><nickname></role_color></click><reply>"
+
+  # How replies are handled in admin chat messages from DiscordSRV
+  # While DiscordSRV has its own options for tweaking message formats like this, KoolSMPCore does not use them as we use
+  #   our own system for admin chats, and it would be a mess to have to maintain two different formats in two different
+  #   plugin configurations.
+  # Available placeholders:
+  #   - display_name:       The author's display name on Discord. If they do not have a name on their account, it simply
+  #                         reverts to their Discord username.
+  #   - role_color:         The color of the top role the author is in. If none are present, it will be white.
+  #   - roles:              The author's roles, neatly collected together.
+  #   - if_has_attachments: Component to be used to determine what should show up if the message has attachments.
+  #                         Boolean choice.
+  #   - attachments:        The message's attachments, neatly collected together. Can be inserted into other elements
+  #                         like hoverable elements.
+  #   - message_id:         The message's Discord ID. Can be inserted into other elements like hoverable elements.
+  #   - date_created:       The message's timestamp. Formatted date string.
+  #   - if_edited:          Component to be used to determine what should show up if the message was edited. Boolean
+  #                         choice.
+  #   - date_edited:        The message's timestamp. Formatted date string if present, empty if otherwise.
+  #   - user_id:            The author's Discord ID. Can be inserted into other elements like hoverable elements.
+  #   - name:               The author's Discord name. Can be inserted into other elements like hoverable elements.
+  #   - nickname:           The author's nickname in the server. Can be inserted into other elements like hoverable
+  #                         elements.
+  #   - username:           The author's Discord username. Can be inserted into other elements like hoverable elements.
+  replying_to_format: " <gray><hover:show_text:'<white><role_color><nickname></role_color></white> <dark_gray>•</dark_gray> <gray><date_created:\"yyyy-MM-dd HH:mm:ss\"></gray><newline><white><message><if_has_attachments:\"<newline><newline>Attachments:<newline><attachments>\":\"\">'>(replying to <role_color><nickname></role_color>)</hover></gray>"
+
+# KoolSMPCore does not have a permission system of its own. User groups are determined by the name of the primary group
+#   a particular user is in, as reported by the permission plugin you have installed. Entries here must have the same
+#   name as the group it's supposed to be for. If no group could be found or no groups are defined, the plugin will use
+#   built-in groups where applicable (such as Discord).
+# A typical entry will have these options available for you:
+#   - name:         The name of the group the entry is for.
+#   - color:        The color you want to give the group. This can be the name of a color or a hex color.
+#   - displayName:  How you want the group's name to show up in places like the admin chat, formatted in MiniMessage.
+groups:
+  default:
+    name: default
+    color: gray
+    displayName: <gray>Member
+  mod:
+    name: mod
+    color: green
+    displayName: <green>Moderator
+  admin:
+    name: admin
+    color: aqua
+    displayName: <aqua>Admin
+  senior:
+    name: senior
+    color: gold
+    displayName: <gold>Senior
+  developer:
+    name: developer
+    color: dark_purple
+    displayName: <dark_purple>Developer
+  manager:
+    name: manager
+    color: light_purple
+    displayName: <light_purple>Manager
+  co_owner:
+    name: co_owner
+    color: red
+    displayName: <red>Co-Owner
+  executive:
+    name: executive
+    color: dark_red
+    displayName: <dark_red>Executive
+  owner:
+    name: owner
+    color: red
+    displayName: <red>Owner

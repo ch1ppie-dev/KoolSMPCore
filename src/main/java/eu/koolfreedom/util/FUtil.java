@@ -1,158 +1,350 @@
 package eu.koolfreedom.util;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.log.FLog;
+import eu.koolfreedom.bridge.GroupManagement;
+import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.event.AdminChatEvent;
+import eu.koolfreedom.event.PublicBroadcastEvent;
+import lombok.Getter;
+import lombok.NonNull;
+import net.kyori.adventure.key.Namespaced;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Modifying;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
 import java.util.*;
 
-@SuppressWarnings("deprecation")
 public class FUtil // the f stands for fuck
 {
-    public static Map<String, ChatColor> CHAT_COLOR_NAMES;
-    public static List<ChatColor> CHAT_COLOR_POOL;
-    private static Random RANDOM;
+    private static final Random RANDOM = new Random();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().tags(TagResolver.builder()
+            .resolver(StandardTags.defaults())
+            .resolver(TagResolver.resolver("randomize", RandomColorTag.randomColorTag))
+            .build()).build();
+    private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
 
-    static
+    /**
+     * Broadcasts a staff action to the server. This calls the {@link PublicBroadcastEvent}.
+     * @param sender        The {@link CommandSender} performing the action.
+     * @param message       The message being broadcast as a String in MiniMessage format.
+     * @param placeholders  An array of {@link TagResolver} instances. If you don't want to have any additional
+     *                      placeholders, just leave out that argument.
+     */
+    public static void staffAction(@NonNull CommandSender sender, @NonNull String message,
+                                   @NonNull TagResolver... placeholders)
     {
-        RANDOM = new Random();
-        CHAT_COLOR_NAMES = new HashMap<>();
-        CHAT_COLOR_POOL = Arrays.asList(ChatColor.DARK_RED, ChatColor.RED, ChatColor.GOLD, ChatColor.YELLOW, ChatColor.GREEN, ChatColor.DARK_GREEN, ChatColor.AQUA, ChatColor.DARK_AQUA, ChatColor.BLUE, ChatColor.DARK_BLUE, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE);
-        for (final ChatColor chatColor : CHAT_COLOR_POOL)
+        broadcast("<gray><i>[<sender>: <action>]", Placeholder.unparsed("sender", sender.getName()),
+                Placeholder.component("action", FUtil.miniMessage(message, placeholders)));
+    }
+
+    /**
+     * Broadcasts a text component to the server. This calls the {@link PublicBroadcastEvent}.
+     * @param component     The {@link Component} being broadcasted.
+     */
+    public static void broadcast(Component component)
+    {
+        broadcast(true, component);
+    }
+
+    /**
+     * Broadcasts a text component to the server. This can optionally call the {@link PublicBroadcastEvent}.
+     * @param callEvent     Whether to call the {@link PublicBroadcastEvent}.
+     * @param component     The {@link Component} being broadcasted.
+     */
+    public static void broadcast(boolean callEvent, Component component)
+    {
+        Bukkit.broadcast(component);
+
+        if (callEvent)
         {
-            CHAT_COLOR_NAMES.put(chatColor.name().toLowerCase().replace("_", ""), chatColor);
+            new PublicBroadcastEvent(!Bukkit.isPrimaryThread(), component).callEvent();
         }
     }
 
-    public static void copy(InputStream in, File file) throws IOException
+    /**
+     * Broadcasts a text component to users on the server with a specific permission node. This does not call the
+     *  {@link PublicBroadcastEvent}.
+     * @param component     The {@link Component} being broadcasted.
+     * @param permission    The permission node required for a player to see the message.
+     */
+    public static void broadcast(Component component, String permission)
     {
-        if (!file.exists())
-        {
-            file.getParentFile().mkdirs();
-        }
-
-        final OutputStream out = new FileOutputStream(file);
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0)
-        {
-            out.write(buf, 0, len);
-        }
-        out.close();
-        in.close();
+        Bukkit.broadcast(component, permission);
     }
 
-    @SuppressWarnings("deprecation")
-    public static void adminAction(String adminName, String action, boolean isRed)
+    /**
+     * Broadcasts a MiniMessage-formatted message to the server. This calls the {@link PublicBroadcastEvent}.
+     * @param message       The message being broadcast as a String in MiniMessage format.
+     * @param placeholders  An array of {@link TagResolver} instances. If you don't want to have any additional
+     *                      placeholders, just leave out that argument.
+     */
+    public static void broadcast(String message, TagResolver... placeholders)
     {
-        FUtil.bcastMsg(adminName + " - " + action, (isRed ? ChatColor.RED : ChatColor.AQUA));
+        broadcast(true, message, placeholders);
     }
 
-    @SuppressWarnings("deprecation")
-    public static void bcastMsg(String message, ChatColor color)
+    /**
+     * Broadcasts a MiniMessage-formatted message to the server. This can optionally call the
+     *  {@link PublicBroadcastEvent}.
+     * @param callEvent     Whether to call the {@link PublicBroadcastEvent}.
+     * @param message       The message being broadcast as a String in MiniMessage format.
+     * @param placeholders  An array of {@link TagResolver} instances. If you don't want to have any additional
+     *                      placeholders, just leave out that argument.
+     */
+    public static void broadcast(boolean callEvent, String message, TagResolver... placeholders)
     {
-        bcastMsg(message, color, true);
-    }
+        Bukkit.broadcast(miniMessage(message, placeholders));
 
-    @SuppressWarnings("deprecation")
-    public static void bcastMsg(String message, ChatColor color, Boolean toConsole)
-    {
-        if (toConsole)
+        if (callEvent)
         {
-            FLog.info(message);
-        }
-
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-            player.sendMessage((color == null ? "" : color) + message);
+            new PublicBroadcastEvent(!Bukkit.isPrimaryThread(), miniMessage(message, placeholders)).callEvent();
         }
     }
 
-    public static void bcastMsg(String message, Boolean toConsole)
+    /**
+     * Broadcasts a MiniMessage-formatted message to users on the server with a specific permission node. This does not
+     *  call the {@link PublicBroadcastEvent}.
+     * @param permission    The permission node required for a player to see the message.
+     * @param message       The message being broadcast as a String in MiniMessage format.
+     * @param placeholders  An array of {@link TagResolver} instances. If you don't want to have any additional
+     *                      placeholders, just leave out that argument.
+     */
+    public static void broadcast(String permission, String message, TagResolver... placeholders)
     {
-        bcastMsg(message, null, toConsole);
+        Bukkit.broadcast(miniMessage(message, placeholders), permission);
     }
 
-    public static void bcastMsg(String message)
+    /**
+     * Processes MiniMessage messages into a regular Adventure text component.
+     * @param message       The message as a String in MiniMessage format.
+     * @param placeholders  An array of {@link TagResolver} instances. If you don't want to have any additional
+     *                      placeholders, just leave out that argument.
+     * @return              The resulting {@link Component}.
+     */
+    public static Component miniMessage(String message, TagResolver... placeholders)
     {
-        FUtil.bcastMsg(message, null, true);
+        return MINI_MESSAGE.deserialize(message, placeholders);
     }
 
-    public static String colorize(final String string)
+    /**
+     * Get the content of a component as a plain text String.
+     * @param input     The {@link Component} to get as a component.
+     * @return          The resulting String.
+     */
+    public static String plainText(Component input)
     {
-        return ChatColor.translateAlternateColorCodes('&', string);
+        return PLAIN_TEXT.serialize(input);
     }
 
-    public static ChatColor randomChatColor()
+    /**
+     * Get a random number between two numbers.
+     * @param min   The lowest the number can be.
+     * @param max   The highest the number can be.
+     * @return      A randomly generated number.
+     */
+    public static int randomNumber(int min, int max)
     {
-        return CHAT_COLOR_POOL.get(RANDOM.nextInt(CHAT_COLOR_POOL.size()));
-    }
-
-    public static void adminChat(CommandSender sender, String message)
-    {
-        Player player = Bukkit.getPlayer(sender.getName());
-        String rank = KoolSMPCore.main.perms.getDisplay(player);
-        String format = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "AC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + sender.getName() + ChatColor.DARK_GRAY + " [" + rank
-                + ChatColor.DARK_GRAY + "] " + ChatColor.GOLD + message;
-        Bukkit.getLogger().info(format);
-        Bukkit.getOnlinePlayers()
-                .stream()
-                .filter((players) -> (players.hasPermission("kf.admin")))
-                .forEachOrdered((players) -> players.sendMessage(format));
-    }
-
-    public static long getUnixTime()
-    {
-        return System.currentTimeMillis() / 1000L;
-    }
-
-    public static Date getUnixDate(long unix)
-    {
-        return new Date(unix * 1000);
-    }
-
-    public static long getUnixTime(Date date)
-    {
-        if (date == null)
+        if (min > max)
         {
-            return 0;
+            throw new IllegalArgumentException("Numbers are flipped. Max < min.");
         }
 
-        return date.getTime() / 1000L;
+        return RANDOM.nextInt(min, max);
     }
 
-    public static String decolorize(String string)
+    /**
+     * Get a randomly generated String that is the given length.
+     * @param length    int
+     * @return          A randomly generated alphanumeric string.
+     */
+    public static String randomString(int length)
     {
-        return string.replaceAll("\\u00A7(?=[0-9a-fk-or])", "&");
+        return RANDOM.ints(48, 122)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(length)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
     }
 
-    public static File getPluginFile(Plugin plugin, String name)
+    /**
+     * Sends a message to the admin chat on all platforms asynchronously.
+     * @see                 #adminChat(boolean, CommandSender, Component, String, GroupManagement.Group, Component, Namespaced)
+     * @param senderDisplay The sender's display name, represented as a {@link Component}.
+     * @param senderName    The sender's name.
+     * @param group         The {@link eu.koolfreedom.bridge.GroupManagement.Group} the sender is in.
+     * @param message       The message sent to the chat, represented as a {@link Component}.
+     * @param caller        An instance of {@link Namespaced}, such as {@link org.bukkit.NamespacedKey}. This is
+     *                      mandatory, as it is used to check if a particular event was sent by a given source and
+     *                      prevent duplicate or even endless messages from being sent.
+     */
+    public static void asyncAdminChat(Component senderDisplay, String senderName, GroupManagement.Group group,
+                                      Component message, Namespaced caller)
     {
-        return new File(plugin.getDataFolder(), name);
+        adminChat(true, null, senderDisplay, senderName, group, message, caller);
     }
 
-    public static String getIp(Player player)
+    /**
+     * Sends a message to the admin chat on all platforms asynchronously.
+     * @see                 #adminChat(boolean, CommandSender, Component, String, GroupManagement.Group, Component, Namespaced)
+     * @param sender        The {@link CommandSender} responsible for the message.
+     * @param group         The {@link eu.koolfreedom.bridge.GroupManagement.Group} the sender is in.
+     * @param message       The message sent to the chat, represented as a {@link Component}.
+     * @param caller        An instance of {@link Namespaced}, such as {@link org.bukkit.NamespacedKey}. This is
+     *                      mandatory, as it is used to check if a particular event was sent by a given source and
+     *                      prevent duplicate or even endless messages from being sent.
+     */
+    public static void asyncAdminChat(CommandSender sender, GroupManagement.Group group, Component message,
+                                      Namespaced caller)
     {
-        return player.getAddress().getAddress().getHostAddress().trim();
+        adminChat(true, sender, sender instanceof Player player ? player.displayName() :
+                Component.text(sender.getName()), sender.getName(), group, message, caller);
     }
 
-    public static String getFormattedEndDate(long end) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(end);
+    /**
+     * Sends a message to the admin chat on all platforms synchronously.
+     * @see                 #adminChat(boolean, CommandSender, Component, String, GroupManagement.Group, Component, Namespaced)
+     * @param sender        The {@link CommandSender} responsible for the message.
+     * @param group         The {@link eu.koolfreedom.bridge.GroupManagement.Group} the sender is in.
+     * @param message       The message sent to the chat, represented as a {@link Component}.
+     * @param caller        An instance of {@link Namespaced}, such as {@link org.bukkit.NamespacedKey}. This is
+     *                      mandatory, as it is used to check if a particular event was sent by a given source and
+     *                      prevent duplicate or even endless messages from being sent.
+     */
+    public static void adminChat(CommandSender sender, GroupManagement.Group group, Component message, Namespaced caller)
+    {
+        adminChat(false, sender, sender instanceof Player player ? player.displayName() :
+                Component.text(sender.getName()), sender.getName(), group, message, caller);
+    }
 
-        return String.format(
-                "%02d/%02d/%02d %02dH:%02dM",
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH),
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE)
-        );
+    /**
+     * Sends a message to the admin chat on all platforms synchronously.
+     * @see                 #adminChat(boolean, CommandSender, Component, String, GroupManagement.Group, Component, Namespaced)
+     * @param senderDisplay The sender's display name, represented as a {@link Component}.
+     * @param senderName    The sender's name.
+     * @param group         The {@link eu.koolfreedom.bridge.GroupManagement.Group} the sender is in.
+     * @param message       The message sent to the chat, represented as a {@link Component}.
+     * @param caller        An instance of {@link Namespaced}, such as {@link org.bukkit.NamespacedKey}. This is
+     *                      mandatory, as it is used to check if a particular event was sent by a given source and
+     *                      prevent duplicate or even endless messages from being sent.
+     */
+    public static void adminChat(@NonNull Component senderDisplay, @NonNull String senderName,
+                                 @NonNull GroupManagement.Group group, @NonNull Component message,
+                                 @NonNull Namespaced caller)
+    {
+        adminChat(false, null, senderDisplay, senderName, group, message, caller);
+    }
+
+    /**
+     * Sends a message to the admin chat on all platforms by calling the {@link AdminChatEvent} event and broadcasting
+     *  the message in-game.
+     * @param async         Whether to call the event asynchronously. This is required to be true to send admin chat
+     *                      events from platforms like Discord.
+     * @param sender        The {@link CommandSender} behind a given message. This can be null if {@code senderDisplay}
+     *                      and {@code senderName} are not null.
+     * @param senderDisplay The sender's display name, represented as a {@link Component}. This can be null if
+     *                      {@code sender} is not null.
+     * @param senderName    The sender's name. This can be null if {@code sender} is not null.
+     * @param group         The {@link eu.koolfreedom.bridge.GroupManagement.Group} the sender is in.
+     * @param message       The message sent to the chat, represented as a {@link Component}.
+     * @param caller        An instance of {@link Namespaced}, such as {@link org.bukkit.NamespacedKey}. This is
+     *                      mandatory, as it is used to check if a particular event was sent by a given source and
+     *                      prevent duplicate or even endless messages from being sent.
+     */
+    private static void adminChat(boolean async, @Nullable CommandSender sender, @Nullable Component senderDisplay,
+                                  @Nullable String senderName, @NonNull GroupManagement.Group group,
+                                  @NonNull Component message, @NonNull Namespaced caller)
+    {
+        // Mandates having one or the other to avoid possible issues in the future
+        if (sender == null)
+        {
+            Objects.requireNonNull(senderName);
+            Objects.requireNonNull(senderDisplay);
+        }
+        else if (senderName == null && senderDisplay == null)
+        {
+            Objects.requireNonNull(sender);
+        }
+
+        Component formattedMessage = miniMessage(ConfigEntry.FORMATS_ADMIN_CHAT.getString(),
+                Placeholder.unparsed("name", sender != null ? sender.getName() : senderName),
+                Placeholder.component("display_name", senderDisplay != null ?
+                        senderDisplay :
+                        sender instanceof Player player ?
+                                player.displayName() :
+                                Component.text(sender.getName())),
+                Placeholder.component("rank", group.getDisplayName()),
+                Placeholder.styling("rank_color", rank -> rank.color(group.getColor())),
+                Placeholder.component("message", message));
+
+        broadcast(formattedMessage, "kfc.command.adminchat");
+        new AdminChatEvent(async, sender, senderDisplay, senderName, group, message, caller).callEvent();
+    }
+
+    /**
+     * Get a player's IP address.
+     * @param player    The {@link Player} in question.
+     * @return          The player's IP address.
+     */
+    public static String getIp(@NonNull Player player)
+    {
+        return Objects.requireNonNull(player.getAddress()).getAddress().getHostAddress().trim();
+    }
+
+    /**
+     * Get a list of the names of all players currently online, plus or minus the users who are vanished.
+     * @param includeVanish Whether to include vanished players or not.
+     * @return              A list of player names which includes or excludes vanished players (depending on the given
+     *                      parameters).
+     */
+    public static List<String> getPlayerList(boolean includeVanish)
+    {
+        return Bukkit.getOnlinePlayers().stream().filter(player ->
+                KoolSMPCore.getInstance().getVanishBridge() != null &&
+                        KoolSMPCore.getInstance().getVanishBridge().isVanished(player) || includeVanish)
+                .map(Player::getName).toList();
+    }
+
+    /**
+     * Fetches a player currently online unless they are vanished and the given parameter does not allow it.
+     * @param name          The player's username
+     * @param seeVanished   Whether to return the {@link Player} or not.
+     * @return              The {@link Player}. This returns null if the player is not online, or they are vanished and
+     *                      {@code seeVanished} is false.
+     */
+    public static Player getPlayer(String name, boolean seeVanished)
+    {
+        Player player = Bukkit.getPlayer(name);
+        return seeVanished || KoolSMPCore.getInstance().getVanishBridge() != null
+                && KoolSMPCore.getInstance().getVanishBridge().isVanished(player) ? player : null;
+    }
+
+    public static class RandomColorTag implements Modifying
+    {
+        @Getter
+        private static final RandomColorTag randomColorTag = new RandomColorTag();
+
+        @Override
+        public Component apply(@NotNull Component current, int depth)
+        {
+            if (current instanceof TextComponent textComponent)
+            {
+                return Component.join(JoinConfiguration.spaces(), Arrays.stream(textComponent.content().split(" "))
+                        .map(text -> Component.text(text).colorIfAbsent(TextColor.color(randomNumber(0, 255),
+                                randomNumber(0, 255), randomNumber(0, 255)))).toList());
+            }
+
+            return current;
+        }
     }
 }

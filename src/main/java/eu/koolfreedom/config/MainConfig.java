@@ -1,58 +1,49 @@
 package eu.koolfreedom.config;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.log.FLog;
-import org.apache.commons.io.FileUtils;
+import eu.koolfreedom.util.FLog;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.EnumMap;
 import java.util.List;
 
 public class MainConfig
 {
-    public static final File CONFIG_FILE = new File(KoolSMPCore.main.getDataFolder(), KoolSMPCore.CONFIG_FILENAME);
+    public static final File CONFIG_FILE = new File(KoolSMPCore.getInstance().getDataFolder(), "config.yml");
     private static final EnumMap<ConfigEntry, Object> ENTRY_MAP;
-    private static final Deefawlts DEFAULTS;
 
     static
     {
-        ENTRY_MAP = new EnumMap<ConfigEntry, Object>(ConfigEntry.class);
+        ENTRY_MAP = new EnumMap<>(ConfigEntry.class);
 
-        Deefawlts tempDefaults = null;
+        Defaults tempDefaults;
         try
         {
-            try
+            try (InputStream defaultConfig = getDefaultConfig())
             {
-                InputStream defaultConfig = getDefaultConfig();
-                tempDefaults = new Deefawlts(defaultConfig);
+                tempDefaults = new Defaults(defaultConfig);
                 for (ConfigEntry entry : ConfigEntry.values())
                 {
                     ENTRY_MAP.put(entry, tempDefaults.get(entry.getConfigName()));
                 }
-                defaultConfig.close();
             }
             catch (IOException ex)
             {
-                FLog.severe(ex);
+                FLog.error("Failed to load default configuration", ex);
             }
 
-            copyDefaultConfig(CONFIG_FILE);
+            copyDefaultConfig();
 
             load();
         }
         catch (Exception ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to load configuration", ex);
         }
-
-        DEFAULTS = tempDefaults;
-    }
-
-    private MainConfig()
-    {
-        throw new AssertionError();
     }
 
     public static void load()
@@ -60,6 +51,11 @@ public class MainConfig
         try
         {
             YamlConfiguration config = new YamlConfiguration();
+
+            if (!CONFIG_FILE.exists())
+            {
+                copyDefaultConfig();
+            }
 
             config.load(CONFIG_FILE);
 
@@ -84,19 +80,11 @@ public class MainConfig
                 }
             }
         }
-        catch (FileNotFoundException ex)
+        catch (IOException | InvalidConfigurationException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to load configuration", ex);
         }
-        catch (IOException ex)
-        {
-            FLog.severe(ex);
-        }
-        catch (InvalidConfigurationException ex)
-        {
-            FLog.severe(ex);
-        }
-    }
+	}
 
     public static String getString(ConfigEntry entry)
     {
@@ -106,8 +94,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as a string (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -119,7 +108,7 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to set configuration entry as a string (incorrect type?)", ex);
         }
     }
 
@@ -131,8 +120,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as a double (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -144,7 +134,7 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to set configuration entry as a double (incorrect type?)", ex);
         }
     }
 
@@ -156,8 +146,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as a boolean (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -169,7 +160,7 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to set configuration entry as a boolean (incorrect type?)", ex);
         }
     }
 
@@ -181,8 +172,9 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as an integer (incorrect type?)", ex);
         }
+
         return null;
     }
 
@@ -194,11 +186,37 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to set configuration entry as an integer (incorrect type?)", ex);
         }
     }
 
-    public static List getList(ConfigEntry entry)
+    public static Long getLong(ConfigEntry entry)
+    {
+        try
+        {
+            return get(entry, Long.class);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            FLog.error("Failed to read configuration entry as a long (incorrect type?)", ex);
+        }
+
+        return null;
+    }
+
+    public static void setLong(ConfigEntry entry, Long value)
+    {
+        try
+        {
+            set(entry, value, Long.class);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            FLog.error("Failed to set configuration entry as an integer (incorrect type?)", ex);
+        }
+    }
+
+    public static List<?> getList(ConfigEntry entry)
     {
         try
         {
@@ -206,8 +224,23 @@ public class MainConfig
         }
         catch (IllegalArgumentException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to read configuration entry as a list (incorrect type?)", ex);
         }
+
+        return null;
+    }
+
+    public static ConfigurationSection getConfigurationSection(ConfigEntry entry)
+    {
+        try
+        {
+            return get(entry, ConfigurationSection.class);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            FLog.error("Failed to read configuration entry as a configuration section (incorrect type?)", ex);
+        }
+
         return null;
     }
 
@@ -237,59 +270,40 @@ public class MainConfig
         ENTRY_MAP.put(entry, value);
     }
 
-    private static void copyDefaultConfig(File targetFile)
+    private static void copyDefaultConfig()
     {
-        if (targetFile.exists())
+        if (MainConfig.CONFIG_FILE.exists())
         {
             return;
         }
 
-        FLog.info("Installing default configuration file template: " + targetFile.getPath());
+        FLog.info("Installing default configuration file template: {}", MainConfig.CONFIG_FILE.getPath());
 
         try
         {
             InputStream defaultConfig = getDefaultConfig();
-            FileUtils.copyInputStreamToFile(defaultConfig, targetFile);
+            Files.copy(defaultConfig, MainConfig.CONFIG_FILE.toPath());
             defaultConfig.close();
         }
         catch (IOException ex)
         {
-            FLog.severe(ex);
+            FLog.error("Failed to install default configuration file", ex);
         }
     }
 
     private static InputStream getDefaultConfig()
     {
-        return KoolSMPCore.main.getResource(KoolSMPCore.CONFIG_FILENAME);
+        return KoolSMPCore.getInstance().getResource("config.yml");
     }
 
-    public static TFM_Defaults getDefaults()
+    public static class Defaults
     {
-        return DEFAULTS;
-    }
+        private final YamlConfiguration defaults;
 
-    public static class TFM_Defaults
-    {
-        private YamlConfiguration defaults = null;
-
-        private TFM_Defaults(InputStream defaultConfig)
+        private Defaults(InputStream defaultConfig)
         {
-            try
-            {
-                defaults = new YamlConfiguration();
-                final InputStreamReader isr = new InputStreamReader(defaultConfig);
-                defaults.load(isr);
-                isr.close();
-            }
-            catch (IOException ex)
-            {
-                FLog.severe(ex);
-            }
-            catch (InvalidConfigurationException ex)
-            {
-                FLog.severe(ex);
-            }
-        }
+            defaults = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultConfig));
+		}
 
         public Object get(String path)
         {

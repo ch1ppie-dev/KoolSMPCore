@@ -1,300 +1,190 @@
 package eu.koolfreedom;
 
-import eu.koolfreedom.api.Permissions;
-import eu.koolfreedom.banning.BanListener;
-import eu.koolfreedom.banning.Bans;
-import eu.koolfreedom.banning.PermBans;
-import eu.koolfreedom.config.Configuration;
-import eu.koolfreedom.discord.Discord;
-import eu.koolfreedom.log.FLog;
-import net.dv8tion.jda.api.JDA;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.luckperms.api.LuckPerms;
+import eu.koolfreedom.bridge.GroupManagement;
+import eu.koolfreedom.banning.BanManager;
+import eu.koolfreedom.bridge.LuckPermsBridge;
+import eu.koolfreedom.bridge.VanishIntegration;
+import eu.koolfreedom.bridge.vanish.EssentialsVanishIntegration;
+import eu.koolfreedom.bridge.vanish.SuperVanishIntegration;
+import eu.koolfreedom.command.CommandLoader;
+import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.bridge.discord.DiscordSRVIntegration;
+import eu.koolfreedom.bridge.DiscordIntegration;
+import eu.koolfreedom.bridge.discord.EssentialsXDiscordIntegration;
+import eu.koolfreedom.util.FLog;
+import eu.koolfreedom.punishment.RecordKeeper;
+import eu.koolfreedom.reporting.ReportManager;
+import eu.koolfreedom.util.BuildProperties;
+import eu.koolfreedom.util.FUtil;
+import lombok.Getter;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
-import net.kyori.adventure.text.*;
 import eu.koolfreedom.command.impl.*;
 import eu.koolfreedom.listener.*;
-import com.earth2me.essentials.*;
-import org.bukkit.event.*;
-import java.io.InputStream;
-import java.util.concurrent.*;
-import net.kyori.adventure.text.serializer.legacy.*;
 import org.bukkit.*;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
 import java.util.*;
 
-import org.bukkit.event.player.*;
-import org.bukkit.entity.*;
+@Getter
+public class KoolSMPCore extends JavaPlugin
+{
+    @Getter
+    private static KoolSMPCore instance;
 
-@SuppressWarnings("deprecation")
-public class KoolSMPCore extends JavaPlugin implements Listener {
-    public static KoolSMPCore main;
-    public static Server server;
-    public static final Random random = new Random();
-    public static String pluginVersion;
-    public static String pluginName;
-    public static final String CONFIG_FILENAME = "config.yml";
-    public static final BuildProperties build = new BuildProperties();
-    private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    public Configuration config;
-    public ServerListener sl;
-    public Permissions perms;
-    public ExploitListener el;
-    public TabListener tl;
-    public LoginListener lol; // lol
-    public static JDA jda;
+    private BuildProperties buildMeta;
 
-    public static KoolSMPCore getPlugin()
-    {
-        return main;
-    }
+    private CommandLoader commandLoader;
 
-    public Component mmDeserialize(String message)
-    {
-        return MINI_MESSAGE.deserialize(message).clickEvent(null).hoverEvent(null);
-    }
+    private BanManager banManager;
+    private MuteManager muteManager;
+    private RecordKeeper recordKeeper;
+    private ReportManager reportManager;
 
-    public static LuckPerms getLuckPermsAPI()
-    {
-        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-        if (provider != null)
-        {
-            FLog.info("Successfully loaded the LuckPerms API.");
-            return provider.getProvider();
-        }
-        FLog.severe("The LuckPerms API was not loaded successfully. The plugin will not function properly.");
-        return null;
-    }
+    private CosmeticManager cosmeticManager;
+    private ExploitListener exploitListener;
+    private ChatListener chatListener;
 
+    private GroupManagement groupManager;
+    private LuckPermsBridge luckPermsBridge;
+    private DiscordIntegration<?> discordBridge;
+    private VanishIntegration<?> vanishBridge;
 
+    private BukkitTask announcer = null;
+
+    @Override
     public void onLoad()
     {
-        main = this;
-        server = main.getServer();
-        KoolSMPCore.pluginName = main.getDescription().getName();
-        KoolSMPCore.pluginVersion = main.getDescription().getVersion();
-
-        FLog.setPluginLogger(main.getLogger());
-        FLog.setServerLogger(getServer().getLogger());
-
-        config = new Configuration(this, "config.yml", true);
-
-        build.load(main);
+        instance = this;
+        buildMeta = new BuildProperties();
     }
 
     @Override
     public void onEnable()
     {
         FLog.info("Created by gamingto12 and 0x7694C9");
-        FLog.info("Version " + build.version);
-        FLog.info("Compiled " + build.date + " by " + build.author);
-        server.getPluginManager().registerEvents(this, this);
-        loadCommands();
-        FLog.info("Loaded commands");
+        FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
+        FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
+
+        commandLoader = new CommandLoader();
+        commandLoader.loadCommands(List.of(AdminChatCommand.class, BanCommand.class, BanIPCommand.class,
+                BanListCommand.class, ClearChatCommand.class, CommandSpyCommand.class, CrashCommand.class,
+                CryCommand.class, DoomCommand.class, HugCommand.class, KickCommand.class, KissCommand.class,
+                KoolSMPCoreCommand.class, MuteCommand.class, OrbitCommand.class, PatCommand.class, PokeCommand.class,
+                RawSayCommand.class, ReportCommand.class, ReportsCommand.class, SatisfyAllCommand.class,
+                SayCommand.class, ShipCommand.class, SlapCommand.class, SmiteCommand.class, SpectateCommand.class,
+                UnbanCommand.class, WarnCommand.class));
+        FLog.info("Loaded {} commands", commandLoader.getKoolCommands().size());
+
         loadListeners();
         FLog.info("Loaded listeners");
-        perms = new Permissions();
-        config.load();
+
+        groupManager = new GroupManagement();
+        FLog.info("Loaded group manager");
+
         loadBansConfig();
         FLog.info("Loaded configurations");
 
-        if (getConfig().getBoolean("enable-announcer")) announcerRunnable();
+        // Set up announcer
+        resetAnnouncer();
 
-        Discord.init();
+        loadBridges();
+        FLog.info("Bridges built");
     }
 
     @Override
     public void onDisable()
     {
         FLog.info("KoolSMPCore has been disabled");
-        if (jda != null) jda.shutdownNow();
-        config.save();
+
+        banManager.save();
+        reportManager.save();
     }
 
     public void loadBansConfig()
     {
-        Bans bans = Bans.getConfig();
-        bans.options().copyDefaults(true);
-        bans.save();
-        PermBans permbans = PermBans.getConfig();
-        permbans.options().copyDefaults(true);
-        permbans.save();
+        banManager = new BanManager();
+        banManager.load();
+        recordKeeper = new RecordKeeper();
     }
 
     public void loadListeners()
     {
-        PluginManager manager = Bukkit.getServer().getPluginManager();
-
-        manager.registerEvents(new BanListener(this), this);
-        manager.registerEvents(new MuteManager(this), this);
-        sl = new ServerListener(this);
-        el = new ExploitListener(this);
-        lol = new LoginListener(this);
-        tl = new TabListener(this);
+        muteManager = new MuteManager();
+        reportManager = new ReportManager();
+        cosmeticManager = new CosmeticManager();
+        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
+        chatListener = new ChatListener();
     }
 
-    public void loadCommands()
+    public void loadBridges()
     {
-        Objects.requireNonNull(getCommand("adminchat")).setExecutor(new AdminChatCommand());
-        Objects.requireNonNull(getCommand("ban")).setExecutor(new BanCommand());
-        Objects.requireNonNull(getCommand("clearchat")).setExecutor(new ClearChatCommand());
-        Objects.requireNonNull(getCommand("commandspy")).setExecutor(new CommandSpyCommand());
-        Objects.requireNonNull(getCommand("crash")).setExecutor(new CrashCommand());
-        Objects.requireNonNull(getCommand("cry")).setExecutor(new CryCommand());
-        Objects.requireNonNull(getCommand("doom")).setExecutor(new DoomCommand());
-        Objects.requireNonNull(getCommand("hug")).setExecutor(new HugCommand());
-        Objects.requireNonNull(getCommand("kick")).setExecutor(new KickCommand());
-        Objects.requireNonNull(getCommand("kiss")).setExecutor(new KissCommand());
-        Objects.requireNonNull(getCommand("koolsmpcore")).setExecutor(new KoolSMPCoreCommand());
-        Objects.requireNonNull(getCommand("mute")).setExecutor(new MuteCommand());
-        Objects.requireNonNull(getCommand("obliterate")).setExecutor(new ObliterateCommand());
-        Objects.requireNonNull(getCommand("orbit")).setExecutor(new OrbitCommand());
-        Objects.requireNonNull(getCommand("pat")).setExecutor(new PatCommand());
-        Objects.requireNonNull(getCommand("permbans")).setExecutor(new PermBansCommand());
-        Objects.requireNonNull(getCommand("poke")).setExecutor(new PokeCommand());
-        Objects.requireNonNull(getCommand("rawsay")).setExecutor(new RawSayCommand());
-        Objects.requireNonNull(getCommand("report")).setExecutor(new ReportCommand());
-        Objects.requireNonNull(getCommand("satisfyall")).setExecutor(new SatisfyAllCommand());
-        Objects.requireNonNull(getCommand("say")).setExecutor(new SayCommand());
-        Objects.requireNonNull(getCommand("ship")).setExecutor(new ShipCommand());
-        Objects.requireNonNull(getCommand("slap")).setExecutor(new SlapCommand());
-        Objects.requireNonNull(getCommand("smite")).setExecutor(new SmiteCommand());
-        Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand());
-        Objects.requireNonNull(getCommand("unban")).setExecutor(new UnbanCommand());
-        Objects.requireNonNull(getCommand("warn")).setExecutor(new WarnCommand());
-    }
+        PluginManager pluginManager = Bukkit.getPluginManager();
 
-
-    public static class BuildProperties
-    {
-        public String author;
-        public String version;
-        public String number;
-        public String date;
-
-        void load(KoolSMPCore plugin)
+        // Discord
+        if (pluginManager.isPluginEnabled("DiscordSRV"))
         {
-            try
-            {
-                final Properties props;
-
-                try (InputStream in = plugin.getResource("build.properties"))
-                {
-                    props = new Properties();
-                    props.load(in);
-                }
-
-                author = props.getProperty("buildAuthor", "gamingto12");
-                version = props.getProperty("buildVersion", pluginVersion);
-                number = props.getProperty("buildNumber", "1");
-                date = props.getProperty("buildDate", "unknown");
-            }
-            catch (Exception ex)
-            {
-                FLog.severe("Could not load build properties! Did you compile with NetBeans/Maven?");
-                FLog.severe(ex.toString());
-            }
+            FLog.info("Using DiscordSRV bridge.");
+            discordBridge = new DiscordSRVIntegration().register();
         }
-    }
-
-    public boolean isVanished(Player player)
-    {
-        Plugin essentials = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
-
-        if (essentials == null) {
-            return false;
-        }
-
-        return essentials.isEnabled() && ((Essentials) essentials).getUser(player).isVanished();
-    }
-
-    private void announcerRunnable()
-    {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () ->
+        else if (pluginManager.isPluginEnabled("EssentialsDiscord") && pluginManager.isPluginEnabled("EssentialsDiscordLink"))
         {
-            List<String> messageKeys = new ArrayList<>(getConfig().getConfigurationSection("messages").getKeys(false));
-            if (messageKeys.isEmpty())
-            {
-                getLogger().warning("No messages found in configuration.");
-                return;
-            }
-            String randomKey = messageKeys.get(ThreadLocalRandom.current().nextInt(messageKeys.size()));
-            List<String> lines = getConfig().getStringList("messages." + randomKey);
-            if (lines.isEmpty())
-            {
-                getLogger().warning("Message '" + randomKey + "' has no lines.");
-                return;
-            }
-            Bukkit.broadcast(Component.newline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(String.join("\n", lines))).appendNewline());
-        }, 0L, getConfig().getLong("announcer-time"));
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onChat(AsyncPlayerChatEvent event) {
-        String message = event.getMessage();
-        Player player = event.getPlayer();
-
-        if (message.startsWith("/") && !player.isOp()) {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (player.hasPermission("kf.admin"))
-        {
-            if (message.contains("@everyone"))
-            {
-                String lastColor = ChatColor.getLastColors(message);
-                message = message.replace("@everyone", "§b@everyone" + (lastColor.isEmpty() ? "§r" : lastColor));
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
-                }
-
-                event.setMessage(message);
-                return;
-            }
+            FLog.info("Using EssentialsXDiscord bridge.");
+            discordBridge = new EssentialsXDiscordIntegration().register();
         }
         else
         {
-            if (message.trim().toLowerCase().contains("nigger") ||
-                    (message.trim().toLowerCase().contains("nigga") ||
-                            (message.trim().toLowerCase().contains("faggot") ||
-                                    (message.trim().toLowerCase().contains("n1gga")) ||
-                                    (message.trim().toLowerCase().contains("fag")) ||
-                                    (message.trim().toLowerCase().contains("heil hitler")) ||
-                                    (message.trim().toLowerCase().contains("tranny")) ||
-                                    (message.trim().toLowerCase().contains("n1gger")) ||
-                                    (message.trim().toLowerCase().contains("fagg0t")) ||
-                                    (message.trim().toLowerCase().contains("sieg heil")) ||
-                                    (message.trim().toLowerCase().contains("niga"))))){
-                event.setCancelled(true);
+            discordBridge = Bukkit.getServicesManager().load(DiscordIntegration.class);
 
-                player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), message));
-
-                Bukkit.getScheduler().runTaskLater(this, () -> {
-                    if (player.isOnline())
-                    {
-                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "obliterate " + player.getName() + "Hate-Speech");
-                    }
-                    else
-                    {
-                        getServer().dispatchCommand(Bukkit.getConsoleSender(), "banip " + player.getName() + " Hate-Speech");
-                    }
-                }, 50L);
-
-                return;
+            if (discordBridge != null)
+            {
+                FLog.info("Using external Discord integrator {}", discordBridge.getClass().getName());
             }
         }
 
-        for (Player p : Bukkit.getOnlinePlayers())
+        // Vanish plugins
+        if (pluginManager.isPluginEnabled("Essentials"))
         {
-            if (isVanished(p)) continue;
+            vanishBridge = new EssentialsVanishIntegration();
+        }
+        else if (pluginManager.isPluginEnabled("SuperVanish"))
+        {
+            vanishBridge = new SuperVanishIntegration();
+        }
 
-            if (message.contains("@" + p.getName()))
+        // LuckPerms
+        if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms"))
+        {
+            luckPermsBridge = new LuckPermsBridge();
+        }
+    }
+
+    public void resetAnnouncer()
+    {
+        if (announcer != null)
+        {
+            announcer.cancel();
+        }
+
+        if (ConfigEntry.ANNOUNCER_ENABLED.getBoolean())
+        {
+            announcer = new BukkitRunnable()
             {
-                String lastColor = ChatColor.getLastColors(message);
-                message = message.replace("@" + p.getName(), "§b@" + p.getName() + (lastColor.isEmpty() ? "§r" : lastColor));
-                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.0F);
-            }
+                @Override
+                public void run()
+                {
+                    List<String> messages = ConfigEntry.ANNOUNCER_MESSAGES.getStringList();
+
+                    // Messages aren't configured, so we're not going to bother
+                    if (messages.isEmpty())
+                    {
+                        return;
+                    }
+
+                    FUtil.broadcast(false, messages.get(FUtil.randomNumber(0, messages.size())));
+                }
+            }.runTaskTimer(this, 0, Math.max(1, ConfigEntry.ANNOUNCER_DELAY.getInteger()));
         }
     }
 }
