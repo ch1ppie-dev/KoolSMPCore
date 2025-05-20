@@ -19,9 +19,10 @@ public class AdminInfoCommand extends KoolCommand
             msg(sender, playersOnly);
         }
 
-        msg(sender, "<red>To apply for a staff rank, head over to <gold>" + website_or_forums + "</gold> and fill out a staff application.");
-        msg(sender, "<red>Be mindful of the rules and guidelines, and don't spam the staff team.");
-        msg(sender, "<red>Failure to comply with the rules and guidelines will result in a consequence decided by staff.");
+        msg(sender, "<gold>To apply for a staff rank, head over to <red>" + website_or_forums + "</red> and fill out a staff application.");
+        msg(sender, "<gold>Be mindful of the <red>rules and guidelines</red>, and don't spam the staff team.");
+        msg(sender, "<gold>Failure to comply with the rules and guidelines will result in a <b><red>ban</b></red>.");
+        msg(sender, "<gold>Do not bug staff members to look at your application or else it will most likely get <red>denied</red>.");
         return true;
     }
 }
