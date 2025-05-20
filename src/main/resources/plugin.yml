@@ -51,6 +51,7 @@ permissions:
       - kfc.command.say
       - kfc.command.smite
       - kfc.command.spectate
+      - kfc.command.troll
       - kfc.command.unban
       - kfc.command.warn
       - kfc.command.warn.immune
