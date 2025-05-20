@@ -23,6 +23,7 @@ public class SatisfyAllCommand extends KoolCommand
             player.setFoodLevel(20);
             player.setSaturation(20);
             player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+            player.setFireTicks(0);
         });
         FUtil.staffAction(sender, "Healed all players");
         return true;
