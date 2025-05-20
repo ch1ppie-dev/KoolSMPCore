@@ -1,5 +1,6 @@
 package eu.koolfreedom.banning;
 
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.util.FUtil;
 import lombok.Builder;
@@ -133,6 +134,8 @@ public class Ban
 		{
 			builder.append("<newline>Expires: <yellow><expires></yellow>");
 		}
+
+		builder.append("<newline><red>You can appeal at <yellow>" + ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString() + "</yellow>");
 
 		return FUtil.miniMessage(builder.toString(),
 				Placeholder.unparsed("expires", expirationDateFormat.format(new Date(expires))),
