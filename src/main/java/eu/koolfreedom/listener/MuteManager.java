@@ -1,6 +1,7 @@
 package eu.koolfreedom.listener;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.impl.MuteChatCommand;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.Bukkit;
@@ -73,6 +74,20 @@ public class MuteManager implements Listener
         if (isMuted(player))
         {
             event.setCancelled(true);
+        }
+    }
+
+    // this should only be used in the mutechat command,
+    @EventHandler
+    @SuppressWarnings("deprecation")
+    public void muteChatEvent(AsyncPlayerChatEvent event)
+    {
+        Player player = event.getPlayer();
+
+        if (MuteChatCommand.isChatMuted() && !player.hasPermission("kfc.mutechat.bypass"))
+        {
+            event.setCancelled(true);
+            player.sendMessage(FUtil.miniMessage("<red>Chat is currently muted, you cannot speak."));
         }
     }
 }

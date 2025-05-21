@@ -85,6 +85,7 @@ public class KoolSMPCore extends JavaPlugin
                 KissCommand.class,
                 KoolSMPCoreCommand.class,
                 MuteCommand.class,
+                MuteChatCommand.class,
                 OrbitCommand.class,
                 PatCommand.class,
                 PokeCommand.class,

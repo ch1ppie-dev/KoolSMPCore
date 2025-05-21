@@ -45,6 +45,8 @@ permissions:
       - kfc.command.kick
       - kfc.command.mute
       - kfc.command.mute.immune
+      - kfc.command.mutechat
+      - kfc.mutechat.bypass
       - kfc.command.orbit
       - kfc.command.rawsay
       - kfc.command.reports
