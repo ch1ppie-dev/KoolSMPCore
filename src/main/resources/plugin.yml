@@ -41,6 +41,7 @@ permissions:
       - kfc.command.clearchat
       - kfc.command.clearchat.immune
       - kfc.command.commandspy
+      - kfc.command.entitywipe
       - kfc.command.kick
       - kfc.command.mute
       - kfc.command.mute.immune
@@ -64,6 +65,7 @@ permissions:
       - kfc.command.banlist.reload
       - kfc.command.koolsmpcore.reload
       - kfc.command.doom
+      - kfc.command.unloadchunks
   kfc.exec:
     description: Permission group offering pretty much everything the plugin has to offer, plus some fun commands
     default: op
