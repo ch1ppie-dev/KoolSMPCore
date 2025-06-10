@@ -2,6 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.util.FUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -10,64 +11,108 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-@CommandParameters(name = "entitywipe", description = "Wipe entities (not including players)", usage = "/<command> [mob,monster,mobs", aliases = {"ew", "mp"})
+@CommandParameters(name = "entitywipe", description = "Wipe entities (not including players)", usage = "/<command> [entity] [radius]", aliases = {"ew"})
 public class EntityWipeCommand extends KoolCommand
 {
-    public static final List<EntityType> NO_CLEAR = Arrays.asList(EntityType.ITEM_FRAME, EntityType.MINECART, EntityType.ARMOR_STAND);
-    public EntityType et;
-
-    public static int entities()
-    {
-        int removed = 0;
-        for (World eworld : Bukkit.getWorlds())
-        {
-            removed = eworld.getEntities().stream().filter((entity) -> ( ! (entity instanceof Player) &&  ! NO_CLEAR.contains(entity.getType()))).map((entity) ->
-            {
-                entity.remove();
-                return entity;
-            }).map((_item) -> 1).reduce(removed, Integer :: sum);
-        }
-        return removed;
-    }
-
-    public static int mobs()
-    {
-        int removed = 0;
-        for (World eworld : Bukkit.getWorlds())
-        {
-            removed = eworld.getLivingEntities().stream().filter((entity) -> (entity instanceof Creature || entity instanceof Ghast || entity instanceof Slime || entity instanceof EnderDragon || entity instanceof Ambient)).map((entity) ->
-            {
-                entity.remove();
-                return entity;
-            }).map((_item) -> 1).reduce(removed, Integer :: sum);
-        }
-        return removed;
-    }
-
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
-        Player player = (Player) sender;
+        List<String> entityBlacklist = ConfigEntry.ENTITYWIPE_CLEAR_LIST.getStringList();
 
-        if (args.length == 0)
+        List<String> entityWhitelist = new LinkedList<>(Arrays.asList(args));
+
+        boolean radiusSpecified = !entityWhitelist.isEmpty() && isNumeric(entityWhitelist.get(entityWhitelist.size() - 1));
+        boolean useBlacklist = args.length == 0 || (args.length == 1 && radiusSpecified);
+        int radius = 0;
+
+        if (radiusSpecified)
         {
-            FUtil.staffAction(sender, "Removed all entities");
-            msg(sender, "<gray>Removed " + entities() + " entities.");
-            return true;
+            radius = parseInt(sender, args[entityWhitelist.size() - 1]); // get the args length as the size of the list
+            radius *= radius;
+            entityWhitelist.remove(entityWhitelist.size() - 1); // remove the radius from the list
         }
-        if (args.length <= 1)
+
+        EntityType[] entityTypes = EntityType.values();
+        entityWhitelist.removeIf(name ->
         {
-            if (args[0].equalsIgnoreCase("mob") || args[0].equalsIgnoreCase("monsters") || args[0].equalsIgnoreCase("mobs"))
+            boolean res = Arrays.stream(entityTypes).noneMatch(entityType -> name.equalsIgnoreCase(entityType.name()));
+            if (res)
             {
-                FUtil.staffAction(sender, "Purged all mobs");
-                msg(sender, "<gray>Removed " + mobs() + " mobs");
+                msg(sender, "<gray>Invalid mob type");
+            }
+            return res;
+        });
+
+        HashMap<String, Integer> entityCounts = new HashMap<>();
+
+        for (World world : Bukkit.getWorlds())
+        {
+            for (Entity entity : world.getEntities())
+            {
+                if (entity.getType() != EntityType.PLAYER)
+                {
+                    String type = entity.getType().name();
+
+                    if (useBlacklist ? entityBlacklist.stream().noneMatch(entityName -> entityName.equalsIgnoreCase(type)) : entityWhitelist.stream().anyMatch(entityName -> entityName.equalsIgnoreCase(type)))
+                    {
+                        if (radius > 0)
+                        {
+                            if (playerSender != null && entity.getWorld() == playerSender.getWorld() && playerSender.getLocation().distanceSquared(entity.getLocation()) > radius)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int entityCount = entityCounts.values().stream().mapToInt(a -> a).sum();
+
+        if (useBlacklist)
+        {
+            FUtil.staffAction(sender, "Removed " + entityCount + " entities");
+        }
+        else
+        {
+            if (entityCount == 0)
+            {
+                msg(sender, "<gray>No entities were removed");
                 return true;
             }
-            msg(sender, "<gray>Usage: /<command> [mobs,mob,monsters]");
-            return true;
+            String list = String.join(", ", entityCounts.keySet());
+            list = list.replaceAll("(, )(?!.*\1)", (list.indexOf(", ") == list.lastIndexOf(", ") ? "" : ",") + " and ");
+            FUtil.staffAction(sender, "Removed " + entityCount + " of type " + list);
+        }
+        return true;
+    }
+
+    private Integer parseInt(CommandSender sender, String string)
+    {
+        try
+        {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException e) {
+            msg(sender, "<gray>Not a number");
+        }
+        return null;
+    }
+
+    private boolean isNumeric(String string)
+    {
+        if (string == null)
+        {
+            return false;
+        }
+        try
+        {
+            int num = Integer.parseInt(string);
+        }
+        catch (NumberFormatException nfe)
+        {
+            return false;
         }
         return true;
     }
