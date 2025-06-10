@@ -4,11 +4,14 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.impl.MuteChatCommand;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +80,20 @@ public class MuteManager implements Listener
         }
     }
 
-    // this should only be used in the mutechat command,
+    // TODO: Create a command-blocking system to add to this.
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event)
+    {
+        Player player = event.getPlayer();
+
+        if (isMuted(player))
+        {
+            event.setCancelled(true);
+            player.sendMessage(FUtil.miniMessage("<red>You are muted, you cannot use commands."));
+        }
+    }
+
+    // this should only be used in the mutechat command
     @EventHandler
     @SuppressWarnings("deprecation")
     public void muteChatEvent(AsyncPlayerChatEvent event)
