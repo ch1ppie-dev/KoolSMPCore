@@ -40,6 +40,7 @@ permissions:
       - kfc.command.adminchat
       - kfc.command.ban
       - kfc.command.banip
+      - kfc command.banlist
       - kfc.command.clearchat
       - kfc.command.clearchat.immune
       - kfc.command.commandspy
