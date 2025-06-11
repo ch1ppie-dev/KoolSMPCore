@@ -18,7 +18,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getPlayer;
 
-@CommandParameters(name = "cage", description = "For the naughty ones, put them in a cage", usage = "/<command> <player>")
+@CommandParameters(name = "cage", description = "For the naughty ones, put them in a cage", usage = "/<command> <purge> | <player> [head | block] [playername | blockname]")
 public class CageCommand extends KoolCommand
 {
     @Getter
