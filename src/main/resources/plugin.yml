@@ -41,6 +41,7 @@ permissions:
       - kfc.command.ban
       - kfc.command.banip
       - kfc command.banlist
+      - kfc.command.blockcmd
       - kfc.command.clearchat
       - kfc.command.clearchat.immune
       - kfc.command.commandspy
@@ -69,6 +70,7 @@ permissions:
     children:
       - kfc.admin
       - kfc.command.banlist.reload
+      - kfc.command.cage
       - kfc.command.koolsmpcore.reload
       - kfc.command.doom
       - kfc.command.unloadchunks

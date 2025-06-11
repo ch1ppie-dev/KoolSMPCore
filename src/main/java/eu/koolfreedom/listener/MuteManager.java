@@ -1,6 +1,7 @@
 package eu.koolfreedom.listener;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.command.impl.BlockCmdCommand;
 import eu.koolfreedom.command.impl.MuteChatCommand;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class MuteManager implements Listener
 {
     private final List<UUID> muted = new ArrayList<>();
+    private final List<UUID> blockedCommands = new ArrayList<>();
 
     public MuteManager()
     {
@@ -55,6 +57,31 @@ public class MuteManager implements Listener
         return muted.contains(player.getUniqueId());
     }
 
+    public void setCommandsBlocked(Player player, boolean block)
+    {
+        if (block)
+        {
+            blockedCommands.add(player.getUniqueId());
+        }
+        else
+        {
+            blockedCommands.remove(player.getUniqueId());
+        }
+    }
+
+    public boolean isCommandsBlocked(Player player)
+    {
+        return blockedCommands.contains(player.getUniqueId());
+    }
+
+    public int wipeBlockedCommands()
+    {
+        int amount = blockedCommands.size();
+        blockedCommands.clear();
+        return amount;
+    }
+
+
     @EventHandler
     public void onPlayerChat(AsyncChatEvent event)
     {
@@ -80,11 +107,17 @@ public class MuteManager implements Listener
         }
     }
 
-    // TODO: Create a command-blocking system to add to this.
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event)
     {
         Player player = event.getPlayer();
+
+        if (isCommandsBlocked(player))
+        {
+            event.setCancelled(true);
+            player.sendMessage(FUtil.miniMessage("<red>You are not allowed to use commands right now."));
+            return;
+        }
 
         if (isMuted(player))
         {
