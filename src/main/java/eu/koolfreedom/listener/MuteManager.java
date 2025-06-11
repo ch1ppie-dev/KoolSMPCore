@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,6 +138,17 @@ public class MuteManager implements Listener
         {
             event.setCancelled(true);
             player.sendMessage(FUtil.miniMessage("<red>Chat is currently muted, you cannot speak."));
+        }
+    }
+
+    // half-assed way to make sure players are still muted if the muted player relogs
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event)
+    {
+        Player player = event.getPlayer();
+        if (isMuted(player))
+        {
+            setMuted(player, true);
         }
     }
 }
