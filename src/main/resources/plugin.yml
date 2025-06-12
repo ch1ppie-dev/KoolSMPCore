@@ -41,7 +41,7 @@ permissions:
       - kfc.command.ban
       - kfc.command.banip
       - kfc command.banlist
-      - kfc.command.blockcmd
+      - kfc.command.blockcommand
       - kfc.command.clearchat
       - kfc.command.clearchat.immune
       - kfc.command.commandspy
