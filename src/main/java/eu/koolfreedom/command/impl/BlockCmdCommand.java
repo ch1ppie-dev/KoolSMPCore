@@ -32,10 +32,11 @@ public class BlockCmdCommand extends KoolCommand
             FUtil.staffAction(sender, "Unblocking commands for all players.");
             int count = manager.wipeBlockedCommands();
 
-            for (Player p : Bukkit.getOnlinePlayers())
-            {
-                p.sendMessage(FUtil.miniMessage("<green>Your command block has been lifted."));
-            }
+            // TODO: don't make this broadcast to everyone, only players who had their commands blocked
+            //for (Player p : Bukkit.getOnlinePlayers())
+            //{
+            //    p.sendMessage(FUtil.miniMessage("<green>Your command block has been lifted."));
+            //}
 
             msg(sender, "<gray>Unblocked commands for " + count + " players.");
             return true;

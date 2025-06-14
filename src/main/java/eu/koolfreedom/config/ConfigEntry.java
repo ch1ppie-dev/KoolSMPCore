@@ -20,7 +20,6 @@ public enum ConfigEntry
     DISCORD_REPLYING_TO_FORMAT(String.class, "discord.replying_to_format"),
     CHAT_FILTER_ENABLED(Boolean.class, "chat-filter.enabled"),
     CHAT_FILTER_CATEGORIES(ConfigurationSection.class, "chat-filter.categories"),
-    ENTITYWIPE_CLEAR_LIST(List.class, "entitywipe_list"),
     FORMATS_ADMIN_CHAT(String.class, "formats.admin_chat"),
     FORMATS_COMMANDSPY(String.class, "formats.commandspy"),
     FORMATS_REPORT(String.class, "formats.report"),

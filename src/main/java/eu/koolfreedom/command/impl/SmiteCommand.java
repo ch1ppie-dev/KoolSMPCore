@@ -50,12 +50,12 @@ public class SmiteCommand extends KoolCommand
     {
         FUtil.broadcast("<red><player> has been a naughty, naughty child.",
                 Placeholder.unparsed("player", target.getName()));
-        FUtil.broadcast(" <red>Smitten by: <yellow><sender>", Placeholder.unparsed("sender", sender.getName()));
+        FUtil.broadcast("<red>Smitten by: <yellow><sender>", Placeholder.unparsed("sender", sender.getName()));
 
         if (reason != null)
         {
 
-            FUtil.broadcast(" <red>Reason: <yellow><reason>", Placeholder.unparsed("reason", reason));
+            FUtil.broadcast("<red>Reason: <yellow><reason>", Placeholder.unparsed("reason", reason));
         }
 
         KoolSMPCore.getInstance().getRecordKeeper().recordPunishment(Punishment.builder()

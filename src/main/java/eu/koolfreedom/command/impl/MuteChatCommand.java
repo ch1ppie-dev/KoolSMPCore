@@ -21,7 +21,7 @@ public class MuteChatCommand extends KoolCommand
     {
         chatMuted = !chatMuted;
         String status = chatMuted ? "Muted" : "Unmuted";
-        FUtil.staffAction(sender, status + " chat");
+        FUtil.staffAction(sender, status + " global chat");
         return true;
     }
 }
