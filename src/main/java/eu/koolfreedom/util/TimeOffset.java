@@ -10,7 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Getter
-public enum TimeOffset {
+public enum TimeOffset 
+{
 	MILLISECOND(1L, "ms"),
 	SECOND(1000L, "s"),
 	MINUTE(60L * 1000, "m"),
@@ -27,16 +28,19 @@ public enum TimeOffset {
 	private final long multiplier;
 	private final String delimiter;
 
-	TimeOffset(long multiplier, String delimiter) {
+	TimeOffset(long multiplier, String delimiter) 
+	{
 		this.multiplier = multiplier;
 		this.delimiter = delimiter;
 	}
 
-	public long multiply(long amount) {
+	public long multiply(long amount) 
+	{
 		return amount * multiplier;
 	}
 
-	public static long getOffset(String str) {
+	public static long getOffset(String str) 
+	{
 		Matcher matcher = pattern.matcher(str);
 		AtomicLong amount = new AtomicLong(0);
 
