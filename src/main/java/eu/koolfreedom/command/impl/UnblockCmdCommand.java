@@ -34,7 +34,7 @@ public class UnblockCmdCommand extends KoolCommand
         if (manager.isCommandsBlocked(player))
         {
             manager.setCommandsBlocked(player, false);
-            FUtil.staffAction(sender, "Unblocking commands for <player>", Placeholder.unparsed("player", player.getName()));
+            FUtil.staffAction(sender, "Unblocked commands for <player>", Placeholder.unparsed("player", player.getName()));
             msg(sender, "<gray>Unblocked commands for <player>", Placeholder.unparsed("player", player.getName()));
         }
         else
