@@ -4,6 +4,12 @@ This is the official source code repository for the KoolSMPCore plugin
 
 KoolSMPCore is a plugin primarily made to support the KoolFreedom SMP Minecraft Server, but you are more than welcome to use the source code for your own server.
 
+# Alternative Download
+
+We are now on SpigotMC, you can download the plugin from this link:
+
+https://www.spigotmc.org/resources/koolsmpcore.126127/ 
+
 # Compiling
 
 You need Maven to build.
