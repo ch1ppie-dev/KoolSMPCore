@@ -29,7 +29,7 @@ public class BlockCmdCommand extends KoolCommand
 
         if (sub.equalsIgnoreCase("purge"))
         {
-            FUtil.staffAction(sender, "Unblocking commands for all players.");
+            FUtil.staffAction(sender, "Unblocked commands for all players.");
             int count = manager.wipeBlockedCommands();
 
             // hopefully this actually works as planned.
@@ -50,7 +50,7 @@ public class BlockCmdCommand extends KoolCommand
 
         if (sub.equalsIgnoreCase("-a"))
         {
-            FUtil.staffAction(sender, "Blocking commands for all non-admins.");
+            FUtil.staffAction(sender, "Blocked commands for all non-admins.");
             int count = 0;
 
             for (Player p : Bukkit.getOnlinePlayers())
@@ -89,7 +89,7 @@ public class BlockCmdCommand extends KoolCommand
             return true;
         }
 
-        FUtil.staffAction(sender, "Blocking all commands for " + target.getName());
+        FUtil.staffAction(sender, "Blocked all commands for " + target.getName());
         manager.setCommandsBlocked(target, true);
         target.sendMessage(FUtil.miniMessage("<red>Your commands have been blocked."));
         msg(sender, "<gray>Blocked commands for " + target.getName() + ".");
