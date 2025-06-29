@@ -10,11 +10,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 public class GroupManagement
 {
@@ -102,6 +105,32 @@ public class GroupManagement
         return Component.text(sender.getName()).color(getSenderGroup(sender).getColor());
     }
 
+    /**
+     * Adds / moves the player into a Team whose color matches their primary group,
+     * so the hovering nametag adopts that color.
+     */
+    public void applyNametagColor(Player player)
+    {
+        Group g = getSenderGroup(player);
+        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+
+        String teamName = "rank_" + g.getInternalName().toLowerCase(Locale.ROOT);
+        Team team = main.getTeam(teamName);
+
+        if (team == null)
+        {
+            team = main.registerNewTeam(teamName);
+            team.setColor(g.toChatColor());
+        }
+
+        // update color if config changed
+        if (team.getColor() != g.toChatColor())
+            team.setColor(g.toChatColor());
+
+        if (!team.hasEntry(player.getName()))
+            team.addEntry(player.getName());
+    }
+
     @Getter
     public static class Group
     {
@@ -148,6 +177,17 @@ public class GroupManagement
         public static Group createGroup(String internalName, String name, Component displayName, TextColor color)
         {
             return new Group(internalName, name, displayName, color);
+        }
+
+        @SuppressWarnings("deprecation")
+        public ChatColor toChatColor()
+        {
+            if (color instanceof NamedTextColor named)
+            {
+                return ChatColor.valueOf(named.toString().toUpperCase(Locale.ROOT));
+            }
+            // fallback (no hex codes)
+            return ChatColor.GRAY;
         }
 
         private Group(String internalName, String name, TextColor textColor)
