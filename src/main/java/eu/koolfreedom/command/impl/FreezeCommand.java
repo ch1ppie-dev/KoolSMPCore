@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.freeze.FreezeManager;
@@ -15,9 +16,9 @@ public class FreezeCommand extends KoolCommand
 {
     private final FreezeManager fm;
 
-    public FreezeCommand(FreezeManager fm)
+    public FreezeCommand()
     {
-        this.fm = fm;
+        this.fm = KoolSMPCore.getInstance().getFreezeManager();
     }
 
     @Override
