@@ -11,6 +11,8 @@ import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.bridge.discord.DiscordSRVIntegration;
 import eu.koolfreedom.bridge.DiscordIntegration;
 import eu.koolfreedom.bridge.discord.EssentialsXDiscordIntegration;
+import eu.koolfreedom.freeze.FreezeListener;
+import eu.koolfreedom.freeze.FreezeManager;
 import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
@@ -41,6 +43,8 @@ public class KoolSMPCore extends JavaPlugin
     private MuteManager muteManager;
     private RecordKeeper recordKeeper;
     private ReportManager reportManager;
+    private FreezeManager freezeManager;
+    private FreezeListener freezeListener;
 
     private CosmeticManager cosmeticManager;
     private ExploitListener exploitListener;
@@ -110,6 +114,8 @@ public class KoolSMPCore extends JavaPlugin
         cosmeticManager = new CosmeticManager();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
         chatListener = new ChatListener();
+        freezeManager = new FreezeManager(this);
+        freezeListener = new FreezeListener(freezeManager);
     }
 
     public void loadBridges()
@@ -180,5 +186,10 @@ public class KoolSMPCore extends JavaPlugin
                 }
             }.runTaskTimer(this, 0, Math.max(1, ConfigEntry.ANNOUNCER_DELAY.getInteger()));
         }
+    }
+
+    public FreezeManager getFreezeManager()
+    {
+        return freezeManager;
     }
 }
