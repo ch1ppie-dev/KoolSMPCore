@@ -71,6 +71,8 @@ public class KoolSMPCore extends JavaPlugin
         FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
         FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
 
+        freezeManager = new FreezeManager();
+
         commandLoader = new CommandLoader(AdminChatCommand.class);
         commandLoader.loadCommands();
         FLog.info("Loaded {} commands", commandLoader.getKoolCommands().size());
@@ -114,8 +116,7 @@ public class KoolSMPCore extends JavaPlugin
         cosmeticManager = new CosmeticManager();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
         chatListener = new ChatListener();
-        freezeManager = new FreezeManager(this);
-        freezeListener = new FreezeListener(freezeManager);
+        freezeListener = new FreezeListener();
     }
 
     public void loadBridges()

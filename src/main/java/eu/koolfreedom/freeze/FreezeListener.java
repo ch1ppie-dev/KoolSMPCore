@@ -1,33 +1,23 @@
 package eu.koolfreedom.freeze;
 
+import eu.koolfreedom.KoolSMPCore;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.entity.Player;
 
-public class FreezeListener implements Listener
-{
-    private final FreezeManager fm;
+public class FreezeListener implements Listener {
 
-    public FreezeListener(FreezeManager fm)
+    private final FreezeManager freezeManager = KoolSMPCore.getInstance().getFreezeManager();
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event)
     {
-        this.fm = fm;
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onMove(PlayerMoveEvent e)
-    {
-        Player p = e.getPlayer();
-
-        if (!fm.isGlobalFreeze() && !fm.isFrozen(p))
+        if (!event.getFrom().toVector().equals(event.getTo().toVector()))
         {
-            return;
+            if (freezeManager.isFrozen(event.getPlayer()) || freezeManager.isGlobalFreeze())
+            {
+                event.setTo(event.getFrom());
+            }
         }
-
-        // keep them flying so that they don't fall endlessly
-        p.setFlying(true);
-
-        // cancel movement
-        e.setTo(e.getFrom());
     }
 }

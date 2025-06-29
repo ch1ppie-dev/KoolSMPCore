@@ -1,95 +1,56 @@
 package eu.koolfreedom.freeze;
 
 import eu.koolfreedom.KoolSMPCore;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
-import lombok.Getter;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FreezeManager
 {
-    private final KoolSMPCore plugin;
-    private final Map<UUID, FreezeEntry> frozen = new HashMap<>();
+    private final Map<Player, FreezeData> frozenPlayers = new ConcurrentHashMap<>();
     @Getter
+    @Setter
     private boolean globalFreeze = false;
-    private final long PURGE_SECONDS = 300; // default 5 minutes before auto-purge
 
-    public FreezeManager(KoolSMPCore plugin)
+    public void freeze(Player player, long durationSeconds)
     {
-        this.plugin = plugin;
-    }
+        unfreeze(player);
+        FreezeData data = new FreezeData(player);
+        frozenPlayers.put(player, data);
 
-    public void freeze(Player p, long seconds)
-    {
-        unfreeze(p); // if already frozen, reset
-
-        p.setAllowFlight(true);
-        p.setFlying(true);
-
-        BukkitTask task = new BukkitRunnable()
+        BukkitRunnable task = new BukkitRunnable()
         {
             @Override
             public void run()
             {
-                unfreeze(p);
+                unfreeze(player);
             }
-        }.runTaskLater(plugin, seconds * 20L);
-
-        frozen.put(
-                p.getUniqueId(),
-                new FreezeEntry(p.getLocation(), task)
-        );
+        };
+        data.setUnfreezeTask(task.runTaskLater(KoolSMPCore.getInstance(), durationSeconds * 20));
     }
 
-    public void freeze(Player p)
+    public void unfreeze(Player player)
     {
-        freeze(p, PURGE_SECONDS);
+        FreezeData data = frozenPlayers.remove(player);
+        if (data != null) data.clearTask();
     }
 
-    public void unfreeze(Player p)
+    public boolean isFrozen(Player player)
     {
-        FreezeEntry entry = frozen.remove(p.getUniqueId());
-        if(entry != null && entry.task != null)
-        {
-            entry.task.cancel();
-        }
-
-        // restore flight only if they weren’t already in creative
-        if (p.getGameMode() != org.bukkit.GameMode.CREATIVE) {
-            p.setFlying(false);
-            p.setAllowFlight(false);
-        }
+        return frozenPlayers.containsKey(player);
     }
 
-    public boolean isFrozen(Player p)
+    public FreezeData getData(Player player)
     {
-        return frozen.containsKey(p.getUniqueId());
+        return frozenPlayers.get(player);
     }
 
-    /* ---------- Global ---------- */
-
-    public void setGlobalFreeze(boolean enabled) {
-        globalFreeze = enabled;
-        if (!enabled) {           // un‑freeze everyone
-            Bukkit.getOnlinePlayers().forEach(this::unfreeze);
-        } else {                  // freeze everyone that’s not op
-            Bukkit.getOnlinePlayers()
-                    .stream()
-                    .filter(pl -> !pl.isOp())
-                    .forEach(this::freeze);
-        }
-    }
-
-    /* =========  DATA CLASS  ========= */
-
-    private record FreezeEntry(Location loc, BukkitTask task)
+    public void unfreezeAll()
     {
-        // nothing
+        frozenPlayers.keySet().forEach(this::unfreeze);
     }
 }
