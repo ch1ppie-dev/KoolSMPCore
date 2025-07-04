@@ -71,6 +71,7 @@ public class LuckPermsBridge
 					if (player != null)
 					{
 						player.playerListName(KoolSMPCore.getInstance().getGroupManager().getColoredName(player));
+						KoolSMPCore.getInstance().getGroupManager().applyNametagColor(player);
 					}
 				}
 			}

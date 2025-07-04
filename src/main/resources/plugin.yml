@@ -45,6 +45,7 @@ permissions:
       - kfc.command.clearchat
       - kfc.command.clearchat.immune
       - kfc.command.commandspy
+      - kfc.command.freeze
       - kfc.command.heal
       - kfc.command.kick
       - kfc.command.mute

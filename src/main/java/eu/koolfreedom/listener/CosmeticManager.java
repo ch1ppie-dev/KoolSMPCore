@@ -42,5 +42,7 @@ public class CosmeticManager implements Listener
         }
 
         player.playerListName(KoolSMPCore.getInstance().getGroupManager().getColoredName(player));
+
+        KoolSMPCore.getInstance().getGroupManager().applyNametagColor(player);
     }
 }
