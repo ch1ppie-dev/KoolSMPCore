@@ -111,6 +111,19 @@
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-base</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -149,7 +162,7 @@
                             <target>
                                 <propertyfile file="${project.basedir}/src/main/resources/build.properties"
                                               comment="Build information. Edit this to your liking.">
-                                    <entry key="buildAuthor" default="${user.name}"/>
+                                    <entry key="buildAuthor" value="${buildAuthor}"/>
                                     <entry key="buildNumber" default="0"/>
                                     <entry key="buildVersion" value="${project.version}"/>
                                     <entry key="buildDate" value="${maven.build.timestamp}"/>
@@ -218,10 +231,18 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <minimizeJar>true</minimizeJar>
+                            <minimizeJar>false</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>eu.koolfreedom.libs.bstats</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <artifactSet>
                                 <includes>
                                     <include>org.reflections:reflections</include>
+                                    <include>org.bstats:bstats-bukkit</include>
+                                    <include>org.bstats:bstats-base</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

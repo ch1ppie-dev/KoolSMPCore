@@ -91,10 +91,6 @@ public class KoolSMPCore extends JavaPlugin
         Metrics metrics = new Metrics(this, pluginId);
         FLog.info("Enabled Metrics");
 
-        freezeManager = new FreezeManager();
-        altManager = new AltManager();
-        playtimeManager = new PlaytimeManager();
-
         commandLoader = new CommandLoader(AdminChatCommand.class);
         commandLoader.loadCommands();
         FLog.info("Loaded {} commands", commandLoader.getKoolCommands().size());
@@ -143,6 +139,10 @@ public class KoolSMPCore extends JavaPlugin
         pjListener = new PlayerJoinListener();
         altListener = new AltListener();
         ptListener = new PlaytimeListener();
+        altManager = new AltManager();
+        playtimeManager = new PlaytimeManager();
+        noteManager = new NoteManager();
+        freezeManager = new FreezeManager();
     }
 
     public void loadBridges()

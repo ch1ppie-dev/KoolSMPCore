@@ -7,16 +7,17 @@ import eu.koolfreedom.note.NoteManager;
 import eu.koolfreedom.note.PlayerNote;
 import eu.koolfreedom.listener.MuteManager;
 import eu.koolfreedom.freeze.FreezeManager;
+import eu.koolfreedom.stats.PlaytimeManager;
 import eu.koolfreedom.util.FUtil;
+import net.ess3.api.IEssentials;
+import net.ess3.api.IUser;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -32,14 +33,15 @@ public class SeenCommand extends KoolCommand
     private final NoteManager noteManager = plugin.getNoteManager();
     private final MuteManager muteManager = plugin.getMuteManager();
     private final FreezeManager freezeManager = plugin.getFreezeManager();
+    private final PlaytimeManager playtimeManager = plugin.getPlaytimeManager();
+    private final IEssentials essentials = (IEssentials) Bukkit.getPluginManager().getPlugin("Essentials");
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+    private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
 
     @Override
     public boolean run(CommandSender sender, Player player, Command cmd, String label, String[] args)
     {
-        if (args.length != 1)
-        {
+        if (args.length != 1) {
             msg(sender, "<gray>Usage: /seen <player|ip>");
             return true;
         }
@@ -48,153 +50,122 @@ public class SeenCommand extends KoolCommand
 
         if (FUtil.isValidIP(input))
         {
-            List<OfflinePlayer> playersWithIP = plugin.getAltManager().getAlts(input).stream()
-                    .map(Bukkit::getOfflinePlayer)
-                    .collect(Collectors.toList());
-
-            if (playersWithIP.isEmpty())
+            // IP lookup
+            List<OfflinePlayer> targets = FUtil.getOfflinePlayersByIp(input);
+            if (targets.isEmpty())
             {
                 msg(sender, "<red>No players found with IP <white>" + input + "</white>.");
                 return true;
             }
-
             msg(sender, FUtil.miniMessage("<gold>Players with IP <white>" + input + "</white>:"));
-
-            for (OfflinePlayer altPlayer : playersWithIP)
-            {
-                displayPlayerInfo(sender, altPlayer, input);
-            }
+            targets.forEach(p -> displayPlayer(sender, p, input));
             return true;
         }
-        else
+
+        // Player lookup
+        OfflinePlayer target = Bukkit.getOfflinePlayerIfCached(input);
+        if (target == null || (!target.hasPlayedBefore() && !target.isOnline()))
         {
-            OfflinePlayer targetPlayer = Bukkit.getOfflinePlayerIfCached(input);
-            if (targetPlayer == null || (!targetPlayer.hasPlayedBefore() && !targetPlayer.isOnline()))
+            target = Bukkit.getPlayerExact(input);
+            if (target == null)
             {
-                Player onlinePlayer = Bukkit.getPlayerExact(input);
-                if (onlinePlayer != null)
-                {
-                    targetPlayer = onlinePlayer;
-                }
-                else
-                {
-                    msg(sender, "<red>Player not found: <white>" + input + "</white>");
-                    return true;
-                }
+                msg(sender, "<red>Player not found: <white>" + input + "</white>");
+                return true;
             }
-
-            displayPlayerInfo(sender, targetPlayer, null);
         }
-
+        displayPlayer(sender, target, null);
         return true;
     }
 
-    private void displayPlayerInfo(CommandSender sender, OfflinePlayer target, String ipFilter)
+    private void displayPlayer(CommandSender sender, OfflinePlayer target, String forcedIp)
     {
         UUID uuid = target.getUniqueId();
-        String name = target.getName() != null ? target.getName() : "Unknown";
+        String name = target.getName() != null ? target.getName() : uuid.toString();
 
-        // Header with username + UUID
-        Component header = FUtil.miniMessage("<gold>Player Info: <white>" + name + "</white> <gray>(" + uuid + ")</gray>");
-        msg(sender, header);
+        msg(sender, FUtil.miniMessage("<red>Player Info: <gold>" + name + "</gold> <gray>(" + uuid + ")</gray>"));
 
-        // First join time
-        Instant firstJoin = target.getFirstPlayed() > 0 ? Instant.ofEpochMilli(target.getFirstPlayed()) : null;
-        String firstJoinStr = firstJoin != null ? formatter.format(firstJoin) : "Unknown";
+        /* --- TIMESTAMPS --- */
+        IUser essUser = essentials != null ? essentials.getUser(uuid) : null;
+        long first = playtimeManager.get(uuid).firstJoin;
+        if (first == 0 && essUser != null) first = essUser.getBase().getFirstPlayed();
+        long last = target.getLastPlayed();
+        if ((last == 0 || last < first) && essUser != null) last = essUser.getBase().getLastPlayed();
 
-        // Last seen
-        Instant lastSeen = target.getLastPlayed() > 0 ? Instant.ofEpochMilli(target.getLastPlayed()) : null;
-        String lastSeenStr = lastSeen != null ? formatter.format(lastSeen) : "Unknown";
+        String firstStr = first > 0 ? fmt.format(Instant.ofEpochMilli(first)) : "Unknown";
+        String lastStr  = last  > 0 ? fmt.format(Instant.ofEpochMilli(last))  : "Unknown";
 
-        // Total playtime
-        long playtimeSeconds = plugin.getPlaytimeManager().getPlaytime(uuid);
-        String playtimeStr = formatDuration(playtimeSeconds);
+        long playSeconds = playtimeManager.get(uuid).totalPlaySeconds;
+        String playStr = playSeconds > 0 ? formatDuration(playSeconds) : "Unknown";
 
-        // IP address - only show if sender has permission
-        String ipDisplayRaw = ipFilter != null ? ipFilter : plugin.getAltManager().getLastIP(uuid).orElse("Unknown");
-
-        Component ipDisplay;
-        if (sender.hasPermission("kfc.seen.viewip")) {
-            ipDisplay = Component.text(ipDisplayRaw)
-                    .clickEvent(ClickEvent.copyToClipboard(ipDisplayRaw))
-                    .hoverEvent(HoverEvent.showText(Component.text("Click to copy IP")))
-                    .color(NamedTextColor.YELLOW);
-        } else {
-            ipDisplay = Component.text("<hidden>").color(NamedTextColor.GRAY);
-        }
-
-        // Alts by IP
-        List<String> altNames = FUtil.getOfflinePlayersByIp(ipDisplayRaw).stream()
+        /* --- IP & ALTS --- */
+        String ip = forcedIp != null ? forcedIp : plugin.getAltManager().getLastIP(uuid).orElse("Unknown");
+        List<String> alts = FUtil.getOfflinePlayersByIp(ip).stream()
                 .map(OfflinePlayer::getName)
-                .filter(n -> !n.equalsIgnoreCase(name))
+                .filter(n -> n != null && !n.equalsIgnoreCase(name))
                 .collect(Collectors.toList());
 
-        // Notes and flags
+        /* --- NOTES --- */
         List<PlayerNote> notes = noteManager.getNotes(uuid);
 
-        // Status - only check mute/freeze if player is online and a Player instance
-        boolean isMuted = false;
-        boolean isFrozen = false;
-        if (target.isOnline() && target instanceof Player onlinePlayer) {
-            isMuted = muteManager.isMuted(onlinePlayer);
-            isFrozen = freezeManager.isFrozen(onlinePlayer);
+        /* --- STATUS --- */
+        boolean muted   = target.isOnline() && muteManager.isMuted((Player) target);
+        boolean frozen  = target.isOnline() && freezeManager.isFrozen((Player) target);
+        boolean banned  = banManager.isBanned(target);
+        boolean opped   = target.isOp();
+        boolean white   = target.isWhitelisted();
+
+        /* --- OUTPUT --- */
+        msg(sender, FUtil.miniMessage("<red>First Join:</red> <yellow>" + firstStr));
+        msg(sender, FUtil.miniMessage("<red>Last Seen:</red>  <yellow>" + lastStr));
+        msg(sender, FUtil.miniMessage("<red>Playtime:</red>   <yellow>" + playStr));
+
+        if (sender.hasPermission("kfc.seen.viewip")) {
+            Component ipComp = Component.text(ip).clickEvent(ClickEvent.copyToClipboard(ip))
+                    .hoverEvent(Component.text("Click to copy IP"));
+            sender.sendMessage(FUtil.miniMessage("<red>IP:</red> ").append(ipComp));
+        }
+        else
+        {
+            msg(sender, FUtil.miniMessage("<red>IP:</red> <gray>[Hidden]</gray>"));
         }
 
-        boolean isBanned = banManager.isBanned(target);
-        boolean isWhitelisted = target.isWhitelisted();
-        boolean isOp = target.isOp();
-
-        // Build the message string for MiniMessage (notes etc)
-        StringBuilder sb = new StringBuilder();
-        sb.append("<yellow>First Join:</yellow> <white>").append(firstJoinStr).append("\n");
-        sb.append("<yellow>Last Seen:</yellow> <white>").append(lastSeenStr).append("\n");
-        sb.append("<yellow>Playtime:</yellow> <white>").append(playtimeStr).append("\n");
-        sb.append("<yellow>IP:</yellow> "); // We'll send ipDisplay component separately
-
-        // Send header + details without IP first
-        msg(sender, FUtil.miniMessage(sb.toString()));
-
-        // Send an IP component separately (for clickable event)
-        msg(sender, ipDisplay);
-
-        if (!altNames.isEmpty()) {
-            msg(sender, FUtil.miniMessage("<yellow>Alts:</yellow> <white>" + String.join(", ", altNames) + "</white>"));
+        if (!alts.isEmpty())
+        {
+            msg(sender, FUtil.miniMessage("<red>Alts:</red> <yellow>" + String.join(", ", alts)));
         }
 
-        if (!notes.isEmpty()) {
-            msg(sender, FUtil.miniMessage("<yellow>Notes:</yellow>"));
-            for (PlayerNote note : notes) {
-                msg(sender, FUtil.miniMessage("  <gray>- [" + note.getTimestamp() + "] " + note.getAuthor() + ": " + note.getMessage() + "</gray>"));
+        if (!notes.isEmpty())
+        {
+            msg(sender, FUtil.miniMessage("<red>Notes:</red>"));
+            for (PlayerNote n : notes)
+            {
+                msg(sender, FUtil.miniMessage("  <gray>- [" + n.getTimestamp() + "] " + n.getAuthor() + ": " + n.getMessage() + "</gray>"));
             }
-        } else {
-            msg(sender, FUtil.miniMessage("<yellow>Notes:</yellow> <gray>None</gray>"));
+        }
+        else
+        {
+            msg(sender, FUtil.miniMessage("<red>Notes:</red> <gray>None"));
         }
 
-        String status = (isMuted ? "Muted" : "Not Muted") + ", " + (isFrozen ? "Frozen" : "Not Frozen");
-        msg(sender, FUtil.miniMessage("<yellow>Status:</yellow> <white>" + status + "</white>"));
-        msg(sender, FUtil.miniMessage("<yellow>OP:</yellow> <white>" + (isOp ? "Yes" : "No") + "</white>"));
-        msg(sender, FUtil.miniMessage("<yellow>Banned:</yellow> <white>" + (isBanned ? "Yes" : "No") + "</white>"));
-        msg(sender, FUtil.miniMessage("<yellow>Whitelisted:</yellow> <white>" + (isWhitelisted ? "Yes" : "No") + "</white>"));
+        String status = (muted ? "Muted" : "Not Muted") + ", " + (frozen ? "Frozen" : "Not Frozen");
+        msg(sender, FUtil.miniMessage("<red>Status:</red> <yellow>" + status + "</yellow>"));
+        msg(sender, FUtil.miniMessage("<red>OP:</red> <yellow>" + (opped ? "Yes" : "No") + "</yellow>"));
+        msg(sender, FUtil.miniMessage("<red>Banned:</red> <yellow>" + (banned ? "Yes" : "No") + "</yellow>"));
+        msg(sender, FUtil.miniMessage("<red>Whitelisted:</red> <yellow>" + (white ? "Yes" : "No") + "</yellow>"));
     }
 
     private String formatDuration(long totalSeconds)
     {
-        if (totalSeconds <= 0)
-        {
-            return "0s";
-        }
-        long days = totalSeconds / 86400;
-        long hours = (totalSeconds % 86400) / 3600;
+        if (totalSeconds <= 0) return "0s";
+        long days    = totalSeconds / 86400;
+        long hours   = (totalSeconds % 86400) / 3600;
         long minutes = (totalSeconds % 3600) / 60;
-        long seconds = totalSeconds % 60;
-
-        StringBuilder result = new StringBuilder();
-        if (days > 0) result.append(days).append("d ");
-        if (hours > 0) result.append(hours).append("h ");
-        if (minutes > 0) result.append(minutes).append("m ");
-        if (seconds > 0) result.append(seconds).append("s");
-
-        return result.toString().trim();
+        long secs    = totalSeconds % 60;
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) sb.append(days).append("d ");
+        if (hours > 0) sb.append(hours).append("h ");
+        if (minutes > 0) sb.append(minutes).append("m ");
+        if (secs > 0) sb.append(secs).append("s");
+        return sb.toString().trim();
     }
-
 }

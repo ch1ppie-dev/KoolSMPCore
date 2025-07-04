@@ -10,6 +10,7 @@ softdepend:
   - EssentialsDiscord
   - EssentialsDiscordLink
   - DiscordSRV
+  - Essentials
 authors:
   - "gamingto12"
   - "_sftp"
