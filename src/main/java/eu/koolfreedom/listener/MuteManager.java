@@ -1,12 +1,9 @@
 package eu.koolfreedom.listener;
 
 import eu.koolfreedom.KoolSMPCore;
-import eu.koolfreedom.command.impl.BlockCmdCommand;
 import eu.koolfreedom.command.impl.MuteChatCommand;
 import eu.koolfreedom.util.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -124,6 +121,12 @@ public class MuteManager implements Listener
         {
             event.setCancelled(true);
             player.sendMessage(FUtil.miniMessage("<red>You are muted, you cannot use commands."));
+        }
+
+        if (player.isFrozen())
+        {
+            event.setCancelled(true);
+            player.sendMessage(FUtil.miniMessage("<red>You are frozen, you cannot use commands."));
         }
     }
 

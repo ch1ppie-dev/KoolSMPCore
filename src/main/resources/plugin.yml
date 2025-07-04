@@ -30,6 +30,7 @@ permissions:
       - kfc.command.pat
       - kfc.command.poke
       - kfc.command.report
+      - kfc.command.seen
       - kfc.command.ship
       - kfc.command.slap
   kfc.admin:
@@ -40,7 +41,7 @@ permissions:
       - kfc.command.adminchat
       - kfc.command.ban
       - kfc.command.banip
-      - kfc command.banlist
+      - kfc.command.banlist
       - kfc.command.blockcommand
       - kfc.command.clearchat
       - kfc.command.clearchat.immune
@@ -52,11 +53,15 @@ permissions:
       - kfc.command.mute.immune
       - kfc.command.mutechat
       - kfc.mutechat.bypass
+      - kfc.notes.add
+      - kfc.notes.view
+      - kfc.command.note
       - kfc.command.orbit
       - kfc.command.rawsay
       - kfc.command.reports
       - kfc.command.satisfyall
       - kfc.command.say
+      - kfc.seen.viewip
       - kfc.command.smite
       - kfc.command.spectate
       - kfc.command.troll
@@ -70,6 +75,7 @@ permissions:
     default: op
     children:
       - kfc.admin
+      - kfc.antispam.bypass
       - kfc.command.banlist.reload
       - kfc.command.cage
       - kfc.command.koolsmpcore.reload

@@ -1,11 +1,14 @@
 package eu.koolfreedom;
 
+import eu.koolfreedom.api.AltListener;
+import eu.koolfreedom.api.AltManager;
 import eu.koolfreedom.bridge.GroupManagement;
 import eu.koolfreedom.banning.BanManager;
 import eu.koolfreedom.bridge.LuckPermsBridge;
 import eu.koolfreedom.bridge.VanishIntegration;
 import eu.koolfreedom.bridge.vanish.EssentialsVanishIntegration;
 import eu.koolfreedom.bridge.vanish.SuperVanishIntegration;
+import eu.koolfreedom.chat.AntiSpamService;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.bridge.discord.DiscordSRVIntegration;
@@ -13,6 +16,9 @@ import eu.koolfreedom.bridge.DiscordIntegration;
 import eu.koolfreedom.bridge.discord.EssentialsXDiscordIntegration;
 import eu.koolfreedom.freeze.FreezeListener;
 import eu.koolfreedom.freeze.FreezeManager;
+import eu.koolfreedom.note.NoteManager;
+import eu.koolfreedom.stats.PlaytimeListener;
+import eu.koolfreedom.stats.PlaytimeManager;
 import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
@@ -45,11 +51,20 @@ public class KoolSMPCore extends JavaPlugin
     private RecordKeeper recordKeeper;
     private ReportManager reportManager;
     private FreezeManager freezeManager;
+    @Getter
+    private NoteManager noteManager;
+    @Getter
+    private AltManager altManager;
+    @Getter
+    private PlaytimeManager playtimeManager;
     private FreezeListener freezeListener;
 
     private CosmeticManager cosmeticManager;
     private ExploitListener exploitListener;
     private ChatListener chatListener;
+    private PlayerJoinListener pjListener;
+    private AltListener altListener;
+    private PlaytimeListener ptListener;
 
     private GroupManagement groupManager;
     private LuckPermsBridge luckPermsBridge;
@@ -74,8 +89,11 @@ public class KoolSMPCore extends JavaPlugin
 
         int pluginId = 26369;
         Metrics metrics = new Metrics(this, pluginId);
+        FLog.info("Enabled Metrics");
 
         freezeManager = new FreezeManager();
+        altManager = new AltManager();
+        playtimeManager = new PlaytimeManager();
 
         commandLoader = new CommandLoader(AdminChatCommand.class);
         commandLoader.loadCommands();
@@ -119,8 +137,12 @@ public class KoolSMPCore extends JavaPlugin
         reportManager = new ReportManager();
         cosmeticManager = new CosmeticManager();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
+        new AntiSpamService(this);
         chatListener = new ChatListener();
         freezeListener = new FreezeListener();
+        pjListener = new PlayerJoinListener();
+        altListener = new AltListener();
+        ptListener = new PlaytimeListener();
     }
 
     public void loadBridges()
@@ -191,10 +213,5 @@ public class KoolSMPCore extends JavaPlugin
                 }
             }.runTaskTimer(this, 0, Math.max(1, ConfigEntry.ANNOUNCER_DELAY.getInteger()));
         }
-    }
-
-    public FreezeManager getFreezeManager()
-    {
-        return freezeManager;
     }
 }

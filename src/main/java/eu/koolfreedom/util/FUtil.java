@@ -1,6 +1,7 @@
 package eu.koolfreedom.util;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.api.AltManager;
 import eu.koolfreedom.bridge.GroupManagement;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.event.AdminChatEvent;
@@ -19,6 +20,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -346,5 +348,32 @@ public class FUtil // the f stands for fuck
 
             return current;
         }
+    }
+
+    public static boolean isValidIP(String ip)
+    {
+        if (ip == null)
+        {
+            return false;
+        }
+
+        return ip.matches(
+                "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.|$)){4}$"
+        );
+    }
+
+    public static List<OfflinePlayer> getOfflinePlayersByIp(String ip) {
+        AltManager altManager = KoolSMPCore.getInstance().getAltManager();
+        Set<UUID> uuids = altManager.getAlts(ip);
+
+        List<OfflinePlayer> players = new ArrayList<>();
+        for (UUID uuid : uuids) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            if (offlinePlayer != null) {
+                players.add(offlinePlayer);
+            }
+        }
+
+        return players;
     }
 }
