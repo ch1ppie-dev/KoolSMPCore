@@ -19,6 +19,7 @@ import eu.koolfreedom.reporting.ReportManager;
 import eu.koolfreedom.util.BuildProperties;
 import eu.koolfreedom.util.FUtil;
 import lombok.Getter;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.*;
 import org.bukkit.plugin.*;
 import eu.koolfreedom.command.impl.*;
@@ -70,6 +71,9 @@ public class KoolSMPCore extends JavaPlugin
         FLog.info("Created by gamingto12 and 0x7694C9");
         FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
         FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
+
+        int pluginId = 26369;
+        Metrics metrics = new Metrics(this, pluginId);
 
         freezeManager = new FreezeManager();
 
