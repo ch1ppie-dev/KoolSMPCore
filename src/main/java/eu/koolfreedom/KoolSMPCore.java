@@ -96,6 +96,9 @@ public class KoolSMPCore extends JavaPlugin
         noteManager = new NoteManager();
         freezeManager = new FreezeManager();
 
+        loadBansConfig();
+        FLog.info("Loaded configurations");
+
         commandLoader = new CommandLoader(AdminChatCommand.class);
         commandLoader.loadCommands();
         FLog.info("Loaded {} commands", commandLoader.getKoolCommands().size());
@@ -105,9 +108,6 @@ public class KoolSMPCore extends JavaPlugin
 
         groupManager = new GroupManagement();
         FLog.info("Loaded group manager");
-
-        loadBansConfig();
-        FLog.info("Loaded configurations");
 
         // Set up announcer
         resetAnnouncer();
