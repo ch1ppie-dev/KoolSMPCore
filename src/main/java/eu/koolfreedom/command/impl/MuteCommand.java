@@ -13,9 +13,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
-@CommandParameters(name = "mute", description = "Mutes a player with optional duration and reason.", usage = "/<command> <player> [duration] [reason]")
+@CommandParameters(name = "mute", description = "Mutes a player with optional duration and reason.", usage = "/<command> <player>")
 public class MuteCommand extends KoolCommand
 {
     @Override
@@ -87,32 +86,5 @@ public class MuteCommand extends KoolCommand
                 .filter(player -> !player.hasPermission("kfc.command.mute.immune"))
                 .map(Player::getName).toList()
                 : List.of();
-    }
-
-    private boolean isValidDuration(String input)
-    {
-        return input.matches("(?i)^\\d+[smhd]$");
-    }
-
-    private long parseDurationMillis(String input)
-    {
-        try
-        {
-            long value = Long.parseLong(input.substring(0, input.length() - 1));
-            char unit = Character.toLowerCase(input.charAt(input.length() - 1));
-
-            return switch (unit)
-            {
-                case 's' -> TimeUnit.SECONDS.toMillis(value);
-                case 'm' -> TimeUnit.MINUTES.toMillis(value);
-                case 'h' -> TimeUnit.HOURS.toMillis(value);
-                case 'd' -> TimeUnit.DAYS.toMillis(value);
-                default -> -1;
-            };
-        }
-        catch (Exception e)
-        {
-            return -1;
-        }
     }
 }
