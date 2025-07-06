@@ -50,6 +50,7 @@ permissions:
       - kfc.command.freeze
       - kfc.command.heal
       - kfc.command.kick
+      - kfc.command.lockup
       - kfc.command.mute
       - kfc.command.mute.immune
       - kfc.command.mutechat

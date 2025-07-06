@@ -121,8 +121,11 @@ public class SeenCommand extends KoolCommand
 
         List<PlayerNote> notes = noteManager.getNotes(uuid);
 
-        boolean muted = target.isOnline() && muteManager.isMuted((Player) target);
-        boolean frozen = target.isOnline() && freezeManager.isFrozen((Player) target);
+        MuteManager muteManager = plugin.getMuteManager();
+        FreezeManager freezeManager = plugin.getFreezeManager();
+
+        boolean muted = muteManager != null && muteManager.isMuted(target);
+        boolean frozen = target.isOnline() && freezeManager != null && freezeManager.isFrozen((Player) target);
         boolean banned = banManager.isBanned(target);
         boolean opped = target.isOp();
         boolean white = target.isWhitelisted();

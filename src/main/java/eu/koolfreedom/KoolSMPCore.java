@@ -51,6 +51,8 @@ public class KoolSMPCore extends JavaPlugin
     private MuteManager muteManager;
     private RecordKeeper recordKeeper;
     private ReportManager reportManager;
+    @Getter
+    private LockupManager lockupManager;
     private FreezeManager freezeManager;
     @Getter
     private NoteManager noteManager;
@@ -146,6 +148,7 @@ public class KoolSMPCore extends JavaPlugin
         new AntiSpamService(this);
         chatListener = new ChatListener();
         freezeListener = new FreezeListener();
+        lockupManager = new LockupManager(this);
         pjListener = new PlayerJoinListener();
         altListener = new AltListener();
         ptListener = new PlaytimeListener();
