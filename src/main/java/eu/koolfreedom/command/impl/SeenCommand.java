@@ -8,6 +8,7 @@ import eu.koolfreedom.note.PlayerNote;
 import eu.koolfreedom.listener.MuteManager;
 import eu.koolfreedom.freeze.FreezeManager;
 import eu.koolfreedom.stats.PlaytimeManager;
+import eu.koolfreedom.stats.PlaytimeManager.PlaytimeData;
 import eu.koolfreedom.util.FUtil;
 import net.ess3.api.IEssentials;
 import net.ess3.api.IUser;
@@ -41,7 +42,8 @@ public class SeenCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player player, Command cmd, String label, String[] args)
     {
-        if (args.length != 1) {
+        if (args.length != 1)
+        {
             msg(sender, "<gray>Usage: /seen <player|ip>");
             return true;
         }
@@ -50,7 +52,6 @@ public class SeenCommand extends KoolCommand
 
         if (FUtil.isValidIP(input))
         {
-            // IP lookup
             List<OfflinePlayer> targets = FUtil.getOfflinePlayersByIp(input);
             if (targets.isEmpty())
             {
@@ -62,7 +63,6 @@ public class SeenCommand extends KoolCommand
             return true;
         }
 
-        // Player lookup
         OfflinePlayer target = Bukkit.getOfflinePlayerIfCached(input);
         if (target == null || (!target.hasPlayedBefore() && !target.isOnline()))
         {
@@ -81,45 +81,58 @@ public class SeenCommand extends KoolCommand
     {
         UUID uuid = target.getUniqueId();
         String name = target.getName() != null ? target.getName() : uuid.toString();
-
         msg(sender, FUtil.miniMessage("<red>Player Info: <gold>" + name + "</gold> <gray>(" + uuid + ")</gray>"));
 
-        /* --- TIMESTAMPS --- */
-        IUser essUser = essentials != null ? essentials.getUser(uuid) : null;
-        long first = playtimeManager.get(uuid).firstJoin;
-        if (first == 0 && essUser != null) first = essUser.getBase().getFirstPlayed();
+        PlaytimeData data = playtimeManager.get(uuid);
+        long first = data.firstJoin;
         long last = target.getLastPlayed();
-        if ((last == 0 || last < first) && essUser != null) last = essUser.getBase().getLastPlayed();
+        long playSeconds = data.totalPlaySeconds;
+
+        IUser essUser = essentials != null ? essentials.getUser(uuid) : null;
+
+        // Migrate from Essentials if needed
+        if ((first == 0 || last == 0 || playSeconds == 0) && essUser != null)
+        {
+            long essFirst = essUser.getBase().getFirstPlayed();
+            long essLast = essUser.getBase().getLastPlayed();
+
+            if (first == 0 && essFirst > 0) first = essFirst;
+            if (last == 0 && essLast > 0) last = essLast;
+
+            if (playSeconds == 0 && essFirst > 0 && essLast > essFirst)
+                playSeconds = (essLast - essFirst) / 1000;
+
+            // Update playtime data
+            data.firstJoin = first;
+            data.lastSeen = last;
+            data.totalPlaySeconds = playSeconds;
+            playtimeManager.set(uuid, data);
+        }
 
         String firstStr = first > 0 ? fmt.format(Instant.ofEpochMilli(first)) : "Unknown";
-        String lastStr  = last  > 0 ? fmt.format(Instant.ofEpochMilli(last))  : "Unknown";
-
-        long playSeconds = playtimeManager.get(uuid).totalPlaySeconds;
+        String lastStr = last > 0 ? fmt.format(Instant.ofEpochMilli(last)) : "Unknown";
         String playStr = playSeconds > 0 ? formatDuration(playSeconds) : "Unknown";
 
-        /* --- IP & ALTS --- */
         String ip = forcedIp != null ? forcedIp : plugin.getAltManager().getLastIP(uuid).orElse("Unknown");
         List<String> alts = FUtil.getOfflinePlayersByIp(ip).stream()
                 .map(OfflinePlayer::getName)
                 .filter(n -> n != null && !n.equalsIgnoreCase(name))
                 .collect(Collectors.toList());
 
-        /* --- NOTES --- */
         List<PlayerNote> notes = noteManager.getNotes(uuid);
 
-        /* --- STATUS --- */
-        boolean muted   = target.isOnline() && muteManager.isMuted((Player) target);
-        boolean frozen  = target.isOnline() && freezeManager.isFrozen((Player) target);
-        boolean banned  = banManager.isBanned(target);
-        boolean opped   = target.isOp();
-        boolean white   = target.isWhitelisted();
+        boolean muted = target.isOnline() && muteManager.isMuted((Player) target);
+        boolean frozen = target.isOnline() && freezeManager.isFrozen((Player) target);
+        boolean banned = banManager.isBanned(target);
+        boolean opped = target.isOp();
+        boolean white = target.isWhitelisted();
 
-        /* --- OUTPUT --- */
         msg(sender, FUtil.miniMessage("<red>First Join:</red> <yellow>" + firstStr));
         msg(sender, FUtil.miniMessage("<red>Last Seen:</red>  <yellow>" + lastStr));
         msg(sender, FUtil.miniMessage("<red>Playtime:</red>   <yellow>" + playStr));
 
-        if (sender.hasPermission("kfc.seen.viewip")) {
+        if (sender.hasPermission("kfc.seen.viewip"))
+        {
             Component ipComp = Component.text(ip).clickEvent(ClickEvent.copyToClipboard(ip))
                     .hoverEvent(Component.text("Click to copy IP"));
             sender.sendMessage(FUtil.miniMessage("<red>IP:</red> ").append(ipComp));
@@ -157,10 +170,10 @@ public class SeenCommand extends KoolCommand
     private String formatDuration(long totalSeconds)
     {
         if (totalSeconds <= 0) return "0s";
-        long days    = totalSeconds / 86400;
-        long hours   = (totalSeconds % 86400) / 3600;
+        long days = totalSeconds / 86400;
+        long hours = (totalSeconds % 86400) / 3600;
         long minutes = (totalSeconds % 3600) / 60;
-        long secs    = totalSeconds % 60;
+        long secs = totalSeconds % 60;
         StringBuilder sb = new StringBuilder();
         if (days > 0) sb.append(days).append("d ");
         if (hours > 0) sb.append(hours).append("h ");

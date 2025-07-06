@@ -19,6 +19,7 @@ import eu.koolfreedom.freeze.FreezeManager;
 import eu.koolfreedom.note.NoteManager;
 import eu.koolfreedom.stats.PlaytimeListener;
 import eu.koolfreedom.stats.PlaytimeManager;
+import eu.koolfreedom.util.AutoUndoManager;
 import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
@@ -58,6 +59,9 @@ public class KoolSMPCore extends JavaPlugin
     @Getter
     private PlaytimeManager playtimeManager;
     private FreezeListener freezeListener;
+    private AntiSpamService antiSpamListener;
+    @Getter
+    private AutoUndoManager autoUndoManager;
 
     private CosmeticManager cosmeticManager;
     private ExploitListener exploitListener;
@@ -94,6 +98,7 @@ public class KoolSMPCore extends JavaPlugin
         altManager = new AltManager();
         playtimeManager = new PlaytimeManager();
         noteManager = new NoteManager();
+        autoUndoManager = new AutoUndoManager(this, muteManager, freezeManager);
         freezeManager = new FreezeManager();
 
         loadBansConfig();
@@ -134,7 +139,7 @@ public class KoolSMPCore extends JavaPlugin
 
     public void loadListeners()
     {
-        muteManager = new MuteManager();
+        muteManager = new MuteManager(this);
         reportManager = new ReportManager();
         cosmeticManager = new CosmeticManager();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
@@ -144,6 +149,7 @@ public class KoolSMPCore extends JavaPlugin
         pjListener = new PlayerJoinListener();
         altListener = new AltListener();
         ptListener = new PlaytimeListener();
+        antiSpamListener = new AntiSpamService(this);
     }
 
     public void loadBridges()

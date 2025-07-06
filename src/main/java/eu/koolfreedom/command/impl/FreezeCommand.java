@@ -10,6 +10,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 @CommandParameters(name = "freeze", description = "Freeze players", usage = "/freeze <player> [seconds] | global on|off")
 public class FreezeCommand extends KoolCommand
 {
@@ -39,11 +41,14 @@ public class FreezeCommand extends KoolCommand
             return true;
         }
 
+        UUID uuid = target.getUniqueId();
+
         if (manager.isFrozen(target))
         {
             manager.unfreeze(target);
             FUtil.staffAction(sender, "Unfroze " + target.getName());
             msg(sender, "<gray>Unfroze " + target.getName());
+            plugin.getAutoUndoManager().cancelAutoUnfreeze(uuid);
             return true;
         }
 
@@ -51,6 +56,7 @@ public class FreezeCommand extends KoolCommand
         manager.freeze(target, seconds);
         FUtil.staffAction(sender, "Froze " + target.getName() + " for " + seconds + "s");
         msg(sender, "<gray>Froze " + target.getName() + " for " + seconds + "s");
+        plugin.getAutoUndoManager().scheduleAutoUnfreeze(target);
         return true;
     }
 

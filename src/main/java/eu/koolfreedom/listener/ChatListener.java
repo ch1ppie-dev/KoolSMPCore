@@ -132,7 +132,7 @@ public class ChatListener implements Listener
 
 							if (!muteManager.isMuted(player))
 							{
-								muteManager.setMuted(player, true);
+								muteManager.mute(player);
 								FUtil.staffAction(Bukkit.getConsoleSender(), "Muted <player>",
 										Placeholder.unparsed("player", player.getName()));
 								KoolSMPCore.getInstance().getRecordKeeper().recordPunishment(Punishment.builder()

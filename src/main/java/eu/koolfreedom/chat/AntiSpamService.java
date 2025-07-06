@@ -1,14 +1,14 @@
 package eu.koolfreedom.chat;
 
 import eu.koolfreedom.KoolSMPCore;
+import eu.koolfreedom.listener.MuteManager;
 import eu.koolfreedom.util.FUtil;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -18,87 +18,82 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AntiSpamService implements Listener
 {
+    private static final int CHAT_MAX_PER_SEC      =  8;   // msgs‑per‑second before mute
+    private static final int CMD_MAX_PER_SEC       = 10;   // cmds‑per‑second before kick
+    private static final int WARN_AT_CHAT_MESSAGES = CHAT_MAX_PER_SEC / 2;
+    private static final int AUTO_MUTE_SECONDS     = 60;   // 60‑second mute
+    private static final String BYPASS_PERMISSION  = "kfc.antispam.bypass";
 
-    /* ---------- config ---------- */
-    private static final int MSG_PER_CYCLE       = 8;    // chat msgs / 1s
-    private static final int COMMANDS_PER_CYCLE  = 5;    // commands / 1s
-    private static final int MUTE_MINUTES_STEP   = 2;    // each spam = +2 mins mute
-    private static final int CYCLE_TICKS         = 20;   // 1 second
-    /* ---------------------------- */
+    private final Map<UUID, Integer> chatCounts  = new ConcurrentHashMap<>();
+    private final Map<UUID, Integer> cmdCounts   = new ConcurrentHashMap<>();
 
-    private final Map<UUID, Integer> chatCount    = new ConcurrentHashMap<>();
-    private final Map<UUID, Integer> cmdCount     = new ConcurrentHashMap<>();
-    private final Map<UUID, Integer> muteStrikes  = new ConcurrentHashMap<>();
-
+    private final MuteManager muteManager;
     private final KoolSMPCore plugin;
 
     public AntiSpamService(KoolSMPCore plugin)
     {
         this.plugin = plugin;
+        this.muteManager = plugin.getMuteManager();
 
-        /* reset counters every second */
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+
+        /* reset counters once per second */
         new BukkitRunnable()
         {
-            @Override
-            public void run()
+            @Override public void run()
             {
-                chatCount.clear();
-                cmdCount.clear();
+                chatCounts.clear();
+                cmdCounts.clear();
             }
-        }.runTaskTimer(plugin, CYCLE_TICKS, CYCLE_TICKS);
-
-        /* register events */
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        }.runTaskTimer(plugin, 20L, 20L);  // every 1 s
     }
 
-    /* ===== chat handler ===== */
-    @EventHandler(priority = EventPriority.LOW)
-    @SuppressWarnings("deprecation")
-    public void onChat(AsyncPlayerChatEvent e)
+    /* ----------------------- CHAT ----------------------- */
+
+    @EventHandler
+    public void onChat(AsyncChatEvent e)
     {
         Player p = e.getPlayer();
-        if (p.hasPermission("kfc.antispam.bypass")) return;
+        if (p.hasPermission(BYPASS_PERMISSION)) return;
+        if (muteManager.isMuted(p))             return;   // already muted
 
-        int total = chatCount.merge(p.getUniqueId(), 1, Integer::sum);
-        if (total <= MSG_PER_CYCLE) return;              // under limit
+        int count = chatCounts.merge(p.getUniqueId(), 1, Integer::sum);
 
-        /* ----- over chat limit → punish ----- */
-        e.setCancelled(true);
+        if (count > CHAT_MAX_PER_SEC)
+        {
+            muteManager.mute(p);                                   // permanent mute
+            plugin.getAutoUndoManager().scheduleAutoUnmute(p);     // auto‑undo in 5 min
+            FUtil.staffAction(Bukkit.getConsoleSender(),
+                    "Auto‑muted <player> for spamming chat",
+                    Placeholder.unparsed("player", p.getName()));
+            e.setCancelled(true);
+            return;
+        }
 
-        int strikes     = muteStrikes.merge(p.getUniqueId(), 1, Integer::sum);
-        int muteMinutes = strikes * MUTE_MINUTES_STEP;
-
-        /* 1)  MUTE NOW  */
-        plugin.getMuteManager().setMuted(p, true);
-
-        /* 2)  SCHEDULE AUTOMATIC UNMUTE  */
-        Bukkit.getScheduler().runTaskLater(
-                plugin,
-                () -> {
-                    if (p.isOnline())
-                    {
-                        plugin.getMuteManager().setMuted(p, false);
-                    }
-
-                },
-                muteMinutes * 60L * 20L    // minutes → ticks
-        );
-
-        FUtil.broadcast("<red><player> was muted for spamming.", Placeholder.unparsed("player", p.getName()));
+        if (count >= WARN_AT_CHAT_MESSAGES)
+        {
+            p.sendMessage(FUtil.miniMessage("<gray>Please slow down — spamming is not allowed."));
+            e.setCancelled(true);
+        }
     }
 
-    /* ===== command handler ===== */
-    @EventHandler(priority = EventPriority.LOW)
+    /* -------------------- COMMANDS --------------------- */
+
+    @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e)
     {
         Player p = e.getPlayer();
-        if (p.hasPermission("kfc.antispam.bypass")) return;
+        if (p.hasPermission(BYPASS_PERMISSION)) return;
 
-        int total = cmdCount.merge(p.getUniqueId(), 1, Integer::sum);
-        if (total <= COMMANDS_PER_CYCLE) return;
+        int count = cmdCounts.merge(p.getUniqueId(), 1, Integer::sum);
 
-        e.setCancelled(true);
-        p.kick(FUtil.miniMessage("<red>Kicked for spamming commands."));
-        FUtil.broadcast("<red><player> was kicked for spamming commands.", Placeholder.unparsed("player", p.getName()));
+        if (count > CMD_MAX_PER_SEC)
+        {
+            FUtil.staffAction(Bukkit.getConsoleSender(),
+                    "Auto‑kicked <player> for command spam",
+                    Placeholder.unparsed("player", p.getName()));
+            p.kick(FUtil.miniMessage("<red>You were kicked for command spam."));
+            e.setCancelled(true);
+        }
     }
 }
