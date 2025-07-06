@@ -11,36 +11,53 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandParameters(name = "unblockcmd", description = "Unblocks commands for a player.", usage = "/<command> <player>", aliases = "unblockcommand,unblockcommands,ubcmds,unblockcmds,ubc")
+@CommandParameters(
+        name      = "unblockcmd",
+        description = "Unblocks commands for a player.",
+        usage       = "/<command> <player>",
+        aliases     = {"unblockcommand","unblockcommands","ubcmds","unblockcmds","ubc"}
+)
 public class UnblockCmdCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
+    public boolean run(CommandSender sender,
+                       Player playerSender,
+                       Command cmd,
+                       String label,
+                       String[] args)
     {
-        MuteManager manager = KoolSMPCore.getInstance().getMuteManager();
-
-        if (args.length == 0)
+        if (args.length != 1)
         {
             return false;
         }
 
-        Player player = Bukkit.getPlayer(args[0]);
-        if (player == null)
+        Player target = Bukkit.getPlayer(args[0]);
+        if (target == null)
         {
             msg(sender, playerNotFound);
             return true;
         }
 
-        if (manager.isCommandsBlocked(player))
+        MuteManager manager = KoolSMPCore.getInstance().getMuteManager();
+
+        if (!manager.isCommandsBlocked(target.getUniqueId()))
         {
-            manager.setCommandsBlocked(player, false);
-            FUtil.staffAction(sender, "Unblocked commands for <player>", Placeholder.unparsed("player", player.getName()));
-            msg(sender, "<gray>Unblocked commands for <player>", Placeholder.unparsed("player", player.getName()));
+            msg(sender, "<red>That player's commands aren't blocked.");
+            return true;
         }
-        else
-        {
-            msg(sender, "<red>That players commands aren't blocked.");
-        }
+
+        manager.setCommandsBlocked(target.getUniqueId(), false);
+
+        FUtil.staffAction(sender,
+                "Unblocked commands for <player>",
+                Placeholder.unparsed("player", target.getName()));
+
+        msg(sender,
+                "<gray>Unblocked commands for <player>",
+                Placeholder.unparsed("player", target.getName()));
+
+        target.sendMessage(FUtil.miniMessage("<green>Your command block has been lifted."));
+
         return true;
     }
 }

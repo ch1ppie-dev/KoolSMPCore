@@ -10,13 +10,15 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 import static org.bukkit.Bukkit.getPlayer;
 
 @CommandParameters(name = "blockcommand", description = "Block all commands for everyone on the server, or a specific player.", usage = "/<command> <-a | purge | <player>>", aliases = {"bmcd", "blockcmd"})
 public class BlockCmdCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String label, String[] args)
     {
         MuteManager manager = KoolSMPCore.getInstance().getMuteManager();
 
@@ -29,19 +31,12 @@ public class BlockCmdCommand extends KoolCommand
 
         if (sub.equalsIgnoreCase("purge"))
         {
-            FUtil.staffAction(sender, "Unblocked commands for all players.");
             int count = manager.wipeBlockedCommands();
+            FUtil.staffAction(sender, "Unblocked commands for all players.");
 
-            // hopefully this actually works as planned.
-            // probably the most half-ass thing i've ever done in this plugin.
-            // and i've done a lot of that throughout the entire development process.
             for (Player p : Bukkit.getOnlinePlayers())
             {
-                if (manager.isCommandsBlocked(p))
-                {
-                    p.sendMessage(FUtil.miniMessage("<green>Your command block has been lifted."));
-                    return true;
-                }
+                p.sendMessage(FUtil.miniMessage("<green>Your command block has been lifted."));
             }
 
             msg(sender, "<gray>Unblocked commands for " + count + " players.");
@@ -50,22 +45,19 @@ public class BlockCmdCommand extends KoolCommand
 
         if (sub.equalsIgnoreCase("-a"))
         {
-            FUtil.staffAction(sender, "Blocked commands for all non-admins.");
             int count = 0;
 
             for (Player p : Bukkit.getOnlinePlayers())
             {
-                if (!p.hasPermission("kfc.admin"))
+                if (!p.hasPermission("kfc.admin") && !manager.isCommandsBlocked(p.getUniqueId()))
                 {
-                    if (!manager.isCommandsBlocked(p))
-                    {
-                        manager.setCommandsBlocked(p, true);
-                        p.sendMessage(FUtil.miniMessage("<red>Your commands have been blocked by an admin."));
-                        count++;
-                    }
+                    manager.setCommandsBlocked(p.getUniqueId(), true);
+                    p.sendMessage(FUtil.miniMessage("<red>Your commands have been blocked by an admin."));
+                    count++;
                 }
             }
 
+            FUtil.staffAction(sender, "Blocked commands for all non-admins.");
             msg(sender, "<gray>Blocked commands for " + count + " players.");
             return true;
         }
@@ -77,21 +69,23 @@ public class BlockCmdCommand extends KoolCommand
             return true;
         }
 
+        UUID uuid = target.getUniqueId();
+
         if (target.hasPermission("kfc.admin"))
         {
             msg(sender, "<gray>" + target.getName() + " is an admin and cannot be command-blocked.");
             return true;
         }
 
-        if (manager.isCommandsBlocked(target))
+        if (manager.isCommandsBlocked(uuid))
         {
             msg(sender, "<red>That player's commands have already been blocked.");
             return true;
         }
 
-        FUtil.staffAction(sender, "Blocked all commands for " + target.getName());
-        manager.setCommandsBlocked(target, true);
+        manager.setCommandsBlocked(uuid, true);
         target.sendMessage(FUtil.miniMessage("<red>Your commands have been blocked."));
+        FUtil.staffAction(sender, "Blocked all commands for " + target.getName());
         msg(sender, "<gray>Blocked commands for " + target.getName() + ".");
         return true;
     }
