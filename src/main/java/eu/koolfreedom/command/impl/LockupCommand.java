@@ -21,8 +21,7 @@ import java.util.List;
 public class LockupCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender, Player playerSender, Command command,
-                       String label, String[] args)
+    public boolean run(CommandSender sender, Player playerSender, Command command, String label, String[] args)
     {
         if (args.length != 1)
             return false;

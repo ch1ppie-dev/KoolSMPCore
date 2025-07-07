@@ -43,7 +43,10 @@ public class LockupManager implements Listener
         }
     }
 
-    public boolean isLocked(UUID uuid)          { return locked.containsKey(uuid); }
+    public boolean isLocked(UUID uuid)
+    {
+        return locked.containsKey(uuid);
+    }
 
     /* --------------------------------------------------------------------- */
     /*  Implementation                                                       */
@@ -54,7 +57,8 @@ public class LockupManager implements Listener
         // Keep inventory screen open every tick (prevents ESC)
         BukkitRunnable task = new BukkitRunnable()
         {
-            @Override public void run()
+            @Override
+            public void run()
             {
                 if (!p.isOnline())
                 {
@@ -65,7 +69,7 @@ public class LockupManager implements Listener
                     p.openInventory(p.getInventory());
             }
         };
-        task.runTaskTimer(plugin, 0L, 10L);          // every 0.5 s
+        task.runTaskTimer(plugin, 0L, 10L);          // every 0.5s
         locked.put(p.getUniqueId(), task);
     }
 
@@ -82,13 +86,15 @@ public class LockupManager implements Listener
     /*  Event guards – stop locked players from moving or running commands   */
     /* --------------------------------------------------------------------- */
 
-    @EventHandler public void onMove(PlayerMoveEvent e)
+    @EventHandler
+    public void onMove(PlayerMoveEvent e)
     {
         if (isLocked(e.getPlayer().getUniqueId()) && e.getFrom().getBlockX() != e.getTo().getBlockX())
             e.setTo(e.getFrom());
     }
 
-    @EventHandler public void onCommand(PlayerCommandPreprocessEvent e)
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent e)
     {
         if (isLocked(e.getPlayer().getUniqueId()))
         {
