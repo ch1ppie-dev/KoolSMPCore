@@ -145,7 +145,6 @@ public class KoolSMPCore extends JavaPlugin
         reportManager = new ReportManager();
         cosmeticManager = new CosmeticManager();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
-        new AntiSpamService(this);
         chatListener = new ChatListener();
         freezeListener = new FreezeListener();
         lockupManager = new LockupManager(this);
