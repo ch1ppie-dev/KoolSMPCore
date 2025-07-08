@@ -19,12 +19,9 @@ import eu.koolfreedom.freeze.FreezeManager;
 import eu.koolfreedom.note.NoteManager;
 import eu.koolfreedom.stats.PlaytimeListener;
 import eu.koolfreedom.stats.PlaytimeManager;
-import eu.koolfreedom.util.AutoUndoManager;
-import eu.koolfreedom.util.FLog;
+import eu.koolfreedom.util.*;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
-import eu.koolfreedom.util.BuildProperties;
-import eu.koolfreedom.util.FUtil;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.*;
@@ -92,6 +89,8 @@ public class KoolSMPCore extends JavaPlugin
         FLog.info("Created by gamingto12 and 0x7694C9");
         FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
         FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
+
+        new UpdateChecker(this, "KoolFreedom", "KoolSMPCore").check();
 
         int pluginId = 26369;
         Metrics metrics = new Metrics(this, pluginId);
