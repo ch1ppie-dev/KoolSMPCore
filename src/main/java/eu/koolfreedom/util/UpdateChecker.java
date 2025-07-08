@@ -19,6 +19,7 @@ public class UpdateChecker {
         this.repoName = repoName;
     }
 
+    @SuppressWarnings("deprecation")
     public void check() {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
