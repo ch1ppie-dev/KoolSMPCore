@@ -49,6 +49,10 @@ public class PlaytimeManager
         data.put(id, pd);
     }
 
+    public void replace(UUID id, PlaytimeData newData) {
+        data.put(id, newData);        // simple overwrite helper
+    }
+
     /* -------------------------------------------------------------------- */
     /*  Event hooks                                                         */
     /* -------------------------------------------------------------------- */

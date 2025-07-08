@@ -16,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -83,35 +84,55 @@ public class SeenCommand extends KoolCommand
         String name = target.getName() != null ? target.getName() : uuid.toString();
         msg(sender, FUtil.miniMessage("<red>Player Info: <gold>" + name + "</gold> <gray>(" + uuid + ")</gray>"));
 
-        PlaytimeData data = playtimeManager.get(uuid);
-        long first = data.firstJoin;
+        PlaytimeData pt = playtimeManager.get(uuid);
+        long first = pt.firstJoin;
         long last = target.getLastPlayed();
-        long playSeconds = data.totalPlaySeconds;
+        long played = pt.totalPlaySeconds;
 
-        IUser essUser = essentials != null ? essentials.getUser(uuid) : null;
-
-        // Migrate from Essentials if needed
-        if ((first == 0 || last == 0 || playSeconds == 0) && essUser != null)
+        // --- Essentials / Bukkit statistics migration ---
+        if (played == 0)
         {
-            long essFirst = essUser.getBase().getFirstPlayed();
-            long essLast = essUser.getBase().getLastPlayed();
+            long statisticSecs = 0;
 
-            if (first == 0 && essFirst > 0) first = essFirst;
-            if (last == 0 && essLast > 0) last = essLast;
+            try {
+                int ticks = target.getStatistic(Statistic.PLAY_ONE_MINUTE);
+                statisticSecs = ticks / 20L;
+            } catch (Exception ignored) {}
 
-            if (playSeconds == 0 && essFirst > 0 && essLast > essFirst)
-                playSeconds = (essLast - essFirst) / 1000;
+            if (statisticSecs == 0 && essentials != null)
+            {
+                IUser ess = essentials.getUser(uuid);
+                if (ess != null)
+                {
+                    try {
+                        // No reliable public method, fallback to estimated time based on Essentials timestamps
+                        long essFirst = ess.getBase().getFirstPlayed();
+                        long essLast = ess.getBase().getLastPlayed();
+                        if (essFirst > 0 && essLast > essFirst) {
+                            statisticSecs = (essLast - essFirst) / 1000L;
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
 
-            // Update playtime data
-            data.firstJoin = first;
-            data.lastSeen = last;
-            data.totalPlaySeconds = playSeconds;
-            playtimeManager.set(uuid, data);
+            if (statisticSecs == 0 && first > 0 && last > first)
+            {
+                statisticSecs = (last - first) / 1_000L;
+            }
+
+            played = statisticSecs;
+            pt.totalPlaySeconds = played;
         }
+
+        if (first == 0) first = target.getFirstPlayed();
+        if (last == 0) last = target.getLastPlayed();
+        pt.firstJoin = first;
+        pt.lastSeen = last;
+        playtimeManager.set(uuid, pt);
 
         String firstStr = first > 0 ? fmt.format(Instant.ofEpochMilli(first)) : "Unknown";
         String lastStr = last > 0 ? fmt.format(Instant.ofEpochMilli(last)) : "Unknown";
-        String playStr = playSeconds > 0 ? formatDuration(playSeconds) : "Unknown";
+        String playStr = played > 0 ? formatDuration(played) : "Unknown";
 
         String ip = forcedIp != null ? forcedIp : plugin.getAltManager().getLastIP(uuid).orElse("Unknown");
         List<String> alts = FUtil.getOfflinePlayersByIp(ip).stream()
@@ -120,9 +141,6 @@ public class SeenCommand extends KoolCommand
                 .collect(Collectors.toList());
 
         List<PlayerNote> notes = noteManager.getNotes(uuid);
-
-        MuteManager muteManager = plugin.getMuteManager();
-        FreezeManager freezeManager = plugin.getFreezeManager();
 
         boolean muted = muteManager != null && muteManager.isMuted(target);
         boolean frozen = target.isOnline() && freezeManager != null && freezeManager.isFrozen((Player) target);
