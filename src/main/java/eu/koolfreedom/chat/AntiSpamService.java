@@ -19,9 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AntiSpamService implements Listener
 {
     private static final int CHAT_MAX_PER_SEC      =  8;   // msgs‑per‑second before mute
-    private static final int CMD_MAX_PER_SEC       = 10;   // cmds‑per‑second before kick
+    private static final int CMD_MAX_PER_SEC       =  5;   // cmds‑per‑second before kick
     private static final int WARN_AT_CHAT_MESSAGES = CHAT_MAX_PER_SEC / 2;
-    private static final int AUTO_MUTE_SECONDS     = 60;   // 60‑second mute
     private static final String BYPASS_PERMISSION  = "kfc.antispam.bypass";
 
     private final Map<UUID, Integer> chatCounts  = new ConcurrentHashMap<>();

@@ -12,15 +12,19 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
 
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Builder
 @Getter
 public class Ban
 {
-	@Getter
-	private static final SimpleDateFormat expirationDateFormat = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+	private static final DateTimeFormatter EXPIRATION_FORMAT =
+			DateTimeFormatter.ofPattern("yyyy-MM-dd 'at' HH:mm:ss z")
+					.withZone(ZoneId.systemDefault());
 
 	private long id;
 	@Builder.Default
@@ -34,7 +38,7 @@ public class Ban
 	@Builder.Default
 	private long expires = Long.MAX_VALUE;
 	@Builder.Default
-	private List<String> ips = new ArrayList<>();
+	private List<String> ips = Collections.emptyList();
 
 	public static Ban fromYamlConfiguration(Long id, ConfigurationSection section)
 	{
@@ -54,9 +58,15 @@ public class Ban
 			}
 		}
 
-		builder.name(section.getString("name", null));
-		builder.by(section.getString("by", section.getString("punisher", null)));
-		builder.reason(section.getString("reason", null));
+		String name = section.getString("name");
+		if (name != null && !name.isBlank()) builder.name(name);
+
+		String punisher = section.getString("by", section.getString("punisher", null));
+		if (punisher != null && !punisher.isBlank()) builder.by(punisher);
+
+		String reason = section.getString("reason");
+		if (reason != null && !reason.isBlank()) builder.reason(reason);
+
 		builder.expires(section.getLong("expires", section.getLong("length", Long.MAX_VALUE)));
 
 		if (section.contains("ips"))
@@ -78,10 +88,11 @@ public class Ban
 			builder.ips(new ArrayList<>(List.of(FUtil.getIp(onlinePlayer))));
 		}
 
+		long now = System.currentTimeMillis();
+		builder.id(now);
 		builder.by(by);
 		builder.reason(reason);
-		builder.id(System.currentTimeMillis());
-		builder.expires(duration != Long.MAX_VALUE ? System.currentTimeMillis() + duration : Long.MAX_VALUE);
+		builder.expires(duration != Long.MAX_VALUE ? now + duration : Long.MAX_VALUE);
 
 		return builder.build();
 	}
@@ -120,12 +131,12 @@ public class Ban
 	{
 		StringBuilder builder = new StringBuilder("<red>You are banned from this server.");
 
-		if (by != null)
+		if (by != null && !by.isBlank())
 		{
 			builder.append("<newline>Banned by: <yellow><by></yellow>");
 		}
 
-		if (reason != null)
+		if (reason != null && !reason.isBlank())
 		{
 			builder.append("<newline>Reason: <yellow><reason></yellow>");
 		}
@@ -135,11 +146,14 @@ public class Ban
 			builder.append("<newline>Expires: <yellow><expires></yellow>");
 		}
 
-		builder.append("<newline><red>You can appeal at <yellow>" + ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString() + "</yellow>");
+		builder.append("<newline><red>You can appeal at <yellow>")
+				.append(ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString())
+				.append("</yellow>");
 
 		return FUtil.miniMessage(builder.toString(),
-				Placeholder.unparsed("expires", expirationDateFormat.format(new Date(expires))),
-				Placeholder.unparsed("reason", reason != null ? reason : ""),
-				Placeholder.unparsed("by", by != null ? by : ""));
+				Placeholder.unparsed("expires", EXPIRATION_FORMAT.format(ZonedDateTime.ofInstant(
+						Instant.ofEpochMilli(expires), ZoneId.systemDefault()))),
+				Placeholder.unparsed("reason", reason != null ? reason.trim() : ""),
+				Placeholder.unparsed("by", by != null ? by.trim() : ""));
 	}
 }
