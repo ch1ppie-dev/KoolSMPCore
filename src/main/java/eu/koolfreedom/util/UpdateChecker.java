@@ -39,16 +39,16 @@ public class UpdateChecker {
 
                     String currentVersion = plugin.getDescription().getVersion();
                     if (!latestTag.equalsIgnoreCase("v" + currentVersion)) {
-                        plugin.getLogger().warning("------------------------------------------------");
-                        plugin.getLogger().warning("An update is available for " + plugin.getName() + "!");
-                        plugin.getLogger().warning("Current version: v" + currentVersion);
-                        plugin.getLogger().warning("Latest version: " + latestTag);
-                        plugin.getLogger().warning("Download: https://github.com/" + repoOwner + "/" + repoName + "/releases/latest");
-                        plugin.getLogger().warning("------------------------------------------------");
+                        FLog.warning("------------------------------------------------");
+                        FLog.warning("An update is available for " + plugin.getName() + "!");
+                        FLog.warning("Current version: v" + currentVersion);
+                        FLog.warning("Latest version: " + latestTag);
+                        FLog.warning("Download: https://github.com/" + repoOwner + "/" + repoName + "/releases/latest");
+                        FLog.warning("------------------------------------------------");
                     }
                 }
             } catch (Exception e) {
-                plugin.getLogger().warning("Failed to check for updates: " + e.getMessage());
+                FLog.warning("Failed to check for updates: " + e.getMessage());
             }
         });
     }
