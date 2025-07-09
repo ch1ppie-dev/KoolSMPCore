@@ -101,7 +101,6 @@ public class KoolSMPCore extends JavaPlugin
         altManager = new AltManager();
         playtimeManager = new PlaytimeManager();
         noteManager = new NoteManager();
-        autoUndoManager = new AutoUndoManager(this, muteManager, freezeManager);
         freezeManager = new FreezeManager();
 
         loadBansConfig();
@@ -154,6 +153,7 @@ public class KoolSMPCore extends JavaPlugin
         ptListener = new PlaytimeListener();
         antiSpamListener = new AntiSpamService(this);
         combatManager = new CombatManager(this);
+        autoUndoManager = new AutoUndoManager(this, muteManager, freezeManager);
     }
 
     public void loadBridges()

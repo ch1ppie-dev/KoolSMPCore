@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Map;
@@ -65,8 +66,14 @@ public class LockupManager implements Listener
                     cancel();
                     return;
                 }
-                if (p.getOpenInventory() == null)
-                    p.openInventory(p.getInventory());
+                InventoryView view = p.getOpenInventory();
+                if (view == null || view.getTopInventory() != p.getInventory()) {
+                    try {
+                        p.openInventory(p.getInventory());
+                    } catch (IllegalArgumentException ignored) {
+                        // Player already has this inventory open — ignore.
+                    }
+                }
             }
         };
         task.runTaskTimer(plugin, 0L, 10L);          // every 0.5s

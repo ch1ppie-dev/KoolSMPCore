@@ -5,6 +5,7 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.freeze.FreezeManager;
 import eu.koolfreedom.util.FUtil;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -48,24 +49,16 @@ public class FreezeCommand extends KoolCommand
             manager.unfreeze(target);
             FUtil.staffAction(sender, "Unfroze " + target.getName());
             msg(sender, "<gray>Unfroze " + target.getName());
+            target.sendMessage(FUtil.miniMessage("<gray>You have been <aqua>unfrozen!"));
             plugin.getAutoUndoManager().cancelAutoUnfreeze(uuid);
             return true;
         }
 
-        long seconds = args.length >= 2 ? parseLong(args[1], 300) : 300;
-        manager.freeze(target, seconds);
-        FUtil.staffAction(sender, "Froze " + target.getName() + " for " + seconds + "s");
-        msg(sender, "<gray>Froze " + target.getName() + " for " + seconds + "s");
+        manager.freeze(target);
+        FUtil.staffAction(sender, "Froze <player>", Placeholder.unparsed("player", target.getName()));
+        msg(sender, "<gray>Froze <player>", Placeholder.unparsed("player", target.getName()));
+        target.sendMessage(FUtil.miniMessage("<gray>You have been <aqua>frozen!"));
         plugin.getAutoUndoManager().scheduleAutoUnfreeze(target);
         return true;
-    }
-
-    private long parseLong(String s, long def)
-    {
-        try {
-            return Long.parseLong(s);
-        } catch (NumberFormatException e) {
-            return def;
-        }
     }
 }

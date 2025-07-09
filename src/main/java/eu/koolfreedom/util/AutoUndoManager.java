@@ -40,21 +40,34 @@ public class AutoUndoManager
     {
         UUID uuid = player.getUniqueId();
 
-        // Cancel existing task if present
-        BukkitTask existing = muteUndoTasks.remove(uuid);
-        if (existing != null) existing.cancel();
+        // cancel any previous timer
+        BukkitTask old = muteUndoTasks.remove(uuid);
+        if (old != null) old.cancel();
 
-        // Schedule new task
         BukkitTask task = new BukkitRunnable()
         {
             @Override
-            public void run()
-            {
-                if (muteManager.isMuted(uuid))
+            public void run() {
+                // fetch managers fresh – in case they were (re)loaded later
+                MuteManager mm = KoolSMPCore.getInstance().getMuteManager();
+                if (mm == null) {            // should not happen, but be safe
+                    cancel();
+                    return;
+                }
+
+                if (mm.isMuted(uuid))
                 {
-                    muteManager.unmute(uuid);
-                    FUtil.staffAction(Bukkit.getConsoleSender(), "Auto-unmuted <player> after 5 minutes", Placeholder.unparsed("player", player.getName()));
-                    player.sendMessage(FUtil.miniMessage("<green>Your mute has been automatically lifted after 5 minutes."));
+                    mm.unmute(uuid);
+
+                    // broadcast & tell player (if online)
+                    Player online = Bukkit.getPlayer(uuid);
+                    FUtil.staffAction(
+                            Bukkit.getConsoleSender(),
+                            "Auto‑unmuted <player>",
+                            Placeholder.unparsed("player", online != null ? online.getName() : uuid.toString())
+                    );
+                    if (online != null)
+                        online.sendMessage(FUtil.miniMessage("<green>Your mute has been automatically lifted after 5 minutes."));
                 }
                 muteUndoTasks.remove(uuid);
             }
@@ -73,30 +86,46 @@ public class AutoUndoManager
     /* Freeze auto-undo */
     /* ------------------------- */
 
-    public void scheduleAutoUnfreeze(Player player)
-    {
+    public void scheduleAutoUnfreeze(Player player) {
         UUID uuid = player.getUniqueId();
 
+        // Cancel an existing task if one exists
         BukkitTask existing = freezeUndoTasks.remove(uuid);
         if (existing != null) existing.cancel();
 
-        BukkitTask task = new BukkitRunnable()
-        {
+        // Schedule a new task
+        BukkitTask task = new BukkitRunnable() {
             @Override
-            public void run()
-            {
-                if (freezeManager.isFrozen(player))
-                {
-                    freezeManager.unfreeze(player);
-                    FUtil.staffAction(Bukkit.getConsoleSender(), "Auto-unfroze <player>", Placeholder.unparsed("player", player.getName()));
-                    player.sendMessage(FUtil.miniMessage("<green>Your freeze has been automatically lifted after 5 minutes."));
+            public void run() {
+                // Get player safely
+                Player p = Bukkit.getPlayer(uuid);
+                if (p == null || !p.isOnline()) {
+                    FLog.error("[DEBUG] Auto-unfreeze: player is offline or null: " + uuid);
+                    freezeUndoTasks.remove(uuid);
+                    return;
                 }
+
+                if (freezeManager.isFrozen(p)) {
+                    FLog.error("[DEBUG] Auto-unfreeze: unfreezing " + p.getName());
+
+                    // Message and broadcast first
+                    FUtil.staffAction(Bukkit.getConsoleSender(), "Auto-unfroze <player>",
+                            Placeholder.unparsed("player", p.getName()));
+                    p.sendMessage(FUtil.miniMessage("<green>Your freeze has been automatically lifted after 5 minutes."));
+
+                    // Then unfreeze
+                    freezeManager.unfreeze(player);
+                } else {
+                    FLog.error("[DEBUG] Auto-unfreeze: player " + p.getName() + " is not frozen.");
+                }
+
                 freezeUndoTasks.remove(uuid);
             }
         }.runTaskLater(plugin, AUTO_UNDO_TICKS);
 
         freezeUndoTasks.put(uuid, task);
     }
+
 
     public void cancelAutoUnfreeze(UUID uuid)
     {
