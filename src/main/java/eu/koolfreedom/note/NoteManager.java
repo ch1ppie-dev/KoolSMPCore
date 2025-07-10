@@ -11,6 +11,17 @@ public class NoteManager
         notes.computeIfAbsent(playerUUID, k -> new ArrayList<>()).add(note);
     }
 
+    public boolean removeNote(UUID playerUUID, PlayerNote note)
+    {
+        List<PlayerNote> playerNotes = notes.get(playerUUID);
+        if (playerNotes == null)
+        {
+            return false;
+        }
+
+        return playerNotes.remove(note);
+    }
+
     public List<PlayerNote> getNotes(UUID playerUUID)
     {
         return notes.getOrDefault(playerUUID, List.of());

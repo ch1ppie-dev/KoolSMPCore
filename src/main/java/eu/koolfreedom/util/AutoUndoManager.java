@@ -86,7 +86,8 @@ public class AutoUndoManager
     /* Freeze auto-undo */
     /* ------------------------- */
 
-    public void scheduleAutoUnfreeze(Player player) {
+    public void scheduleAutoUnfreeze(Player player)
+    {
         UUID uuid = player.getUniqueId();
 
         // Cancel an existing task if one exists
@@ -94,19 +95,23 @@ public class AutoUndoManager
         if (existing != null) existing.cancel();
 
         // Schedule a new task
-        BukkitTask task = new BukkitRunnable() {
+        BukkitTask task = new BukkitRunnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 // Get player safely
                 Player p = Bukkit.getPlayer(uuid);
-                if (p == null || !p.isOnline()) {
-                    FLog.error("[DEBUG] Auto-unfreeze: player is offline or null: " + uuid);
+                if (p == null || !p.isOnline())
+                {
+                    // FLog.error("[DEBUG] Auto-unfreeze: player is offline or null: " + uuid);
                     freezeUndoTasks.remove(uuid);
                     return;
                 }
 
-                if (freezeManager.isFrozen(p)) {
-                    FLog.error("[DEBUG] Auto-unfreeze: unfreezing " + p.getName());
+                if (freezeManager.isFrozen(p))
+                {
+                    // FLog.error("[DEBUG] Auto-unfreeze: unfreezing " + p.getName());
 
                     // Message and broadcast first
                     FUtil.staffAction(Bukkit.getConsoleSender(), "Auto-unfroze <player>",
@@ -115,8 +120,10 @@ public class AutoUndoManager
 
                     // Then unfreeze
                     freezeManager.unfreeze(player);
-                } else {
-                    FLog.error("[DEBUG] Auto-unfreeze: player " + p.getName() + " is not frozen.");
+                }
+                else
+                {
+                    FLog.error("Auto-unfreeze: player " + p.getName() + " is not frozen.");
                 }
 
                 freezeUndoTasks.remove(uuid);

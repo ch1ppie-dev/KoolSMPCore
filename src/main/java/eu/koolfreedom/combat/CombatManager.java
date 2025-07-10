@@ -186,7 +186,7 @@ public class CombatManager implements Listener
         return p.hasPermission("kfc.combatlog.bypass") || p.getGameMode() == GameMode.CREATIVE;
     }
 
-    /** Returns true if the location is covered by a WG region with PVP=DENY. */
+    /** Returns true if the location is covered by a WorldGuard region with PVP=DENY. */
     private boolean isInSafeZone(Player player)
     {
         World w = player.getWorld();

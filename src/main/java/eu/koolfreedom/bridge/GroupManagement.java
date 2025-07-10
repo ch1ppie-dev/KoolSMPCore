@@ -111,24 +111,32 @@ public class GroupManagement
      */
     public void applyNametagColor(Player player)
     {
+        if (player == null || player.getName() == null) return;
+
         Group g = getSenderGroup(player);
+        if (g == null) return;
+
         Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
-
         String teamName = "rank_" + g.getInternalName().toLowerCase(Locale.ROOT);
-        Team team = main.getTeam(teamName);
 
+        Team team = main.getTeam(teamName);
         if (team == null)
         {
             team = main.registerNewTeam(teamName);
             team.setColor(g.toChatColor());
         }
 
-        // update color if config changed
+        // Re-apply color if needed
         if (team.getColor() != g.toChatColor())
+        {
             team.setColor(g.toChatColor());
+        }
 
+        // Prevent duplicate/null entries
         if (!team.hasEntry(player.getName()))
+        {
             team.addEntry(player.getName());
+        }
     }
 
     @Getter

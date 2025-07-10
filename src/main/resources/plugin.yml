@@ -57,6 +57,7 @@ permissions:
       - kfc.mutechat.bypass
       - kfc.notes.add
       - kfc.notes.view
+      - kfc.notes.remove
       - kfc.command.note
       - kfc.command.orbit
       - kfc.command.rawsay

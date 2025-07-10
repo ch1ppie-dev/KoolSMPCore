@@ -67,10 +67,14 @@ public class LockupManager implements Listener
                     return;
                 }
                 InventoryView view = p.getOpenInventory();
-                if (view == null || view.getTopInventory() != p.getInventory()) {
-                    try {
+                if (view == null || view.getTopInventory() != p.getInventory())
+                {
+                    try
+                    {
                         p.openInventory(p.getInventory());
-                    } catch (IllegalArgumentException ignored) {
+                    }
+                    catch (IllegalArgumentException ignored)
+                    {
                         // Player already has this inventory open — ignore.
                     }
                 }
