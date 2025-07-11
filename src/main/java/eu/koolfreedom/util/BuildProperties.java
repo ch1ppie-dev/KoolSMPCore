@@ -28,7 +28,7 @@ public class BuildProperties extends Properties
 		}
 
 		author = getProperty("buildAuthor", "unknown");
-		version = getProperty("buildVersion", "4.2.2");
+		version = getProperty("buildVersion", "4.2.2-SNAPSHOT");
 		number = getProperty("buildNumber", "1");
 		date = getProperty("buildDate", "unknown");
 	}
