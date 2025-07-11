@@ -11,7 +11,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.Optional;
 
@@ -96,4 +99,16 @@ public class CosmeticManager implements Listener
 
         KoolSMPCore.getInstance().getGroupManager().applyNametagColor(player);
     }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e)
+    {
+        String name = e.getPlayer().getName();
+        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+        for (Team team : main.getTeams())
+        {
+            team.removeEntry(name);
+        }
+    }
+
 }

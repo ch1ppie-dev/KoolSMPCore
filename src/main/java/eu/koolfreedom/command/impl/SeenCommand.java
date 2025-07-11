@@ -89,38 +89,34 @@ public class SeenCommand extends KoolCommand
         long last = target.getLastPlayed();
         long played = pt.totalPlaySeconds;
 
-        // --- Essentials / Bukkit statistics migration ---
-        if (played == 0)
+        // Essentials / Bukkit stats migration w/ max fallback
+        long altPlaytime = 0;
+        try {
+            int ticks = target.getStatistic(Statistic.PLAY_ONE_MINUTE);
+            altPlaytime = Math.max(altPlaytime, ticks / 20L);
+        } catch (Exception ignored) {}
+
+        if (essentials != null)
         {
-            long statisticSecs = 0;
-
-            try {
-                int ticks = target.getStatistic(Statistic.PLAY_ONE_MINUTE);
-                statisticSecs = ticks / 20L;
-            } catch (Exception ignored) {}
-
-            if (statisticSecs == 0 && essentials != null)
+            IUser ess = essentials.getUser(uuid);
+            if (ess != null)
             {
-                IUser ess = essentials.getUser(uuid);
-                if (ess != null)
-                {
-                    try {
-                        // No reliable public method, fallback to estimated time based on Essentials timestamps
-                        long essFirst = ess.getBase().getFirstPlayed();
-                        long essLast = ess.getBase().getLastPlayed();
-                        if (essFirst > 0 && essLast > essFirst) {
-                            statisticSecs = (essLast - essFirst) / 1000L;
-                        }
-                    } catch (Exception ignored) {}
-                }
+                try {
+                    long essFirst = ess.getBase().getFirstPlayed();
+                    long essLast = ess.getBase().getLastPlayed();
+                    if (essFirst > 0 && essLast > essFirst) {
+                        altPlaytime = Math.max(altPlaytime, (essLast - essFirst) / 1000L);
+                    }
+                } catch (Exception ignored) {}
             }
+        }
 
-            if (statisticSecs == 0 && first > 0 && last > first)
-            {
-                statisticSecs = (last - first) / 1_000L;
-            }
+        if (first > 0 && last > first) {
+            altPlaytime = Math.max(altPlaytime, (last - first) / 1000L);
+        }
 
-            played = statisticSecs;
+        if (altPlaytime > played) {
+            played = altPlaytime;
             pt.totalPlaySeconds = played;
         }
 

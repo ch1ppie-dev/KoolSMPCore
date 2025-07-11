@@ -1,5 +1,11 @@
 package eu.koolfreedom.stats;
 
+import eu.koolfreedom.KoolSMPCore;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +19,9 @@ public class PlaytimeManager
     /* -------------------------------------------------------------------- */
     /*  Inner data‑holder                                                   */
     /* -------------------------------------------------------------------- */
+
+    private final File file = new File(KoolSMPCore.getInstance().getDataFolder(), "playtime.yml");
+    private final YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
     public static class PlaytimeData
     {
@@ -36,6 +45,48 @@ public class PlaytimeManager
     /* -------------------------------------------------------------------- */
     /*  Basic CRUD                                                          */
     /* -------------------------------------------------------------------- */
+
+    public void load()
+    {
+        if (!file.exists()) return;
+
+        for (String key : config.getKeys(false))
+        {
+            UUID id = UUID.fromString(key);
+            ConfigurationSection section = config.getConfigurationSection(key);
+            if (section == null) continue;
+
+            PlaytimeData data = new PlaytimeData();
+            data.firstJoin = section.getLong("firstJoin", 0);
+            data.lastSeen = section.getLong("lastSeen", 0);
+            data.totalPlaySeconds = section.getLong("totalPlaySeconds", 0);
+            this.data.put(id, data);
+        }
+    }
+
+    public void save()
+    {
+        for (Map.Entry<UUID, PlaytimeData> entry : data.entrySet())
+        {
+            UUID id = entry.getKey();
+            PlaytimeData d = entry.getValue();
+            String path = id.toString();
+
+            config.set(path + ".firstJoin", d.firstJoin);
+            config.set(path + ".lastSeen", d.lastSeen);
+            config.set(path + ".totalPlaySeconds", d.totalPlaySeconds);
+        }
+
+        try
+        {
+            config.save(file);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 
     /** Get (or create) the play‑time record for a player. */
     public PlaytimeData get(UUID id)
@@ -76,7 +127,9 @@ public class PlaytimeManager
         Long startSecs = sessionStart.remove(id);
         if (startSecs != null)
         {
-            long delta = Instant.now().getEpochSecond() - startSecs;
+            long now = Instant.now().getEpochSecond();
+            long delta = now - startSecs;
+            get(id).lastSeen = now * 1000;  // Also update last seen here
             get(id).totalPlaySeconds += Math.max(delta, 0);
         }
     }

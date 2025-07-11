@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.*;
 
 import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.util.FLog;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -111,33 +112,38 @@ public class GroupManagement
      */
     public void applyNametagColor(Player player)
     {
-        if (player == null || player.getName() == null) return;
+        if (player == null || !player.isOnline()) return;
 
-        Group g = getSenderGroup(player);
-        if (g == null) return;
+        String playerName = player.getName();
+        if (playerName == null || playerName.isBlank()) return;
+
+        Group group = getSenderGroup(player);
+        if (group == null) return;
 
         Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
-        String teamName = "rank_" + g.getInternalName().toLowerCase(Locale.ROOT);
+        String teamName = "rank_" + group.getInternalName().toLowerCase(Locale.ROOT);
 
         Team team = main.getTeam(teamName);
         if (team == null)
         {
             team = main.registerNewTeam(teamName);
-            team.setColor(g.toChatColor());
+            team.setColor(group.toChatColor());
         }
 
-        // Re-apply color if needed
-        if (team.getColor() != g.toChatColor())
+        if (team.getColor() != group.toChatColor())
+            team.setColor(group.toChatColor());
+
+        // Defensive: Remove from other teams
+        for (Team t : main.getTeams())
         {
-            team.setColor(g.toChatColor());
+            if (t.hasEntry(playerName) && !t.getName().equals(teamName))
+                t.removeEntry(playerName);
         }
 
-        // Prevent duplicate/null entries
-        if (!team.hasEntry(player.getName()))
-        {
-            team.addEntry(player.getName());
-        }
+        if (!team.hasEntry(playerName))
+            team.addEntry(playerName);
     }
+
 
     @Getter
     public static class Group
