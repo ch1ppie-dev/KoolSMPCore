@@ -85,41 +85,42 @@ public class SeenCommand extends KoolCommand
         msg(sender, FUtil.miniMessage("<red>Player Info: <gold>" + name + "</gold> <gray>(" + uuid + ")</gray>"));
 
         PlaytimeData pt = playtimeManager.get(uuid);
+
         long first = pt.firstJoin;
         long last = target.getLastPlayed();
-        long played = pt.totalPlaySeconds;
 
-        // Essentials / Bukkit stats migration w/ max fallback
-        long altPlaytime = 0;
+        // Your stored playtime in seconds
+        long storedPlaytime = pt.totalPlaySeconds;
+
+        // Bukkit stats playtime fallback (also in seconds)
+        long bukkitPlaytime = 0;
         try {
             int ticks = target.getStatistic(Statistic.PLAY_ONE_MINUTE);
-            altPlaytime = Math.max(altPlaytime, ticks / 20L);
+            bukkitPlaytime = ticks / 20L;
         } catch (Exception ignored) {}
 
-        if (essentials != null)
-        {
-            IUser ess = essentials.getUser(uuid);
-            if (ess != null)
-            {
-                try {
-                    long essFirst = ess.getBase().getFirstPlayed();
-                    long essLast = ess.getBase().getLastPlayed();
-                    if (essFirst > 0 && essLast > essFirst) {
-                        altPlaytime = Math.max(altPlaytime, (essLast - essFirst) / 1000L);
-                    }
-                } catch (Exception ignored) {}
-            }
+        // Decide which playtime to show
+        long played = storedPlaytime;
+        boolean usingFallback = false;
+
+        if (bukkitPlaytime > played) {
+            played = bukkitPlaytime;
+            // Don't override storedPlaytime here — only use for display
         }
 
-        if (first > 0 && last > first) {
-            altPlaytime = Math.max(altPlaytime, (last - first) / 1000L);
+        // Only fallback if no valid playtime recorded
+        if (played == 0 && first > 0 && last > first) {
+            played = (last - first) / 1000L;
+            usingFallback = true;
         }
 
-        if (altPlaytime > played) {
-            played = altPlaytime;
+        // Update playtime data if we have a bigger number than stored (optional)
+        if (played > storedPlaytime) {
             pt.totalPlaySeconds = played;
+            playtimeManager.set(uuid, pt);
         }
 
+        // Format times for display
         if (first == 0) first = target.getFirstPlayed();
         if (last == 0) last = target.getLastPlayed();
         pt.firstJoin = first;
@@ -129,6 +130,11 @@ public class SeenCommand extends KoolCommand
         String firstStr = first > 0 ? fmt.format(Instant.ofEpochMilli(first)) : "Unknown";
         String lastStr = last > 0 ? fmt.format(Instant.ofEpochMilli(last)) : "Unknown";
         String playStr = played > 0 ? formatDuration(played) : "Unknown";
+
+        // Append fallback label if needed
+        if (usingFallback) {
+            playStr += " (fallback)";
+        }
 
         String ip = forcedIp != null ? forcedIp : plugin.getAltManager().getLastIP(uuid).orElse("Unknown");
         List<String> alts = FUtil.getOfflinePlayersByIp(ip).stream()
