@@ -41,10 +41,6 @@
             <id>scarsz-repo</id>
             <url>https://nexus.scarsz.me/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>sk89q-repo</id>
-            <url>https://maven.enginehub.org/repo/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -127,18 +123,6 @@
             <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldguard</groupId>
-            <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.9-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-bukkit</artifactId>
-            <version>7.3.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
 
     </dependencies>
 
@@ -178,6 +162,7 @@
                             <target>
                                 <propertyfile file="${project.basedir}/src/main/resources/build.properties"
                                               comment="Build information. Edit this to your liking.">
+                                    <!--suppress UnresolvedMavenProperty -->
                                     <entry key="buildAuthor" value="${buildAuthor}"/>
                                     <entry key="buildNumber" default="0"/>
                                     <entry key="buildVersion" value="${project.version}"/>
