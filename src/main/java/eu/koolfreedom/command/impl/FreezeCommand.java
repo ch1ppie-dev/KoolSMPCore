@@ -16,7 +16,7 @@ import java.util.UUID;
 @CommandParameters(name = "freeze", description = "Freeze players", usage = "/freeze <player> [seconds] | global on|off")
 public class FreezeCommand extends KoolCommand
 {
-    private final FreezeManager manager = KoolSMPCore.getInstance().getFreezeManager();
+    private final FreezeManager manager = plugin.getFreezeManager();
 
     @Override
     public boolean run(CommandSender sender, Player player, Command command, String label, String[] args) {

@@ -20,11 +20,7 @@ import org.bukkit.entity.Player;
 public class UnblockCmdCommand extends KoolCommand
 {
     @Override
-    public boolean run(CommandSender sender,
-                       Player playerSender,
-                       Command cmd,
-                       String label,
-                       String[] args)
+    public boolean run(CommandSender sender, Player playerSender, Command cmd, String label, String[] args)
     {
         if (args.length != 1)
         {
@@ -38,7 +34,7 @@ public class UnblockCmdCommand extends KoolCommand
             return true;
         }
 
-        MuteManager manager = KoolSMPCore.getInstance().getMuteManager();
+        MuteManager manager = plugin.getMuteManager();
 
         if (!manager.isCommandsBlocked(target.getUniqueId()))
         {

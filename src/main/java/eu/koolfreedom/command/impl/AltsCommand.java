@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.api.AltManager;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
@@ -19,7 +18,7 @@ import java.util.*;
 @CommandParameters(name = "alts", description = "Shows other accounts known to be associated with a player or IP", usage = "/alts <player|ip>", permission = "kfc.alts")
 public class AltsCommand extends KoolCommand
 {
-    private final AltManager altManager = KoolSMPCore.getInstance().getAltManager();
+    private final AltManager altManager = plugin.getAltManager();
 
     @Override
     public boolean run(CommandSender sender, org.bukkit.entity.Player player, Command command, String label, String[] args)

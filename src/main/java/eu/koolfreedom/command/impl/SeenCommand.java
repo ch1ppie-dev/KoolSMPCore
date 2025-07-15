@@ -11,7 +11,6 @@ import eu.koolfreedom.stats.PlaytimeManager;
 import eu.koolfreedom.stats.PlaytimeManager.PlaytimeData;
 import eu.koolfreedom.util.FUtil;
 import net.ess3.api.IEssentials;
-import net.ess3.api.IUser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;

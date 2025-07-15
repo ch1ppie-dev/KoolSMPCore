@@ -53,7 +53,7 @@ public class NoteCommand extends KoolCommand
 
                 String message = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
                 PlayerNote note = new PlayerNote(sender.getName(), message, LocalDateTime.now());
-                KoolSMPCore.getInstance().getNoteManager().addNote(uuid, note);
+                plugin.getNoteManager().addNote(uuid, note);
 
                 msg(sender, "<green>Note added for <yellow><player></yellow>.",
                         Placeholder.unparsed("player", target.getName()));
@@ -81,7 +81,7 @@ public class NoteCommand extends KoolCommand
                     return true;
                 }
 
-                var notes = KoolSMPCore.getInstance().getNoteManager().getNotes(uuid);
+                var notes = plugin.getNoteManager().getNotes(uuid);
                 if (notes.isEmpty()) {
                     msg(sender, "<gray>No notes for <player>.",
                             Placeholder.unparsed("player", target.getName()));
@@ -110,7 +110,7 @@ public class NoteCommand extends KoolCommand
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
         UUID targetUUID = target.getUniqueId();
 
-        List<PlayerNote> noteList = KoolSMPCore.getInstance().getNoteManager().getNotes(targetUUID);
+        List<PlayerNote> noteList = plugin.getNoteManager().getNotes(targetUUID);
         if (noteList == null || noteList.isEmpty())
         {
             sender.sendMessage(FUtil.miniMessage("<red>That player has no notes."));
@@ -135,7 +135,7 @@ public class NoteCommand extends KoolCommand
         }
 
         PlayerNote removed = noteList.remove(index);
-        KoolSMPCore.getInstance().getNoteManager().removeNote(targetUUID, removed); // This call is now safe
+        plugin.getNoteManager().removeNote(targetUUID, removed); // This call is now safe
 
         sender.sendMessage(FUtil.miniMessage("<green>Removed note #<i>" + (index + 1) + "</i> from <yellow>" + target.getName()));
     }

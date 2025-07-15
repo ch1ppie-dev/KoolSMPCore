@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.listener.MuteManager;
@@ -20,7 +19,7 @@ public class BlockCmdCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String label, String[] args)
     {
-        MuteManager manager = KoolSMPCore.getInstance().getMuteManager();
+        MuteManager manager = plugin.getMuteManager();
 
         if (args.length != 1)
         {
