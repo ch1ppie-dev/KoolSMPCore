@@ -110,39 +110,58 @@ public class GroupManagement
      * Adds / moves the player into a Team whose color matches their primary group,
      * so the hovering nametag adopts that color.
      */
+    @SuppressWarnings("deprecation")
     public void applyNametagColor(Player player)
     {
-        if (player == null || !player.isOnline()) return;
+        if (player == null || !player.isOnline())
+            return;
 
         String playerName = player.getName();
-        if (playerName == null || playerName.isBlank()) return;
+        if (playerName == null || playerName.isBlank())
+            return;
 
         Group group = getSenderGroup(player);
-        if (group == null) return;
+        if (group == null)
+            return;
+
+        // ❌ Skip scoreboard logic if group is default
+        if (group.getInternalName().equalsIgnoreCase("default"))
+            return;
 
         Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
         String teamName = "rank_" + group.getInternalName().toLowerCase(Locale.ROOT);
-
         Team team = main.getTeam(teamName);
-        if (team == null)
+
+        try
         {
-            team = main.registerNewTeam(teamName);
-            team.setColor(group.toChatColor());
+            if (team == null)
+            {
+                team = main.registerNewTeam(teamName);
+                team.setColor(group.toChatColor());
+            }
+            else if (team.getColor() != group.toChatColor())
+            {
+                team.setColor(group.toChatColor());
+            }
+        }
+        catch (IllegalArgumentException | IllegalStateException e)
+        {
+            FLog.warning("[GroupManagement] Failed to register/update team: " + teamName + " for " + playerName + " - " + e.getMessage());
+            return;
         }
 
-        if (team.getColor() != group.toChatColor())
-            team.setColor(group.toChatColor());
-
-        // Defensive: Remove from other teams
+        // Remove from other teams
         for (Team t : main.getTeams())
         {
-            if (t.hasEntry(playerName) && !t.getName().equals(teamName))
+            if (!t.getName().equals(teamName) && t.hasEntry(playerName))
                 t.removeEntry(playerName);
         }
 
+        // Add to the correct team
         if (!team.hasEntry(playerName))
             team.addEntry(playerName);
     }
+
 
 
     @Getter
