@@ -76,10 +76,22 @@ public class MuteManager implements Listener
     }
 
     /* Convenience overloads for Player / OfflinePlayer */
-    public void mute(Player p){ mute(p.getUniqueId()); }
-    public void unmute(Player p){ unmute(p.getUniqueId()); }
-    public boolean isMuted(Player p){ return isMuted(p.getUniqueId()); }
-    public boolean isMuted(OfflinePlayer p){ return isMuted(p.getUniqueId()); }
+    public void mute(Player p)
+    {
+        mute(p.getUniqueId());
+    }
+    public void unmute(Player p)
+    {
+        unmute(p.getUniqueId());
+    }
+    public boolean isMuted(Player p)
+    {
+        return isMuted(p.getUniqueId());
+    }
+    public boolean isMuted(OfflinePlayer p)
+    {
+        return isMuted(p.getUniqueId());
+    }
 
     /* -------------------------------------------------------------------- */
     /* Event listeners                                                      */
@@ -141,6 +153,13 @@ public class MuteManager implements Listener
         if (isMuted(e.getPlayer()))
         {
             e.getPlayer().sendMessage(FUtil.miniMessage("<gray>You are still muted."));
+        }
+
+        UUID id = e.getPlayer().getUniqueId();
+
+        if (isCommandsBlocked(id))
+        {
+            e.getPlayer().sendMessage(FUtil.miniMessage("<gray>Your commands are still blocked."));
         }
     }
 }

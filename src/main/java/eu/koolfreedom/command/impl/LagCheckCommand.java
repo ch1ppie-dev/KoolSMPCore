@@ -15,7 +15,7 @@ import java.lang.management.MemoryUsage;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CommandParameters(name = "lagcheck", description = "Check for potential server lag sources", usage = "/lagcheck")
+@CommandParameters(name = "lagcheck", description = "Check for potential server lag sources", usage = "/lagcheck", aliases = {"lagsource"})
 public class LagCheckCommand extends KoolCommand
 {
     @Override

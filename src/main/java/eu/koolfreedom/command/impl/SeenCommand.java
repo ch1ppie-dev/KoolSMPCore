@@ -70,7 +70,7 @@ public class SeenCommand extends KoolCommand
             target = Bukkit.getPlayerExact(input);
             if (target == null)
             {
-                msg(sender, "<red>Player not found: <white>" + input + "</white>");
+                msg(sender, playerNotFound);
                 return true;
             }
         }

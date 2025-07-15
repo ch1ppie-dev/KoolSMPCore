@@ -31,7 +31,7 @@ public class PlaytimeSyncCommand extends KoolCommand
             target = Bukkit.getPlayerExact(args[0]);
             if (target == null)
             {
-                msg(sender, "<red>Player not found.");
+                msg(sender, playerNotFound);
                 return true;
             }
         }

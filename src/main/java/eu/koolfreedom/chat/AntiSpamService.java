@@ -44,7 +44,7 @@ public class AntiSpamService implements Listener
                 chatCounts.clear();
                 cmdCounts.clear();
             }
-        }.runTaskTimer(plugin, 20L, 20L);  // every 1 s
+        }.runTaskTimer(plugin, 20L, 20L);  // every 1s
     }
 
     /* ----------------------- CHAT ----------------------- */
@@ -61,7 +61,7 @@ public class AntiSpamService implements Listener
         if (count > CHAT_MAX_PER_SEC)
         {
             muteManager.mute(p);                                   // permanent mute
-            plugin.getAutoUndoManager().scheduleAutoUnmute(p);     // auto‑undo in 5 min
+            plugin.getAutoUndoManager().scheduleAutoUnmute(p);     // auto‑undo in 5min
             FUtil.staffAction(Bukkit.getConsoleSender(),
                     "Auto‑muted <player> for spamming chat",
                     Placeholder.unparsed("player", p.getName()));
@@ -71,7 +71,7 @@ public class AntiSpamService implements Listener
 
         if (count >= WARN_AT_CHAT_MESSAGES)
         {
-            p.sendMessage(FUtil.miniMessage("<gray>Please slow down — spamming is not allowed."));
+            p.sendMessage(FUtil.miniMessage("<gray>Please slow down | spamming is not allowed."));
             e.setCancelled(true);
         }
     }

@@ -42,7 +42,7 @@ public class AltsCommand extends KoolCommand
             OfflinePlayer target = Bukkit.getOfflinePlayerIfCached(input);
             if (target == null || (!target.hasPlayedBefore() && !target.isOnline()))
             {
-                msg(sender, "<red>Player not found: <white>" + input);
+                msg(sender, playerNotFound);
                 return true;
             }
 
