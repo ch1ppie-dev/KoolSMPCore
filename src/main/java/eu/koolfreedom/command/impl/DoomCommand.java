@@ -103,7 +103,8 @@ public class DoomCommand extends KoolCommand
         target.spawnParticle(Particle.ASH, target.getLocation(), Integer.MAX_VALUE, 1, 1, 1, 1, null, true);
 
         // Now we can have our fun
-        FUtil.broadcast("<red>Hey, <player>, what's the difference between jelly and jam?",
+        FUtil.broadcast("<red><sender> is swinging the Russian Hammer over <player>",
+                Placeholder.unparsed("sender", sender.getName()),
                 Placeholder.unparsed("player", target.getName()));
 
         // ZAP
@@ -116,7 +117,8 @@ public class DoomCommand extends KoolCommand
             @Override
             public void run()
             {
-                FUtil.broadcast("<red>I can't jelly my ban hammer down your throat.");
+                FUtil.broadcast("<red><player> will be completely eviscerated.",
+                        Placeholder.unparsed("player", target.getName()));
 
                 if (!target.isOnline())
                 {
