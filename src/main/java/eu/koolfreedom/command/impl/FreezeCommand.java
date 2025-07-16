@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-@CommandParameters(name = "freeze", description = "Freeze players", usage = "/freeze <player> [seconds] | global on|off")
+@CommandParameters(name = "freeze", description = "Freeze players", usage = "/freeze <player>")
 public class FreezeCommand extends KoolCommand
 {
     private final FreezeManager manager = plugin.getFreezeManager();
@@ -21,19 +21,6 @@ public class FreezeCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player player, Command command, String label, String[] args) {
         if (args.length == 0) return false;
-
-        if (args[0].equalsIgnoreCase("global"))
-        {
-            if (args.length < 2)
-            {
-                msg(sender, "<gray>Usage: /freeze global <on|off>");
-                return true;
-            }
-            boolean on = args[1].equalsIgnoreCase("on");
-            manager.setGlobalFreeze(on);
-            FUtil.staffAction(sender, (on ? "Globally froze" : "Unfroze") + " all players");
-            return true;
-        }
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null)
