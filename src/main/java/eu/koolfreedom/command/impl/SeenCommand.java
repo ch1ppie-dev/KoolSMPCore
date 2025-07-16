@@ -77,6 +77,7 @@ public class SeenCommand extends KoolCommand
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     private void displayPlayer(CommandSender sender, OfflinePlayer target, String forcedIp)
     {
         UUID uuid = target.getUniqueId();

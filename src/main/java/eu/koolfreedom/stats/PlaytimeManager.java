@@ -145,6 +145,7 @@ public class PlaytimeManager
     }
 
     /** Optional: resync from Essentials */
+    @SuppressWarnings("deprecation")
     public void importFromEssentials(UUID id)
     {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(id);

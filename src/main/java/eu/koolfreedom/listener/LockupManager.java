@@ -95,6 +95,9 @@ public class LockupManager implements Listener
 
     /* --------------------------------------------------------------------- */
     /*  Event guards – stop locked players from moving or running commands   */
+    /*                                                                       */
+    /*  These are mainly in place in the event where the player bypasses all */
+    /*    the calls to open their inventory                                  */
     /* --------------------------------------------------------------------- */
 
     @EventHandler
@@ -111,6 +114,17 @@ public class LockupManager implements Listener
         {
             e.setCancelled(true);
             e.getPlayer().sendMessage(FUtil.miniMessage("<red>You are locked‑up and cannot use commands."));
+        }
+    }
+
+    @EventHandler
+    @SuppressWarnings("deprecation")
+    public void onPlayerChat(AsyncPlayerChatEvent e)
+    {
+        if (isLocked(e.getPlayer().getUniqueId()))
+        {
+            e.setCancelled(true);
+            e.getPlayer().sendMessage(FUtil.miniMessage("<red>You are locked-up and cannot chat."));
         }
     }
 }
