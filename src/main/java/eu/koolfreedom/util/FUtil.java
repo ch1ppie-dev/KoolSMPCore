@@ -328,7 +328,7 @@ public class FUtil // the f stands for fuck
     {
         Player player = Bukkit.getPlayer(name);
         return seeVanished || KoolSMPCore.getInstance().getVanishBridge() != null
-                && KoolSMPCore.getInstance().getVanishBridge().isVanished(player) ? player : null;
+                && !KoolSMPCore.getInstance().getVanishBridge().isVanished(player) ? player : null;
     }
 
     public static class RandomColorTag implements Modifying
