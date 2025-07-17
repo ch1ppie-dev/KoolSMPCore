@@ -124,11 +124,19 @@ public class GroupManagement
         if (group == null)
             return;
 
-        // ❌ Skip scoreboard logic if group is default
+        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+
+        // Always remove the player from all teams first
+        for (Team t : main.getTeams())
+        {
+            if (t.hasEntry(playerName))
+                t.removeEntry(playerName);
+        }
+
+        // Don't create a team for the default group
         if (group.getInternalName().equalsIgnoreCase("default"))
             return;
 
-        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
         String teamName = "rank_" + group.getInternalName().toLowerCase(Locale.ROOT);
         Team team = main.getTeam(teamName);
 
@@ -150,14 +158,6 @@ public class GroupManagement
             return;
         }
 
-        // Remove from other teams
-        for (Team t : main.getTeams())
-        {
-            if (!t.getName().equals(teamName) && t.hasEntry(playerName))
-                t.removeEntry(playerName);
-        }
-
-        // Add to the correct team
         if (!team.hasEntry(playerName))
             team.addEntry(playerName);
     }
