@@ -39,10 +39,19 @@ public class UpdateChecker {
                     String latestTag = json.split("\"tag_name\":\"")[1].split("\"")[0];
 
                     String currentVersion = plugin.getDescription().getVersion();
-                    if (!latestTag.equalsIgnoreCase("v" + currentVersion)) {
+
+                    // Normalize: strip leading 'v' or 'V'
+                    String normalizedLatest = latestTag.replaceFirst("(?i)^v", "");
+                    String normalizedCurrent = currentVersion.replaceFirst("(?i)^v", "");
+
+                    // Log for debugging
+                    FLog.info("Current version: " + normalizedCurrent);
+                    FLog.info("Latest version: " + normalizedLatest);
+
+                    if (!normalizedLatest.equalsIgnoreCase(normalizedCurrent)) {
                         FLog.warning("------------------------------------------------");
                         FLog.warning("An update is available for " + plugin.getName() + "!");
-                        FLog.warning("Current version: v" + currentVersion);
+                        FLog.warning("Current version: " + currentVersion);
                         FLog.warning("Latest version: " + latestTag);
                         FLog.warning("Download: https://github.com/" + repoOwner + "/" + repoName + "/releases/latest");
                         FLog.warning("------------------------------------------------");
@@ -54,4 +63,3 @@ public class UpdateChecker {
         });
     }
 }
-
