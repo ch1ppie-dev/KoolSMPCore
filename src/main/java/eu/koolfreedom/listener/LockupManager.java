@@ -127,4 +127,14 @@ public class LockupManager implements Listener
             e.getPlayer().sendMessage(FUtil.miniMessage("<red>You are locked-up and cannot chat."));
         }
     }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e)
+    {
+        if (isLocked(e.getPlayer().getUniqueId()))
+        {
+            lock(e.getPlayer());
+            e.getPlayer().sendMessage(FUtil.miniMessage("<red>Just because you re-logged doesn't mean you're safe!"));
+        }
+    }
 }

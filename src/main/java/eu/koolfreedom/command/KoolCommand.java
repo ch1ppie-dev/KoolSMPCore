@@ -121,7 +121,7 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
 
 	/**
 	 * Gets tab completions for the command as the sender based on the given arguments. This method is wrapped by
-	 * 	{@link #tabComplete(CommandSender, String, String[])} to handle permission checks and then tab complete the
+	 * 	{@link #tabComplete(CommandSender, String, String[])} to handle permission checks and then tab completes the
 	 * 	command while also catching any possible exceptions that might be thrown by a particular command. While it does
 	 * 	tab complete everything, you should still catch any cases of exceptions caused by user errors.
 	 * @param sender		The {@link CommandSender} tab completing the command
@@ -130,7 +130,7 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
 	 * @param args          An array of strings used for the command arguments.
 	 * @return				A list of Strings containing possible arguments. The aforementioned wrapper method will
 	 * 						suggest any arguments provided that start with the input given by the user. If returning
-	 * 						null, the plugin will fallback to the default way of tab completions which is to just throw
+	 * 						null, the plugin will fallback to the default way of tab completions, which is to just throw
 	 * 						a list of users. To return no tab completions, return an empty list instead using something
 	 * 						like {@link List#of()} or {@link Collections#emptyList()}.
 	 */
@@ -143,7 +143,7 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
 	 * Executes the command as the sender. This method is wrapped by {@link #execute(CommandSender, String, String[])}
 	 * 	to handle permission checks and then run the command while also catching any possible exceptions that might be
 	 * 	thrown by a particular command. While it does catch everything, you should still catch any cases of exceptions
-	 * 	caused by user error (i.e. a NumberFormatException being thrown).
+	 * 	caused by user error (i.e., a NumberFormatException being thrown).
 	 * @param sender		The {@link CommandSender} running the command
 	 * @param playerSender	The sender represented as a {@link Player} if they are one, otherwise it returns null. This
 	 *                      behavior is great for when you want to exclude sources that aren't in-game (like console)
@@ -196,7 +196,7 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
 	}
 
 	/**
-	 * Broadcast an MiniMessage-formatted message to the server.
+	 * Broadcast a MiniMessage-formatted message to the server.
 	 * @param message		String
 	 * @param placeholders	TagResolver[]
 	 */
@@ -206,7 +206,7 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
 	}
 
 	/**
-	 * Broadcast an MiniMessage-formatted message to everyone with a specific permission.
+	 * Broadcast a MiniMessage-formatted message to everyone with a specific permission.
 	 * @param message		String
 	 * @param placeholders	TagResolver[]
 	 */
