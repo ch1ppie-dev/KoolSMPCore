@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.*;
 
-@CommandParameters(name = "alts", description = "Shows other accounts known to be associated with a player or IP", usage = "/alts <player|ip>", permission = "kfc.alts")
+@CommandParameters(name = "alts", description = "Shows other accounts known to be associated with a player or IP", usage = "/alts <player|ip>")
 public class AltsCommand extends KoolCommand
 {
     private final AltManager altManager = plugin.getAltManager();

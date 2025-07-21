@@ -40,6 +40,7 @@ permissions:
     children:
       - kfc.member
       - kfc.command.adminchat
+      - kfc.command.alts
       - kfc.command.ban
       - kfc.command.banip
       - kfc.command.banlist
