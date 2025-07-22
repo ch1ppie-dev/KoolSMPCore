@@ -1,5 +1,6 @@
 package eu.koolfreedom.api;
 
+import eu.koolfreedom.util.FLog;
 import org.bukkit.event.Listener;
 
 import eu.koolfreedom.KoolSMPCore;
@@ -39,6 +40,7 @@ public class AltListener implements Listener
             Bukkit.getOnlinePlayers().stream()
                     .filter(pl -> pl.hasPermission("kfc.admin"))
                     .forEach(pl -> pl.sendMessage(msg));
+            FLog.info(msg);
         }
     }
 }
