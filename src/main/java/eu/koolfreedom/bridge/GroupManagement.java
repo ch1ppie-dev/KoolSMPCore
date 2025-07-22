@@ -24,7 +24,7 @@ public class GroupManagement
 {
     private final Map<String, Group> groups = new HashMap<>();
     private final Group defaultFallbackGroup = new Group("default", "Member", NamedTextColor.GRAY);
-    private final Group consoleGroup = new Group("console", "Console", NamedTextColor.BLUE);
+    private final Group consoleGroup = new Group("console", "Console", NamedTextColor.GREEN);
 
     private Permission permission = null;
     private boolean checked = false;
