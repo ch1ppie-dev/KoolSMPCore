@@ -39,16 +39,4 @@ public class FreezeListener implements Listener
             p.teleport(event.getFrom()); // rubber-band in case client desync
         }
     }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e)
-    {
-        Player p = e.getPlayer();
-
-        if (freezeManager.isFrozen(p))
-        {
-            freezeManager.freeze(p);
-            p.sendMessage(FUtil.miniMessage("<red>Just because you re-logged, doesn't mean you're safe"));
-        }
-    }
 }

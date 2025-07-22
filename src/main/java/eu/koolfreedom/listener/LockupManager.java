@@ -53,7 +53,7 @@ public class LockupManager implements Listener
     /*  Implementation                                                       */
     /* --------------------------------------------------------------------- */
 
-    private void lock(Player p)
+    public void lock(Player p)
     {
         // Keep inventory screen open every tick (prevents ESC)
         BukkitRunnable task = new BukkitRunnable()
@@ -84,7 +84,7 @@ public class LockupManager implements Listener
         locked.put(p.getUniqueId(), task);
     }
 
-    private void unlock(UUID uuid)
+    public void unlock(UUID uuid)
     {
         BukkitRunnable task = locked.remove(uuid);
         if (task != null) task.cancel();
@@ -125,16 +125,6 @@ public class LockupManager implements Listener
         {
             e.setCancelled(true);
             e.getPlayer().sendMessage(FUtil.miniMessage("<red>You are locked-up and cannot chat."));
-        }
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e)
-    {
-        if (isLocked(e.getPlayer().getUniqueId()))
-        {
-            lock(e.getPlayer());
-            e.getPlayer().sendMessage(FUtil.miniMessage("<red>Just because you re-logged doesn't mean you're safe!"));
         }
     }
 }

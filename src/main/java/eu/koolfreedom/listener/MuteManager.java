@@ -145,21 +145,4 @@ public class MuteManager implements Listener
             e.getPlayer().sendMessage(FUtil.miniMessage("<red>You are muted, you cannot use commands."));
         }
     }
-
-    /* keep mute after relog */
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e)
-    {
-        if (isMuted(e.getPlayer()))
-        {
-            e.getPlayer().sendMessage(FUtil.miniMessage("<gray>You are still muted."));
-        }
-
-        UUID id = e.getPlayer().getUniqueId();
-
-        if (isCommandsBlocked(id))
-        {
-            e.getPlayer().sendMessage(FUtil.miniMessage("<gray>Your commands are still blocked."));
-        }
-    }
 }
