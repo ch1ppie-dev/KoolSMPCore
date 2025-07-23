@@ -44,7 +44,7 @@ public class TempBanCommand extends KoolCommand
 
             if (dur.equals("perm") || dur.equals("permanent"))
             {
-                duration = TimeOffset.getOffset("1mil");
+                duration = Long.MAX_VALUE;
                 reason = args.length > 2 ? String.join(" ", ArrayUtils.subarray(args, 2, args.length)) : null;
             }
             else
