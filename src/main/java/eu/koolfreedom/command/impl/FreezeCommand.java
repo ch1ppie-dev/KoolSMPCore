@@ -50,6 +50,7 @@ public class FreezeCommand extends KoolCommand
         return true;
     }
 
+    @Override
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {
         return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
