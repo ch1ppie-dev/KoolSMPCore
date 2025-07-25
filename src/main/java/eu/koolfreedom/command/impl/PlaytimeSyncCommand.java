@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 @CommandParameters(name = "resyncplaytime", description = "Force import of Bukkit playtime data", usage = "/resyncplaytime <player>", permission = "kfc.resync")
@@ -42,5 +43,11 @@ public class PlaytimeSyncCommand extends KoolCommand
 
         msg(sender, "<green>Resynced playtime from Bukkit statistics for <yellow>" + target.getName() + "</yellow>.");
         return true;
+    }
+
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
+                .filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
     }
 }

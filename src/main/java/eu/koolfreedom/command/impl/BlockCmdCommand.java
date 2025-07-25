@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.getPlayer;
@@ -87,5 +88,11 @@ public class BlockCmdCommand extends KoolCommand
         FUtil.staffAction(sender, "Blocked all commands for " + target.getName());
         msg(sender, "<gray>Blocked commands for " + target.getName() + ".");
         return true;
+    }
+
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
+                .filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
     }
 }

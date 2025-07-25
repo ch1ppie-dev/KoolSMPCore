@@ -11,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 @CommandParameters(name = "freeze", description = "Freeze players", usage = "/freeze <player>")
@@ -47,5 +48,11 @@ public class FreezeCommand extends KoolCommand
         target.sendMessage(FUtil.miniMessage("<gray>You have been <aqua>frozen!"));
         plugin.getAutoUndoManager().scheduleAutoUnfreeze(target);
         return true;
+    }
+
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
+                .filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
     }
 }
