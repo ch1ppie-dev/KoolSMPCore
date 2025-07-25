@@ -79,7 +79,6 @@ permissions:
     default: op
     children:
       - kfc.admin
-      - kfc.antispam.bypass
       - kfc.command.banlist.reload
       - kfc.command.cage
       - kfc.command.koolsmpcore.reload
@@ -90,6 +89,7 @@ permissions:
     default: op
     children:
       - kfc.senior
+      - kfc.antispam.bypass
       - kfc.command.crash
       - kfc.command.reports.purge
 libraries:
