@@ -203,3 +203,21 @@ groups:
     name: owner
     color: red
     displayName: <red>Owner
+exploit:
+  enabled: true
+  crash:
+    tab_complete:
+      punishment: "kick %player% Malicious packets."
+      enabled: true
+    bundle:
+      punishment: "doom %player% Malicious packets."
+      enabled: true
+  dupe:
+    book_and_quill:
+      punishment: "kick %player% Malicious packets."
+      enabled: true
+    trident:
+      punishment: "kick %player% Malicious packets."
+      enabled: true
+  misc:
+    # Extra checks, WIP
