@@ -43,7 +43,10 @@ public enum ConfigEntry
     EXPLOIT_TRIDENT(ConfigurationSection.class, "exploits.dupe.trident"),
     EXPLOIT_TRIDENT_ENABLED(Boolean.class, "exploits.dupe.trident.enabled"),
     EXPLOIT_TRIDENT_PUNISH(String.class, "exploits.dupe.trident.punishment"),
-    EXPLOITS_MISC(ConfigurationSection.class, "exploits.misc");
+    EXPLOITS_MISC(ConfigurationSection.class, "exploits.misc"),
+    EXPLOIT_MISC_ABILITIES(ConfigurationSection.class, "exploits.misc.abilities"),
+    EXPLOIT_MISC_ABILITIES_ENABLED(Boolean.class, "exploits.misc.abilities.enabled"),
+    EXPLOIT_MISC_ABILITIES_PUNISH(String.class, "exploits.misc.abilities.punishment");
 
 
 

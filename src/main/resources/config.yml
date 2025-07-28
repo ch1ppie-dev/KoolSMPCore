@@ -203,11 +203,11 @@ groups:
     name: owner
     color: red
     displayName: <red>Owner
-exploit:
+exploits:
   enabled: true
   crash:
     tab_complete:
-      punishment: "kick %player% Malicious packets."
+      punishment: "kick %player% Malicious packets." # Leave blank if you want to disable punishments.
       enabled: true
     bundle:
       punishment: "doom %player% Malicious packets."
@@ -220,4 +220,6 @@ exploit:
       punishment: "kick %player% Malicious packets."
       enabled: true
   misc:
-    # Extra checks, WIP
+    abilities:
+      punishment: "kick %player% Malicious packets."
+      enabled: true
