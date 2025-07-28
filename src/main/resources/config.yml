@@ -78,7 +78,7 @@ chat-filter:
       action: doom
       cancel: true
       reason: Hate Speech
-      delay: 50
+      delay: 0
       filters:
         - "(?i)n[\W_]*[i1!|l][\W_]*g[\W_]*g[\W_]*[ae][\W_]*(r|r+h+|h+)?s?"
         - "(?i)f[a4]g+([o0]t)?"
