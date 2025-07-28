@@ -5,7 +5,7 @@ description: Core plugin for the KoolFreedom SMP
 depend:
   - Vault
 softdepend:
-  - ProtocolLib
+  - packetevents
   - LuckPerms
   - EssentialsDiscord
   - EssentialsDiscordLink
@@ -15,6 +15,7 @@ authors:
   - "gamingto12"
   - "_sftp"
   - "videogamesm12"
+  - "ch1ppie"
 api-version: 1.21.1
 # plugin.yml is no longer used to define commands, rather define permission nodes for commands that don't already have one
 #  defined in the command class.

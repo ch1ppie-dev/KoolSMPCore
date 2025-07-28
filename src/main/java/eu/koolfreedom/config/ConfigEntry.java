@@ -27,7 +27,30 @@ public enum ConfigEntry
     FORMATS_REPORT_QUICK_SUMMARY(String.class, "formats.report_quick_summary"),
     FORMATS_REPORT_EMPTY_QUICK_SUMMARY(String.class, "formats.report_empty_quick_summary"),
     FORMATS_SAY(String.class, "formats.say"),
-    GROUPS(ConfigurationSection.class, "groups");
+    GROUPS(ConfigurationSection.class, "groups"),
+    EXPLOITS_ENABLED(Boolean.class, "exploits.enabled"),
+    EXPLOITS_CRASH(ConfigurationSection.class, "exploits.crash"),
+    EXPLOIT_TAB_COMPLETE(ConfigurationSection.class, "exploits.crash.tab_complete"),
+    EXPLOIT_TAB_COMPLETE_ENABLED(Boolean.class, "exploits.crash.tab_complete.enabled"),
+    EXPLOIT_TAB_COMPLETE_PUNISH(String.class, "exploits.crash.tab_complete.punishment"),
+    EXPLOIT_BUNDLE(ConfigurationSection.class, "exploits.crash.bundle"),
+    EXPLOIT_BUNDLE_ENABLED(Boolean.class, "exploits.crash.bundle.enabled"),
+    EXPLOIT_BUNDLE_PUNISH(String.class, "exploits.crash.bundle.punishment"),
+    EXPLOITS_DUPE(ConfigurationSection.class, "exploits.dupe"),
+    EXPLOIT_BOOK_AND_QUILL(ConfigurationSection.class, "exploits.dupe.book_and_quill"),
+    EXPLOIT_BOOK_AND_QUILL_ENABLED(Boolean.class, "exploits.dupe.book_and_quill.enabled"),
+    EXPLOIT_BOOK_AND_QUILL_PUNISH(String.class, "exploits.dupe.book_and_quill.punishment"),
+    EXPLOIT_TRIDENT(ConfigurationSection.class, "exploits.dupe.trident"),
+    EXPLOIT_TRIDENT_ENABLED(Boolean.class, "exploits.dupe.trident.enabled"),
+    EXPLOIT_TRIDENT_PUNISH(String.class, "exploits.dupe.trident.punishment"),
+    EXPLOITS_MISC(ConfigurationSection.class, "exploits.misc"),
+    EXPLOIT_MISC_ABILITIES(ConfigurationSection.class, "exploits.misc.abilities"),
+    EXPLOIT_MISC_ABILITIES_ENABLED(Boolean.class, "exploits.misc.abilities.enabled"),
+    EXPLOIT_MISC_ABILITIES_PUNISH(String.class, "exploits.misc.abilities.punishment");
+
+
+
+
 
     private final Class<?> type;
     private final String configName;

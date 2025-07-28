@@ -1,5 +1,7 @@
 package eu.koolfreedom;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import eu.koolfreedom.api.AltListener;
 import eu.koolfreedom.api.AltManager;
 import eu.koolfreedom.bridge.GroupManagement;
@@ -23,6 +25,7 @@ import eu.koolfreedom.stats.PlaytimeManager;
 import eu.koolfreedom.util.*;
 import eu.koolfreedom.punishment.RecordKeeper;
 import eu.koolfreedom.reporting.ReportManager;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.*;
@@ -83,6 +86,17 @@ public class KoolSMPCore extends JavaPlugin
     {
         instance = this;
         buildMeta = new BuildProperties();
+        if (Bukkit.getPluginManager().isPluginEnabled("packetevents")) {
+            FLog.info("PacketEvents found, enabling exploit patches.");
+            PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+            PacketEvents.getAPI().load();
+            exploitListener = new ExploitListener();
+            PacketEvents.getAPI().getEventManager().registerListener(exploitListener, PacketListenerPriority.HIGHEST);
+
+        } else {
+            FLog.warning("PacketEvents not found! Exploit patches will not be able to function!");
+        }
+
     }
 
     @Override
@@ -127,6 +141,9 @@ public class KoolSMPCore extends JavaPlugin
     @Override
     public void onDisable()
     {
+        if (Bukkit.getPluginManager().isPluginEnabled("packetevents")) {
+            PacketEvents.getAPI().terminate();
+        }
         FLog.info("KoolSMPCore has been disabled");
 
         banManager.save();
@@ -146,7 +163,6 @@ public class KoolSMPCore extends JavaPlugin
         muteManager = new MuteManager(this);
         reportManager = new ReportManager();
         cosmeticManager = new CosmeticManager();
-        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) exploitListener = new ExploitListener();
         chatListener = new ChatListener();
         freezeListener = new FreezeListener();
         lockupManager = new LockupManager(this);
