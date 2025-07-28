@@ -15,9 +15,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:https://github.com/KoolFreedom/KoolSMPCore.git</connection>
-        <developerConnection>scm:git:https://github.com/KoolFreedom/KoolSMPCore.git</developerConnection>
-        <url>https://github.com/KoolFreedom/KoolSMPCore</url>
+        <connection>scm:git:https://github.com/ch1ppie-dev/KoolSMPCore.git</connection>
+        <developerConnection>scm:git:https://github.com/ch1ppie-dev/KoolSMPCore.git</developerConnection>
+        <url>https://github.com/ch1ppie-dev/KoolSMPCore</url>
     </scm>
 
     <repositories>
