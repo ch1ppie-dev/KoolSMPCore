@@ -80,7 +80,7 @@ chat-filter:
       reason: Hate Speech
       delay: 50
       filters:
-        - "(?ix)\\bn[\\p{L}0-9*_\\-!\\.]?[i1!íìîï][\\p{L}0-9*_\\-!\\.]*?g{2,}[\\p{L}0-9*_\\-!\\.]*?(?:a|er)\\b"
+        - "(?i)n[\W_]*[i1!|l][\W_]*g[\W_]*g[\W_]*[ae][\W_]*(r|r+h+|h+)?s?"
         - "(?i)f[a4]g+([o0]t)?"
         - "(?i)heil hitler"
         - "(?i)seig heil"
