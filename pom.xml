@@ -167,7 +167,7 @@
                                 <propertyfile file="${project.basedir}/src/main/resources/build.properties"
                                               comment="Build information. Edit this to your liking.">
                                     <!--suppress UnresolvedMavenProperty -->
-                                    <entry key="buildAuthor" value="{buildAuthor}"/>
+                                    <entry key="buildAuthor" value="${buildAuthor}"/>
                                     <entry key="buildNumber" default="0"/>
                                     <entry key="buildVersion" value="${project.version}"/>
                                     <entry key="buildDate" value="${maven.build.timestamp}"/>
