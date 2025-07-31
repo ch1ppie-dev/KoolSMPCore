@@ -69,6 +69,7 @@ permissions:
       - kfc.seen.viewip
       - kfc.command.smite
       - kfc.command.spectate
+      - kfc.command.tban
       - kfc.command.troll
       - kfc.command.unban
       - kfc.command.unblockcmd
