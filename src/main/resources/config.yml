@@ -16,7 +16,7 @@ server:
   motd: '<randomize>KoolFreedom SMP (Native 1.21.1)'
   tablist_header: ' <newline>  <light_purple>Welcome to <gold>KoolFreedom SMP</gold>!  <newline> '
   tablist_footer: ' <newline>  <light_purple>Join our <dark_purple>/discord</dark_purple> <newline>  '
-  website_or_forum: 'Put your own forum/website here.'
+  ban_url: 'Put your own forum/website here.'
 
 # All things related to the announcer
 announcer:
@@ -31,6 +31,12 @@ announcer:
     - "<red>[<gold>KoolFreedom</gold>] Remember to join our Discord with <gold><click:suggest_command:/discord>'/discord'</click></gold>."
     - "<red>[<gold>KoolFreedom</gold>] Dealing with a rule-breaker? Use <gold><click:suggest_command:/report>'/report'</click></gold> to submit a report."
     - "<red>[<gold>KoolFreedom</gold>] <gold>gamingto12</gold> is the owner of KoolFreedom."
+
+
+# Admin Info
+# This applies to the /admininfo command in case the server owner / manager wants to configure a different message
+admininfo:
+  - "<red>This is a placeholder message, fill this config section with whatever you want."
 
 # Chat filter
 chat-filter:

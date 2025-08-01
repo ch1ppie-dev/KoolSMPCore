@@ -3,26 +3,30 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.command.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.config.ConfigEntry;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.*;
+
 @CommandParameters(name = "admininfo", description = "Displays info about applying for staff", aliases = {"ai", "staffinfo",})
 public class AdminInfoCommand extends KoolCommand
 {
+    private static final List<Component> ADMIN_INFO = ConfigEntry.ADMININFO.getStringList()
+            .stream().map(info -> MiniMessage.miniMessage().deserialize(info)).toList();
+
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String label, String[] args)
     {
-        String website_or_forums = ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString();
-        if (playerSender == null)
+        if (ADMIN_INFO.isEmpty())
         {
-            msg(sender, playersOnly);
+            msg(sender, "<red>There is currently nothing configured for config section 'admininfo', contact the server's administrator to resolve this error.");
+            return true;
         }
 
-        msg(sender, "<gold>To apply for a staff rank, head over to <red>" + website_or_forums + "</red> and fill out a staff application.");
-        msg(sender, "<gold>Be mindful of the <red>rules and guidelines</red>, and don't spam the staff team.");
-        msg(sender, "<gold>Failure to comply with the rules and guidelines will result in a <b><red>ban</red></b>.");
-        msg(sender, "<gold>Do not bug staff members to look at your application or else it will most likely get <red>denied</red>.");
+        ADMIN_INFO.forEach(component -> msg(sender, component));
         return true;
     }
 }

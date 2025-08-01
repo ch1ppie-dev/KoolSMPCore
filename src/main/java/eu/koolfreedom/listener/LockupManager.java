@@ -2,11 +2,17 @@ package eu.koolfreedom.listener;
 
 import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.util.FUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -18,6 +24,8 @@ public class LockupManager implements Listener
 {
     private final Map<UUID, BukkitRunnable> locked = new ConcurrentHashMap<>();
     private final KoolSMPCore plugin;
+    private final MiniMessage mini = MiniMessage.miniMessage();
+    private final Component lockupTitle = mini.deserialize("<red>You are locked up!");
 
     public LockupManager(KoolSMPCore plugin)
     {
@@ -55,7 +63,8 @@ public class LockupManager implements Listener
 
     public void lock(Player p)
     {
-        // Keep inventory screen open every tick (prevents ESC)
+        Inventory fakeInv = Bukkit.createInventory(null, 27, lockupTitle);
+
         BukkitRunnable task = new BukkitRunnable()
         {
             @Override
@@ -66,22 +75,17 @@ public class LockupManager implements Listener
                     cancel();
                     return;
                 }
+
                 InventoryView view = p.getOpenInventory();
-                if (view == null || view.getTopInventory() != p.getInventory())
+                if (view == null || !Component.text(stripColor(view.title().toString())).equals(stripColor(lockupTitle.toString())))
                 {
-                    try
-                    {
-                        p.openInventory(p.getInventory());
-                    }
-                    catch (IllegalArgumentException ignored)
-                    {
-                        // Player already has this inventory open — ignore.
-                    }
+                    p.openInventory(fakeInv);
                 }
             }
         };
-        task.runTaskTimer(plugin, 0L, 10L);          // every 0.5s
+        task.runTaskTimer(plugin, 0L, 10L); // every 0.5s
         locked.put(p.getUniqueId(), task);
+        p.openInventory(fakeInv);
     }
 
     public void unlock(UUID uuid)
@@ -95,9 +99,6 @@ public class LockupManager implements Listener
 
     /* --------------------------------------------------------------------- */
     /*  Event guards – stop locked players from moving or running commands   */
-    /*                                                                       */
-    /*  These are mainly in place in the event where the player bypasses all */
-    /*    the calls to open their inventory                                  */
     /* --------------------------------------------------------------------- */
 
     @EventHandler
@@ -126,5 +127,40 @@ public class LockupManager implements Listener
             e.setCancelled(true);
             e.getPlayer().sendMessage(FUtil.miniMessage("<red>You are locked-up and cannot chat."));
         }
+    }
+
+    /* --------------------------------------------------------------------- */
+    /*  GUI Interaction Blocking (click, drag, etc.)                         */
+    /* --------------------------------------------------------------------- */
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e)
+    {
+        HumanEntity clicker = e.getWhoClicked();
+        if (!(clicker instanceof Player player)) return;
+
+        if (isLocked(player.getUniqueId()) &&
+                stripColor(e.getView().title().toString()).equalsIgnoreCase(stripColor(lockupTitle.toString())))
+        {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent e)
+    {
+        HumanEntity dragger = e.getWhoClicked();
+        if (!(dragger instanceof Player player)) return;
+
+        if (isLocked(player.getUniqueId()) &&
+                stripColor(e.getView().title().toString()).equalsIgnoreCase(stripColor(lockupTitle.toString())))
+        {
+            e.setCancelled(true);
+        }
+    }
+
+    private String stripColor(String input)
+    {
+        return input.replaceAll("§[0-9a-fk-or]", "").replaceAll("[\\[\\]]", "");
     }
 }

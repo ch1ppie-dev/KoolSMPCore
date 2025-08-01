@@ -147,7 +147,7 @@ public class Ban
 		}
 
 		builder.append("<newline><red>You can appeal at <yellow>")
-				.append(ConfigEntry.SERVER_WEBSITE_OR_FORUM.getString())
+				.append(ConfigEntry.SERVER_APPEAL_URL.getString())
 				.append("</yellow>");
 
 		return FUtil.miniMessage(builder.toString(),

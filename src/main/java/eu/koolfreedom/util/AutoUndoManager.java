@@ -4,12 +4,14 @@ import eu.koolfreedom.KoolSMPCore;
 import eu.koolfreedom.freeze.FreezeManager;
 import eu.koolfreedom.listener.MuteManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -61,10 +63,11 @@ public class AutoUndoManager
 
                     // broadcast & tell player (if online)
                     Player online = Bukkit.getPlayer(uuid);
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
                     FUtil.staffAction(
                             Bukkit.getConsoleSender(),
                             "Auto‑unmuted <player>",
-                            Placeholder.unparsed("player", online != null ? online.getName() : uuid.toString())
+                            Placeholder.unparsed("player", online != null ? online.getName() : Objects.requireNonNull(offlinePlayer.getName()))
                     );
                     if (online != null)
                         online.sendMessage(FUtil.miniMessage("<green>Your mute has been automatically lifted after 5 minutes."));
