@@ -6,9 +6,11 @@ KoolSMPCore is a plugin primarily made to support the KoolFreedom SMP Minecraft 
 
 # Alternative Download
 
-We are now on SpigotMC, you can download the plugin from this link:
+We are also on other platforms, here are the links to current known download pages:
 
-https://www.spigotmc.org/resources/koolsmpcore.126127/ 
+https://www.spigotmc.org/resources/koolsmpcore.126127/
+
+https://modrinth.com/plugin/koolsmpcore
 
 # Compiling
 
