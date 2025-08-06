@@ -12,6 +12,7 @@ import eu.koolfreedom.bridge.vanish.EssentialsVanishIntegration;
 import eu.koolfreedom.bridge.vanish.SuperVanishIntegration;
 import eu.koolfreedom.chat.AntiSpamService;
 //import eu.koolfreedom.combat.CombatManager;
+import eu.koolfreedom.chat.MiniMessageHandler;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.bridge.discord.DiscordSRVIntegration;
@@ -72,7 +73,7 @@ public class KoolSMPCore extends JavaPlugin
     private PlayerJoinListener pjListener;
     private AltListener altListener;
     private PlaytimeListener ptListener;
-    //private CombatManager combatManager;
+    private MiniMessageHandler mmHandler;
 
     private GroupManagement groupManager;
     private LuckPermsBridge luckPermsBridge;
@@ -170,7 +171,7 @@ public class KoolSMPCore extends JavaPlugin
         altListener = new AltListener();
         ptListener = new PlaytimeListener();
         antiSpamListener = new AntiSpamService(this);
-        //combatManager = new CombatManager(this);
+        mmHandler = new MiniMessageHandler();
         autoUndoManager = new AutoUndoManager(this, muteManager, freezeManager);
     }
 

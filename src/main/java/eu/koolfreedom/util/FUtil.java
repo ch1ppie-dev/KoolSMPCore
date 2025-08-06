@@ -369,9 +369,7 @@ public class FUtil // the f stands for fuck
         List<OfflinePlayer> players = new ArrayList<>();
         for (UUID uuid : uuids) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            if (offlinePlayer != null) {
-                players.add(offlinePlayer);
-            }
+            players.add(offlinePlayer);
         }
 
         return players;
